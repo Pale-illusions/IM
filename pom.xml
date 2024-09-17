@@ -37,6 +37,17 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- swagger 接口文档增强 -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>4.5.0</version>
+        </dependency>
+        <!-- 校验框架 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
         <!-- netty -->
         <dependency>
             <groupId>io.netty</groupId>

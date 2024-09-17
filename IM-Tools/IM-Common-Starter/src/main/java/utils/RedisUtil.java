@@ -95,6 +95,15 @@ public class RedisUtil {
     }
 
     /**
+     * 存在 key
+     * @param key key
+     * @return 存在？
+     */
+    public static Boolean hasKey(String key) {
+        return template.hasKey(key);
+    }
+
+    /**
      * 普通缓存放入
      *
      * @param key   键

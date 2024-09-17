@@ -1,5 +1,6 @@
 package com.iflove.user.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.user.domain.entity.User;
 import com.iflove.user.mapper.UserMapper;
@@ -12,7 +13,11 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class UserDao extends ServiceImpl<UserMapper, User> {
-
+    public User getUserByName(String name) {
+        return lambdaQuery()
+                .eq(User::getName, name)
+                .one();
+    }
 }
 
 

@@ -142,6 +142,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '用户id',
     `name` VARCHAR(20) NULL COMMENT '用户昵称',
+    `password` varchar(255) not null comment '用户密码',
     `avatar` VARCHAR(255) NULL COMMENT '用户头像',
     `sex` INT NULL  COMMENT '性别 1为男性，2为女性',
     `last_opt_time` DATETIME NOT NULL DEFAULT Now() COMMENT '最后上下线时间',

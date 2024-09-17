@@ -30,9 +30,16 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- netty -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
+        </dependency>
+        <!-- hutool 工具依赖 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>5.8.32</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -39,7 +39,6 @@ public class NettyWebsocketServer {
     // worker 线程组，用于服务端接受客户端的数据读写
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
 
-
     /**
      * 启动 Websocket 服务器
      * @throws InterruptedException

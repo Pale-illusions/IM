@@ -1,6 +1,5 @@
-package com.iflove.common.controller;
+package com.iflove.common.handler;
 
-import cn.hutool.json.JSONException;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.CommonErrorEnum;
 import com.iflove.common.exception.LoginErrorEnum;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @RestControllerAdvice
 @Slf4j
-public class ExceptionController {
+public class GlobalExceptionHandler {
 
     /**
      * 用户登录验证失败
@@ -26,7 +25,7 @@ public class ExceptionController {
      */
     @ExceptionHandler(BadCredentialsException.class)
     public RestBean<Void> badCredentialException(BadCredentialsException e) {
-        log.warn("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
+        log.error("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
         return RestBean.failure(LoginErrorEnum.WRONG_USERNAME_OR_PASSWORD);
     }
 
@@ -37,7 +36,25 @@ public class ExceptionController {
      */
     @ExceptionHandler(ValidationException.class)
     public RestBean<Void> validateException(ValidationException e) {
-        log.warn("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
+        log.error("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
         return RestBean.failure(CommonErrorEnum.PARAM_VALID);
+    }
+
+    /**
+     * 未知异常
+     */
+    @ExceptionHandler(value = Exception.class)
+    public RestBean<Void> systemExceptionHandler( Exception e) {
+        log.error("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
+        return RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
+    }
+
+    /**
+     * 处理空指针的异常
+     */
+    @ExceptionHandler(value = NullPointerException.class)
+    public RestBean<Void> exceptionHandler( NullPointerException e) {
+        log.error("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
+        return RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
     }
 }

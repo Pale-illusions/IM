@@ -20,10 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import utils.RedisUtil;
 
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,16 +51,17 @@ public class UserServiceImpl implements UserService {
         }
         // 获取token
         String uuid = UUID.randomUUID().toString();
-        Map<String, Object> map = Map.of("jwt_id", uuid, "username", username);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, Const.EXPIRE_TIME);
+        Date expireTime = calendar.getTime();
+        Map<String, Object> map = Map.of("jwt_id", uuid, "username", username, "expire_time", expireTime);
         String token = JWTUtil.createToken(map, Const.JWT_SIGN_KEY.getBytes());
         // 将token存入redis
         RedisUtil.set(RedisKey.JWT_WHITE_LIST + uuid, "", Const.EXPIRE_TIME, TimeUnit.HOURS);
         // 返回结果集
         return RestBean.success(UserAdapter.buildUserInfoVO(userDao.getUserByName(username), v -> {
             v.setToken(token);
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.HOUR, Const.EXPIRE_TIME);
-            v.setExpireTime(calendar.getTime());
+            v.setExpireTime(expireTime);
         }));
     }
 

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: IM
   rabbitmq:
     addresses: localhost
     username: guest
@@ -31,7 +33,12 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.iflove.**.controller
+      packages-to-scan:
+        - com.iflove.user.controller
+        - com.iflove.chat.controller
+        - com.iflove.video.controller
+        - com.iflove.social.controller
+        - com.iflove.interactive.controller
 
 knife4j:
   enable: true

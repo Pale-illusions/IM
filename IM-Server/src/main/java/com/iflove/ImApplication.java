@@ -42,6 +42,7 @@ public class ImApplication {
             log.warn("The host name could not be determined, using `localhost` as fallback");
         }
         log.info("""
+                        \t
                         ----------------------------------------------------------
                         \t应用程序“{}”正在运行中......
                         \t接口文档访问 URL:

@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 public class SwaggerConfiguration {
-    //TODO 编写接口文档
+    // TODO 编写接口文档
     @Bean
     public OpenAPI swaggerOpenAPI() {
         return new OpenAPI()

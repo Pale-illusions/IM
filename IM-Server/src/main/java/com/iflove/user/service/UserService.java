@@ -2,6 +2,7 @@ package com.iflove.user.service;
 
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.user.domain.entity.User;
+import com.iflove.user.domain.vo.request.user.UserRegisterVO;
 import com.iflove.user.domain.vo.response.user.UserInfoVO;
 
 /**
@@ -23,4 +24,11 @@ public interface UserService {
      * @return 结果集
      */
     RestBean<Void> logout(String token);
+
+    /**
+     * 用户注册
+     * @param userRegisterVO 注册信息
+     * @return
+     */
+    RestBean<Void> register(UserRegisterVO userRegisterVO);
 }

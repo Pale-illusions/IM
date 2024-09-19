@@ -9,6 +9,7 @@ import com.iflove.common.exception.ErrorEnum;
 import com.iflove.common.exception.LoginErrorEnum;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.entity.User;
+import com.iflove.user.domain.vo.request.user.UserRegisterVO;
 import com.iflove.user.domain.vo.response.user.UserInfoVO;
 import com.iflove.user.service.UserService;
 import com.iflove.user.service.adapter.UserAdapter;
@@ -81,6 +82,16 @@ public class UserServiceImpl implements UserService {
         } else {
             return RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
         }
+    }
+
+    /**
+     * 用户注册
+     * @param userRegisterVO 注册信息
+     * @return
+     */
+    @Override
+    public RestBean<Void> register(UserRegisterVO userRegisterVO) {
+        return null;
     }
 
 

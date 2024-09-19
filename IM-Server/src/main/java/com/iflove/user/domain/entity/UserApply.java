@@ -16,9 +16,9 @@ import lombok.Data;
 @Data
 public class UserApply implements Serializable {
     /**
-     * 
+     * id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**

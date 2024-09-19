@@ -66,7 +66,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         boolean offlineAll = offline(channel, uidOptional);
         // 用户多端全部下线
         if (uidOptional.isPresent() && offlineAll) {
-            //TODO 用户下线全局通知
+            // TODO 用户下线全局通知
         }
     }
 
@@ -130,9 +130,9 @@ public class WebSocketServiceImpl implements WebSocketService {
         this.online(channel, user.getId());
         // 发送登录成功信息
         this.sendMsg(channel, WSAdapter.buildWSLoginSuccessResp(user, token));
-        //TODO 用户上线全局通知
+        // TODO 用户上线全局通知
 
-        //TODO 更新IP
+        // TODO 更新IP
     }
 
     /**

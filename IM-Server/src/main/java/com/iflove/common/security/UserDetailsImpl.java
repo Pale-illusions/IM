@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class UserDetailsImpl implements UserDetails {
     private final User user;
 
-    //TODO 设置用户权限
+    // TODO 设置用户权限
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

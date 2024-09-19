@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONException;
 import cn.hutool.jwt.JWTException;
 import cn.hutool.jwt.JWTUtil;
+import com.iflove.common.config.ThreadPoolConfiguration;
 import com.iflove.common.constant.RedisKey;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.dto.WSChannelExtraDTO;
@@ -15,6 +16,8 @@ import com.iflove.websocket.NettyUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import utils.JsonUtil;
@@ -45,6 +48,9 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Resource
     UserDao userDao;
+    @Resource
+    @Qualifier(ThreadPoolConfiguration.WS_EXECUTOR)
+    ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     /**
      * 保存 ws 连接

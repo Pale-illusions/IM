@@ -15,7 +15,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @SpringBootApplication
-@EnableAsync
 @EnableTransactionManagement
 @MapperScan("com.iflove.**.mapper")
 @Slf4j

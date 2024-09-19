@@ -18,7 +18,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import utils.RedisUtil;
 
 import java.util.*;
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
     UserDao userDao;
     @Resource
     AuthenticationManager authenticationManager;
+    @Resource
+    PasswordEncoder passwordEncoder;
 
     /**
      * 用户登录
@@ -89,10 +93,15 @@ public class UserServiceImpl implements UserService {
      * @param userRegisterVO 注册信息
      * @return
      */
+    @Transactional
     @Override
     public RestBean<Void> register(UserRegisterVO userRegisterVO) {
-        return null;
+        User user = User.builder()
+                .name(userRegisterVO.getUsername())
+                .password(passwordEncoder.encode(userRegisterVO.getPassword()))
+                .sex(userRegisterVO.getSex())
+                .build();
+        return userDao.save(user) ?
+                RestBean.success() : RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
     }
-
-
 }

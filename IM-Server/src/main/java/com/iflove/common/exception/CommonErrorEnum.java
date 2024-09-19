@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum CommonErrorEnum implements ErrorEnum {
     SYSTEM_ERROR(501, "服务器出错，请联系管理员"),
-    PARAM_VALID(502, "参数校验失败{0}"),
+    PARAM_VALID(502, "参数校验失败"),
     ;
     private final Integer code;
     private final String msg;

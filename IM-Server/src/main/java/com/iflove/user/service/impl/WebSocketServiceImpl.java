@@ -5,6 +5,7 @@ import cn.hutool.jwt.JWTException;
 import cn.hutool.jwt.JWTUtil;
 import com.iflove.common.config.thread.ThreadPoolConfiguration;
 import com.iflove.common.constant.RedisKey;
+import com.iflove.common.event.UserOfflineEvent;
 import com.iflove.common.event.UserOnlineEvent;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.dto.WSChannelExtraDTO;
@@ -81,8 +82,10 @@ public class WebSocketServiceImpl implements WebSocketService {
         boolean offlineAll = offline(channel, uidOptional);
         // 用户多端全部下线
         if (uidOptional.isPresent() && offlineAll) {
-            // TODO 用户下线全局通知
-
+            User user = new User();
+            user.setId(uidOptional.get());
+            user.setLastOptTime(new Date());
+            applicationEventPublisher.publishEvent(new UserOfflineEvent(this, user));
         }
     }
 
@@ -187,7 +190,6 @@ public class WebSocketServiceImpl implements WebSocketService {
         this.online(channel, user.getId());
         // 发送登录成功信息
         this.sendMsg(channel, WSAdapter.buildWSLoginSuccessResp(user, token));
-        // TODO 用户上线全局通知
         boolean online = userCache.isOnline(user.getId());
         if (!online) {
             user.setLastOptTime(new Date());

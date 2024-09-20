@@ -30,7 +30,6 @@ public class MsgPushConsumer {
             key = {MSG_PUSH_KEY}
     ))
     public void onMessage(PushMessageDTO message) {
-        // TODO 消息接收业务逻辑
         WSPushTypeEnum type = WSPushTypeEnum.of(message.getPushType());
         switch (type) {
             case USER -> {

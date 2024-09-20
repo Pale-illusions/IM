@@ -1,4 +1,4 @@
-package com.iflove.common.config;
+package com.iflove.common.config.security;
 
 import com.iflove.common.security.JwtAuthenticationProvider;
 import com.iflove.common.security.JwtAuthenticationTokenFilter;

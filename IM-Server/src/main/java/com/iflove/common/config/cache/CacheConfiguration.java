@@ -1,4 +1,4 @@
-package com.iflove.common.config;
+package com.iflove.common.config.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;

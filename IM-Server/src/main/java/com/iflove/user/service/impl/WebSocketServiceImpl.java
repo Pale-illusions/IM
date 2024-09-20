@@ -1,10 +1,9 @@
 package com.iflove.user.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.json.JSONException;
 import cn.hutool.jwt.JWTException;
 import cn.hutool.jwt.JWTUtil;
-import com.iflove.common.config.ThreadPoolConfiguration;
+import com.iflove.common.config.thread.ThreadPoolConfiguration;
 import com.iflove.common.constant.RedisKey;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.dto.WSChannelExtraDTO;
@@ -18,12 +17,10 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 import utils.JsonUtil;
 import utils.RedisUtil;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,6 +70,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         // 用户多端全部下线
         if (uidOptional.isPresent() && offlineAll) {
             // TODO 用户下线全局通知
+
         }
     }
 
@@ -139,6 +137,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         // TODO 用户上线全局通知
 
         // TODO 更新IP
+
     }
 
     /**

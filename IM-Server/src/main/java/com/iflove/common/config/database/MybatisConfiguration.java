@@ -1,4 +1,4 @@
-package com.iflove.common.config;
+package com.iflove.common.config.database;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

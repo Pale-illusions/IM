@@ -1,4 +1,4 @@
-package com.iflove.common.config;
+package com.iflove.common.config.swagger;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

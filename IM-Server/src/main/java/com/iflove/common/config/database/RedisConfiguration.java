@@ -1,4 +1,4 @@
-package com.iflove.common.config;
+package com.iflove.common.config.database;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

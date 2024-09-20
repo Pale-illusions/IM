@@ -37,6 +37,11 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- 消息队列 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
         <!-- caffeine 缓存 -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>

@@ -5,22 +5,28 @@ import cn.hutool.jwt.JWTException;
 import cn.hutool.jwt.JWTUtil;
 import com.iflove.common.config.thread.ThreadPoolConfiguration;
 import com.iflove.common.constant.RedisKey;
+import com.iflove.common.event.UserOnlineEvent;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.dto.WSChannelExtraDTO;
 import com.iflove.user.domain.entity.User;
 import com.iflove.user.domain.vo.response.ws.WSBaseResp;
 import com.iflove.user.service.WebSocketService;
 import com.iflove.user.service.adapter.WSAdapter;
+import com.iflove.user.service.cache.UserCache;
 import com.iflove.websocket.NettyUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import utils.JsonUtil;
 import utils.RedisUtil;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @implNote
  */
 @Service
+@Slf4j
 public class WebSocketServiceImpl implements WebSocketService {
 
     /**
@@ -44,10 +51,15 @@ public class WebSocketServiceImpl implements WebSocketService {
     private static final ConcurrentHashMap<Long, CopyOnWriteArrayList<Channel>> ONLINE_UID_MAP = new ConcurrentHashMap<>();
 
     @Resource
-    UserDao userDao;
+    private UserDao userDao;
     @Resource
     @Qualifier(ThreadPoolConfiguration.WS_EXECUTOR)
-    ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Resource
+    private UserCache userCache;
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
+
 
     /**
      * 保存 ws 连接
@@ -105,8 +117,8 @@ public class WebSocketServiceImpl implements WebSocketService {
         try{
             String jwtId = (String) JWTUtil.parseToken(token).getPayload("jwt_id");
             // 校验token是否存在白名单且不在黑名单
-            if (!RedisUtil.hasKey(RedisKey.JWT_BLACK_LIST + jwtId)
-                    && RedisUtil.hasKey(RedisKey.JWT_WHITE_LIST + jwtId)) {
+            if (!RedisUtil.hasKey(RedisKey.getKey(RedisKey.JWT_BLACK_LIST, jwtId))
+                    && RedisUtil.hasKey(RedisKey.getKey(RedisKey.JWT_WHITE_LIST, jwtId))) {
                 String username = (String) JWTUtil.parseToken(token).getPayload("username");
                 User user = userDao.getUserByName(username);
                 this.loginSuccess(channel, user, token);
@@ -124,6 +136,47 @@ public class WebSocketServiceImpl implements WebSocketService {
     }
 
     /**
+     * 推送消息给指定的对象
+     * @param wsBaseResp 消息体
+     * @param uid 对象uid
+     */
+    @Override
+    public void sendToUid(WSBaseResp<?> wsBaseResp, Long uid) {
+        CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
+        if (CollectionUtil.isEmpty(channels)) {
+            log.info("用户: {} 不在线", uid);
+            return;
+        }
+        channels.forEach(channel -> {
+            threadPoolTaskExecutor.execute(() -> sendMsg(channel, wsBaseResp));
+        });
+    }
+
+    /**
+     * 推送消息给所有
+     * @param wsBaseResp 消息体
+     * @param skipUid 跳过的人
+     */
+    @Override
+    public void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid) {
+        ONLINE_WS_MAP.forEach(((channel, wsChannelExtraDTO) -> {
+            if (Objects.nonNull(skipUid) && Objects.equals(skipUid, wsChannelExtraDTO.getUid())) {
+                return;
+            }
+            threadPoolTaskExecutor.execute(() -> sendMsg(channel, wsBaseResp));
+        }));
+    }
+
+    /**
+     * 推送消息给所有
+     * @param wsBaseResp 消息体
+     */
+    @Override
+    public void sendToAllOnline(WSBaseResp<?> wsBaseResp) {
+        this.sendToAllOnline(wsBaseResp, null);
+    }
+
+    /**
      * 处理登录成功的逻辑
      * @param channel
      * @param user
@@ -135,7 +188,11 @@ public class WebSocketServiceImpl implements WebSocketService {
         // 发送登录成功信息
         this.sendMsg(channel, WSAdapter.buildWSLoginSuccessResp(user, token));
         // TODO 用户上线全局通知
-
+        boolean online = userCache.isOnline(user.getId());
+        if (!online) {
+            user.setLastOptTime(new Date());
+            applicationEventPublisher.publishEvent(new UserOnlineEvent(this, user));
+        }
         // TODO 更新IP
 
     }

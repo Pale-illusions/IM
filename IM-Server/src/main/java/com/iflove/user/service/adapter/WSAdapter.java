@@ -2,11 +2,17 @@ package com.iflove.user.service.adapter;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.NumberWithFormat;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.iflove.user.domain.entity.User;
+import com.iflove.user.domain.enums.ChatActiveStatusEnum;
 import com.iflove.user.domain.enums.WSRespTypeEnum;
 import com.iflove.user.domain.vo.response.ws.WSBaseResp;
+import com.iflove.user.domain.vo.response.ws.WSChatMemberResp;
 import com.iflove.user.domain.vo.response.ws.WSLoginSuccess;
+import com.iflove.user.domain.vo.response.ws.WSOnlineOfflineNotify;
+import com.iflove.user.service.cache.UserCache;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -36,5 +42,45 @@ public class WSAdapter {
         resp.setType(WSRespTypeEnum.LOGIN_SUCCESS.getType());
         resp.setData(wsLoginSuccess);
         return resp;
+    }
+
+    public static WSBaseResp<WSOnlineOfflineNotify> buildOnlineNotifyResp(User user) {
+        WSBaseResp<WSOnlineOfflineNotify> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.ONLINE_OFFLINE_NOTIFY.getType());
+        wsBaseResp.setData(WSOnlineOfflineNotify
+                .builder()
+                .change(buildOnlineInfo(user))
+                .onlineNum(SpringUtil.getBean(UserCache.class).getOnlineNum())
+                .build());
+        return wsBaseResp;
+    }
+
+    private static WSChatMemberResp buildOnlineInfo(User user) {
+        return WSChatMemberResp
+                .builder()
+                .uid(user.getId())
+                .activeStatus(ChatActiveStatusEnum.ONLINE.getStatus())
+                .lastOptTime(user.getLastOptTime())
+                .build();
+    }
+
+    public static WSBaseResp<WSOnlineOfflineNotify> buildOfflineNotifyResp(User user) {
+        WSBaseResp<WSOnlineOfflineNotify> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.ONLINE_OFFLINE_NOTIFY.getType());
+        wsBaseResp.setData(WSOnlineOfflineNotify
+                .builder()
+                .change(buildOfflineInfo(user))
+                .onlineNum(SpringUtil.getBean(UserCache.class).getOnlineNum())
+                .build());
+        return wsBaseResp;
+    }
+
+    private static WSChatMemberResp buildOfflineInfo(User user) {
+        return WSChatMemberResp
+                .builder()
+                .uid(user.getId())
+                .activeStatus(ChatActiveStatusEnum.OFFLINE.getStatus())
+                .lastOptTime(user.getLastOptTime())
+                .build();
     }
 }

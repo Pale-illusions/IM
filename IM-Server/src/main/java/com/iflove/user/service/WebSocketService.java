@@ -1,5 +1,6 @@
 package com.iflove.user.service;
 
+import com.iflove.user.domain.vo.response.ws.WSBaseResp;
 import io.netty.channel.Channel;
 
 /**
@@ -27,4 +28,24 @@ public interface WebSocketService {
      * @return
      */
     boolean authorize(Channel channel, String token);
+
+    /**
+     * 推送消息给指定的对象
+     * @param wsBaseResp 消息体
+     * @param uid 对象uid
+     */
+    void sendToUid(WSBaseResp<?> wsBaseResp, Long uid);
+
+    /**
+     * 推送消息给所有
+     * @param wsBaseResp 消息体
+     * @param skipUid 跳过的人
+     */
+    void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid);
+
+    /**
+     * 推送消息给所有
+     * @param wsBaseResp 消息体
+     */
+    void sendToAllOnline(WSBaseResp<?> wsBaseResp);
 }

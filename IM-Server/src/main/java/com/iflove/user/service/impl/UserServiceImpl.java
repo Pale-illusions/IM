@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> map = Map.of("jwt_id", uuid, "username", username, "expire_time", expireTime);
         String token = JWTUtil.createToken(map, Const.JWT_SIGN_KEY.getBytes());
         // 将token存入redis
-        RedisUtil.set(RedisKey.JWT_WHITE_LIST + uuid, "", Const.EXPIRE_TIME, TimeUnit.HOURS);
+        RedisUtil.set(RedisKey.getKey(RedisKey.JWT_WHITE_LIST, uuid), "", Const.EXPIRE_TIME, TimeUnit.HOURS);
         // 返回结果集
         return RestBean.success(UserAdapter.buildUserInfoVO(userDao.getUserByName(username), v -> {
             v.setToken(token);
@@ -79,9 +79,9 @@ public class UserServiceImpl implements UserService {
     public RestBean<Void> logout(String token) {
         String jwtId = (String) JWTUtil.parseToken(token).getPayload("jwt_id");
         // 禁止重复登出
-        if (RedisUtil.hasKey(RedisKey.JWT_BLACK_LIST + jwtId)) return RestBean.failure(LoginErrorEnum.FREQUENT_LOGOUT_ERROR);
+        if (RedisUtil.hasKey(RedisKey.getKey(RedisKey.JWT_BLACK_LIST, jwtId))) return RestBean.failure(LoginErrorEnum.FREQUENT_LOGOUT_ERROR);
         // 登出
-        if (RedisUtil.set(RedisKey.JWT_BLACK_LIST + jwtId, "")) {
+        if (RedisUtil.set(RedisKey.getKey(RedisKey.JWT_BLACK_LIST, jwtId), "")) {
             return RestBean.success();
         } else {
             return RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);

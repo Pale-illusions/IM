@@ -53,8 +53,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         // 如果 该Token 被列入黑名单，拒绝访问 或者 Token 已过期
         String jwtId = (String) JWTUtil.parseToken(authToken).getPayload("jwt_id");
-        if (RedisUtil.getStr(RedisKey.JWT_BLACK_LIST + jwtId) != null
-                || RedisUtil.getStr(RedisKey.JWT_WHITE_LIST + jwtId) == null) {
+        if (RedisUtil.getStr(RedisKey.getKey(RedisKey.JWT_BLACK_LIST, jwtId)) != null
+                || RedisUtil.getStr(RedisKey.getKey(RedisKey.JWT_WHITE_LIST, jwtId)) == null) {
             log.info("请重新登录");
             filterChain.doFilter(request, response);
             return;

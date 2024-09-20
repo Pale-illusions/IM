@@ -19,7 +19,7 @@ public class MQProducer {
      * @param queueName 队列名
      * @param message 消息
      */
-    public void sendMessage(String queueName, String message) {
+    public void sendMessage(String queueName, Object message) {
         rabbitTemplate.convertAndSend(queueName, message);
     }
 
@@ -29,7 +29,7 @@ public class MQProducer {
      * @param routingKey 指定路由键
      * @param message 消息
      */
-    public void sendMessageToExchange(String exchangeName, String routingKey, String message) {
+    public void sendMessageToExchange(String exchangeName, String routingKey, Object message) {
         rabbitTemplate.convertAndSend(exchangeName, routingKey, message);
     }
 }

@@ -22,6 +22,7 @@ public class MsgSendConsumer {
             key = {MSG_SEND_KEY}
     ))
     public void onMessage() {
+        // TODO 消息发送业务逻辑
 
     }
 }

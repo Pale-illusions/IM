@@ -44,7 +44,6 @@ public class UserController {
     @PostMapping("reset")
     @Operation(summary = "重置密码")
     public RestBean<Void> reset(@Length(min = 6, max = 20) String password) {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.reset(password, username);
+        return userService.reset(password);
     }
 }

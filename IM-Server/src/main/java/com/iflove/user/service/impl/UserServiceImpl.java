@@ -6,6 +6,7 @@ import com.iflove.common.constant.RedisKey;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.CommonErrorEnum;
 import com.iflove.common.exception.UserErrorEnum;
+import com.iflove.common.utils.RequestHolder;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.entity.User;
 import com.iflove.user.domain.vo.request.user.UserRegisterVO;
@@ -53,17 +54,18 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(authentication)) {
             throw new BadCredentialsException("验证失败");
         }
+        User user = userDao.getUserByName(username);
         // 获取token
         String uuid = UUID.randomUUID().toString();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR, Const.EXPIRE_TIME);
         Date expireTime = calendar.getTime();
-        Map<String, Object> map = Map.of("jwt_id", uuid, "username", username, "expire_time", expireTime);
+        Map<String, Object> map = Map.of("jwt_id", uuid, "username", username, "expire_time", expireTime, "uid", user.getId());
         String token = JWTUtil.createToken(map, Const.JWT_SIGN_KEY.getBytes());
         // 将token存入redis
         RedisUtil.set(RedisKey.getKey(RedisKey.JWT_WHITE_LIST, uuid), "", Const.EXPIRE_TIME, TimeUnit.HOURS);
         // 返回结果集
-        return RestBean.success(UserAdapter.buildUserInfoVO(userDao.getUserByName(username), v -> {
+        return RestBean.success(UserAdapter.buildUserInfoVO(user, v -> {
             v.setToken(token);
             v.setExpireTime(expireTime);
         }));
@@ -107,16 +109,15 @@ public class UserServiceImpl implements UserService {
     /**
      * 重置密码
      * @param password 密码
-     * @param username 执行操作的用户名
      * @return 结果集
      */
     @Transactional
     @Override
-    public RestBean<Void> reset(String password, String username) {
-        User user = userDao.getUserByName(username);
+    public RestBean<Void> reset(String password) {
+        User user = userDao.getById(RequestHolder.get().getUid());
         // 用户不存在
         if (Objects.isNull(user)) return RestBean.failure(UserErrorEnum.USER_NOT_FOUND);
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         return userDao.updateById(user) ?
                 RestBean.success() : RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
     }

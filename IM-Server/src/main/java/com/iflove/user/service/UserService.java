@@ -38,5 +38,5 @@ public interface UserService {
      * @param username 执行操作的用户名
      * @return 结果集
      */
-    RestBean<Void> reset(String password, String username);
+    RestBean<Void> reset(String password);
 }

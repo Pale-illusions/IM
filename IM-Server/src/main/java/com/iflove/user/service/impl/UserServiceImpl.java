@@ -5,8 +5,7 @@ import com.iflove.common.constant.Const;
 import com.iflove.common.constant.RedisKey;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.CommonErrorEnum;
-import com.iflove.common.exception.ErrorEnum;
-import com.iflove.common.exception.LoginErrorEnum;
+import com.iflove.common.exception.UserErrorEnum;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.entity.User;
 import com.iflove.user.domain.vo.request.user.UserRegisterVO;
@@ -79,7 +78,7 @@ public class UserServiceImpl implements UserService {
     public RestBean<Void> logout(String token) {
         String jwtId = (String) JWTUtil.parseToken(token).getPayload("jwt_id");
         // 禁止重复登出
-        if (RedisUtil.hasKey(RedisKey.getKey(RedisKey.JWT_BLACK_LIST, jwtId))) return RestBean.failure(LoginErrorEnum.FREQUENT_LOGOUT_ERROR);
+        if (RedisUtil.hasKey(RedisKey.getKey(RedisKey.JWT_BLACK_LIST, jwtId))) return RestBean.failure(UserErrorEnum.FREQUENT_LOGOUT_ERROR);
         // 登出
         if (RedisUtil.set(RedisKey.getKey(RedisKey.JWT_BLACK_LIST, jwtId), "")) {
             return RestBean.success();
@@ -102,6 +101,23 @@ public class UserServiceImpl implements UserService {
                 .sex(userRegisterVO.getSex())
                 .build();
         return userDao.save(user) ?
+                RestBean.success() : RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
+    }
+
+    /**
+     * 重置密码
+     * @param password 密码
+     * @param username 执行操作的用户名
+     * @return 结果集
+     */
+    @Transactional
+    @Override
+    public RestBean<Void> reset(String password, String username) {
+        User user = userDao.getUserByName(username);
+        // 用户不存在
+        if (Objects.isNull(user)) return RestBean.failure(UserErrorEnum.USER_NOT_FOUND);
+        user.setPassword(password);
+        return userDao.updateById(user) ?
                 RestBean.success() : RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
     }
 }

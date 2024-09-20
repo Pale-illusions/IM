@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/user/auth")
 @Validated
-@Tag(name = "用户权限接口")
+@Tag(name = "用户权限模块")
 public class AuthorizeController {
     @Resource
     UserService userService;
@@ -46,17 +46,10 @@ public class AuthorizeController {
     }
 
     /**
-     * 用户登出
-     * @param request http请求
+     * 用户注册
+     * @param userRegisterVO 注册信息
      * @return 结果集
      */
-    @GetMapping("logout")
-    @Operation(summary = "登出")
-    public RestBean<Void> logout(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        return userService.logout(token);
-    }
-
     @PostMapping("register")
     @Operation(summary = "注册")
     public RestBean<Void> register(@RequestBody @Valid UserRegisterVO userRegisterVO) {

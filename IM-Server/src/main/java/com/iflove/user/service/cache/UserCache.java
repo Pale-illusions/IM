@@ -1,8 +1,6 @@
 package com.iflove.user.service.cache;
 
 import com.iflove.common.constant.RedisKey;
-import com.iflove.user.dao.UserDao;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import utils.RedisUtil;
 

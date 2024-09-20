@@ -1,10 +1,17 @@
 package com.iflove.common.config.security;
 
+import cn.hutool.json.JSONUtil;
+import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.exception.CommonErrorEnum;
+import com.iflove.common.exception.UserErrorEnum;
 import com.iflove.common.security.JwtAuthenticationProvider;
 import com.iflove.common.security.JwtAuthenticationTokenFilter;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,8 +19,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import utils.JsonUtil;
+
+import java.io.IOException;
 
 /**
  * @author 苍镜月
@@ -53,10 +64,10 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 // 异常处理
-//                .exceptionHandling(conf -> conf
-//                        .accessDeniedHandler(this::onAccessDeny)
-//                        .authenticationEntryPoint(this::onUnauthorized)
-//                )
+                .exceptionHandling(conf -> conf
+                        .accessDeniedHandler(this::onAccessDeny)
+                        .authenticationEntryPoint(this::onUnauthorized)
+                )
                 // 禁用缓存
                 .headers(headersConfigurer -> headersConfigurer
                         .cacheControl(HeadersConfigurer.CacheControlConfig::disable)
@@ -72,5 +83,17 @@ public class SecurityConfiguration {
                 // 使用自定义 Provider
                 .authenticationProvider(jwtAuthenticationProvider())
                 .build();
+    }
+
+    private void onUnauthorized(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(JsonUtil.toStr(RestBean.failure(UserErrorEnum.UNAUTHENTICATED)));
+    }
+
+    private void onAccessDeny(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(JsonUtil.toStr(RestBean.failure(UserErrorEnum.FORBIDDEN)));
     }
 }

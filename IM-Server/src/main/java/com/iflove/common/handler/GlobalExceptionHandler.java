@@ -2,7 +2,7 @@ package com.iflove.common.handler;
 
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.CommonErrorEnum;
-import com.iflove.common.exception.LoginErrorEnum;
+import com.iflove.common.exception.UserErrorEnum;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BadCredentialsException.class)
     public RestBean<Void> badCredentialException(BadCredentialsException e) {
         log.warn("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
-        return RestBean.failure(LoginErrorEnum.WRONG_USERNAME_OR_PASSWORD);
+        return RestBean.failure(UserErrorEnum.WRONG_USERNAME_OR_PASSWORD);
     }
 
     /**

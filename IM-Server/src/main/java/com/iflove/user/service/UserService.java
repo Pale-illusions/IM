@@ -28,7 +28,15 @@ public interface UserService {
     /**
      * 用户注册
      * @param userRegisterVO 注册信息
-     * @return
+     * @return 结果集
      */
     RestBean<Void> register(UserRegisterVO userRegisterVO);
+
+    /**
+     * 密码重置
+     * @param password 密码
+     * @param username 执行操作的用户名
+     * @return 结果集
+     */
+    RestBean<Void> reset(String password, String username);
 }

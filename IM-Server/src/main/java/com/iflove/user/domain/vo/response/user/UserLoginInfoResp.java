@@ -1,8 +1,5 @@
 package com.iflove.user.domain.vo.response.user;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -14,7 +11,7 @@ import java.util.Date;
  * @implNote
  */
 @Data
-public class UserInfoVO {
+public class UserLoginInfoResp {
     private Long id;
 
     private String name;

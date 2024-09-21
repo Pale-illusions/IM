@@ -9,12 +9,16 @@ class ImApplicationTests {
 
     @Test
     void contextLoads() {
+
+
     }
 
-    @Test
-    public void test1() {
-        String token = "";
-        String jwtId = (String) JWTUtil.parseToken(token).getPayload("jwt_id");
-        System.out.println(jwtId);
-    }
+//    @Test
+//    public void test1() {
+//        String token = "";
+//        String jwtId = (String) JWTUtil.parseToken(token).getPayload("jwt_id");
+//        System.out.println(jwtId);
+//    }
+
+
 }

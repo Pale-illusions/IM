@@ -10,9 +10,11 @@ import com.iflove.common.utils.RequestHolder;
 import com.iflove.user.dao.UserDao;
 import com.iflove.user.domain.entity.User;
 import com.iflove.user.domain.vo.request.user.UserRegisterVO;
-import com.iflove.user.domain.vo.response.user.UserInfoVO;
+import com.iflove.user.domain.vo.response.user.UserInfoResp;
+import com.iflove.user.domain.vo.response.user.UserLoginInfoResp;
 import com.iflove.user.service.UserService;
 import com.iflove.user.service.adapter.UserAdapter;
+import com.iflove.user.service.cache.UserInfoCache;
 import jakarta.annotation.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,6 +41,8 @@ public class UserServiceImpl implements UserService {
     AuthenticationManager authenticationManager;
     @Resource
     PasswordEncoder passwordEncoder;
+    @Resource
+    UserInfoCache userInfoCache;
 
     /**
      * 用户登录
@@ -47,7 +51,7 @@ public class UserServiceImpl implements UserService {
      * @return 用户信息结果集
      */
     @Override
-    public RestBean<UserInfoVO> login(String username, String password) {
+    public RestBean<UserLoginInfoResp> login(String username, String password) {
         //AuthenticationManager authenticate进行用户认证
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -65,7 +69,7 @@ public class UserServiceImpl implements UserService {
         // 将token存入redis
         RedisUtil.set(RedisKey.getKey(RedisKey.JWT_WHITE_LIST, uuid), "", Const.EXPIRE_TIME, TimeUnit.HOURS);
         // 返回结果集
-        return RestBean.success(UserAdapter.buildUserInfoVO(user, v -> {
+        return RestBean.success(UserAdapter.buildUserLoginInfoResp(user, v -> {
             v.setToken(token);
             v.setExpireTime(expireTime);
         }));
@@ -120,5 +124,17 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(password));
         return userDao.updateById(user) ?
                 RestBean.success() : RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
+    }
+
+    /**
+     * 获取用户信息
+     * @param uid 用户id
+     * @return
+     */
+    @Override
+    public RestBean<UserInfoResp> getUserInfo(Long uid) {
+        User user = userInfoCache.get(uid);
+        return Objects.nonNull(user) ?
+                RestBean.success(UserAdapter.buildUserInfoResp(user)) : RestBean.failure(UserErrorEnum.USER_NOT_FOUND);
     }
 }

@@ -22,6 +22,15 @@ mybatis-plus:
 server:
   port: 8081
 
+# minio相关配置
+oss:
+  enabled: true
+  type: minio
+  endpoint: http://localhost:9000
+  access-key: GehNalA86EyHbLXEoQUk
+  secret-key: PI2LUYwtAHlNspvOjMnSQ18jbEab2zieoqwVKOAj
+  bucketName: IM
+
 # springdoc-openapi项目配置
 springdoc:
   swagger-ui:

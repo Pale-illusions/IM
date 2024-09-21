@@ -1,9 +1,9 @@
 package com.iflove.user.service;
 
 import com.iflove.common.domain.vo.response.RestBean;
-import com.iflove.user.domain.entity.User;
 import com.iflove.user.domain.vo.request.user.UserRegisterVO;
-import com.iflove.user.domain.vo.response.user.UserInfoVO;
+import com.iflove.user.domain.vo.response.user.UserInfoResp;
+import com.iflove.user.domain.vo.response.user.UserLoginInfoResp;
 
 /**
 * @author IFLOVE
@@ -17,7 +17,7 @@ public interface UserService {
      * @param password 密码
      * @return 用户信息结果集
      */
-    RestBean<UserInfoVO> login(String username, String password);
+    RestBean<UserLoginInfoResp> login(String username, String password);
     /**
      * 用户登出
      * @param token token
@@ -35,8 +35,14 @@ public interface UserService {
     /**
      * 密码重置
      * @param password 密码
-     * @param username 执行操作的用户名
      * @return 结果集
      */
     RestBean<Void> reset(String password);
+
+    /**
+     * 获取用户详情
+     * @param uid 用户id
+     * @return 结果集
+     */
+    RestBean<UserInfoResp> getUserInfo(Long uid);
 }

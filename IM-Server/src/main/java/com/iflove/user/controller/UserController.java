@@ -1,13 +1,16 @@
 package com.iflove.user.controller;
 
 import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.utils.RequestHolder;
+import com.iflove.user.domain.vo.response.user.UserInfoResp;
+import com.iflove.user.domain.vo.response.user.UserLoginInfoResp;
 import com.iflove.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Min;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +48,25 @@ public class UserController {
     @Operation(summary = "重置密码")
     public RestBean<Void> reset(@Length(min = 6, max = 20) String password) {
         return userService.reset(password);
+    }
+
+
+    /**
+     * 获取自己用户详情
+     * @return 结果集
+     */
+    @GetMapping("/userinfo/me")
+    public RestBean<UserInfoResp> getUserInfo() {
+        return userService.getUserInfo(RequestHolder.get().getUid());
+    }
+
+    /**
+     * 获取他人用户信息
+     * @param id id
+     * @return 结果集
+     */
+    @GetMapping("/userinfo/{id}")
+    public RestBean<UserInfoResp> getUserInfo(@PathVariable @Min(1) Long id) {
+        return userService.getUserInfo(id);
     }
 }

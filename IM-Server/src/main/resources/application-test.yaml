@@ -41,11 +41,12 @@ springdoc:
     - group: 'default'
       paths-to-match: '/**'
       packages-to-scan:
-        - com.iflove.user.controller
-        - com.iflove.chat.controller
-        - com.iflove.video.controller
-        - com.iflove.social.controller
-        - com.iflove.interactive.controller
+        - com.iflove.api.user.controller
+        - com.iflove.api.chat.controller
+        - com.iflove.api.video.controller
+        - com.iflove.api.social.controller
+        - com.iflove.api.interactive.controller
+        - com.iflove.oss.controller
 
 knife4j:
   enable: true

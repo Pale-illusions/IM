@@ -1,12 +1,14 @@
 package com.iflove.common.domain.vo.response;
 
 import com.iflove.common.exception.ErrorEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author 苍镜月
  * @version 1.0
  * @implNote
  */
+@Schema(description = "基础返回体")
 public record RestBean<T> (int code, T data, String message) {
 
     public static <T> RestBean<T> success(T data) {

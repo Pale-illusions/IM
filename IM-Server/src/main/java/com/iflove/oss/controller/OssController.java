@@ -6,6 +6,9 @@ import com.iflove.oss.domain.OssResp;
 import com.iflove.oss.domain.vo.request.UploadUrlReq;
 import com.iflove.oss.service.OssService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -31,7 +34,13 @@ public class OssController {
      * @return 临时上传链接和下载链接
      */
     @PostMapping("/upload/url")
-    @Operation(summary = "获取临时上传链接")
+    @Operation(summary = "获取临时上传链接",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+            @ApiResponse(responseCode = "502", description = "参数校验失败"),
+            @ApiResponse(responseCode = "501", description = "服务器内部错误")
+    })
     public RestBean<OssResp> getUploadUrl(@Valid UploadUrlReq req) {
         return RestBean.success(ossService.getUploadUrl(RequestHolder.get().getUid(), req));
     }

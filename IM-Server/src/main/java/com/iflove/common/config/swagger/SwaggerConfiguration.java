@@ -1,10 +1,13 @@
 package com.iflove.common.config.swagger;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +25,13 @@ public class SwaggerConfiguration {
     @Bean
     public OpenAPI swaggerOpenAPI() {
         return new OpenAPI()
+                .components(new Components()
+                        .addSecuritySchemes("Authorization",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("Bearer")
+                                        .bearerFormat("JWT")))
+                .addSecurityItem(new SecurityRequirement().addList("Authorization"))
                 .info(new Info().title("IM")
                         // 信息
                         .contact(new Contact().name("苍镜月").email("2307984361@qq.com").url("地址"))

@@ -45,4 +45,11 @@ public interface UserService {
      * @return 结果集
      */
     RestBean<UserInfoResp> getUserInfo(Long uid);
+
+    /**
+     * 上传头像
+     * @param url 头像下载链接
+     * @return 结果集
+     */
+    RestBean<Void> uploadAvatar(String url, Long uid);
 }

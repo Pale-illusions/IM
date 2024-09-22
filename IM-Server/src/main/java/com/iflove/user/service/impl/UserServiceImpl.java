@@ -1,5 +1,6 @@
 package com.iflove.user.service.impl;
 
+import cn.hutool.core.lang.Validator;
 import cn.hutool.jwt.JWTUtil;
 import com.iflove.common.constant.Const;
 import com.iflove.common.constant.RedisKey;
@@ -16,6 +17,7 @@ import com.iflove.user.service.UserService;
 import com.iflove.user.service.adapter.UserAdapter;
 import com.iflove.user.service.cache.UserInfoCache;
 import jakarta.annotation.Resource;
+import jakarta.validation.ValidationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -136,5 +138,27 @@ public class UserServiceImpl implements UserService {
         User user = userInfoCache.get(uid);
         return Objects.nonNull(user) ?
                 RestBean.success(UserAdapter.buildUserInfoResp(user)) : RestBean.failure(UserErrorEnum.USER_NOT_FOUND);
+    }
+
+    /**
+     * 上传头像
+     * @param url 头像下载链接
+     * @return 结果集
+     */
+    @Transactional
+    @Override
+    public RestBean<Void> uploadAvatar(String url, Long uid) {
+        boolean valid = Validator.isUrl(url);
+        if (!valid) {
+            throw new ValidationException("非法链接");
+        }
+        User user = new User();
+        user.setId(uid);
+        user.setAvatar(url);
+        user.setUpdateTime(new Date());
+        // 删除缓存
+        userInfoCache.delete(uid);
+        return userDao.updateById(user) ?
+                RestBean.success() : RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
     }
 }

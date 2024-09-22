@@ -56,6 +56,7 @@ public class UserController {
      * @return 结果集
      */
     @GetMapping("/userinfo/me")
+    @Operation(summary = "获取自己用户信息")
     public RestBean<UserInfoResp> getUserInfo() {
         return userService.getUserInfo(RequestHolder.get().getUid());
     }
@@ -66,7 +67,19 @@ public class UserController {
      * @return 结果集
      */
     @GetMapping("/userinfo/{id}")
+    @Operation(summary = "获取他人用户信息")
     public RestBean<UserInfoResp> getUserInfo(@PathVariable @Min(1) Long id) {
         return userService.getUserInfo(id);
+    }
+
+    /**
+     * 上传头像
+     * @param url 头像下载链接
+     * @return 结果集
+     */
+    @PostMapping("uploadAvatar")
+    @Operation(summary = "上传头像")
+    public RestBean<Void> uploadAvatar(String url) {
+        return userService.uploadAvatar(url, RequestHolder.get().getUid());
     }
 }

@@ -1,13 +1,11 @@
 package com.iflove.common.security;
 
-import com.iflove.user.domain.entity.User;
+import com.iflove.api.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * @author 苍镜月

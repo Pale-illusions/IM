@@ -2,9 +2,9 @@ package com.iflove.websocket;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.iflove.user.domain.enums.WSReqTypeEnum;
-import com.iflove.user.domain.vo.request.ws.WSBaseReq;
-import com.iflove.user.service.WebSocketService;
+import com.iflove.api.user.domain.enums.WSReqTypeEnum;
+import com.iflove.api.user.domain.vo.request.ws.WSBaseReq;
+import com.iflove.api.user.service.WebSocketService;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

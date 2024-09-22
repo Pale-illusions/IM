@@ -1,14 +1,12 @@
 package com.iflove.common.event.listener;
 
-import com.iflove.common.constant.MQConstant;
 import com.iflove.common.event.UserOnlineEvent;
-import com.iflove.common.service.MQ.MQProducer;
-import com.iflove.user.dao.UserDao;
-import com.iflove.user.domain.entity.User;
-import com.iflove.user.domain.enums.ChatActiveStatusEnum;
-import com.iflove.user.service.PushService;
-import com.iflove.user.service.adapter.WSAdapter;
-import com.iflove.user.service.cache.UserCache;
+import com.iflove.api.user.dao.UserDao;
+import com.iflove.api.user.domain.entity.User;
+import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
+import com.iflove.api.user.service.PushService;
+import com.iflove.api.user.service.adapter.WSAdapter;
+import com.iflove.api.user.service.cache.UserCache;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

@@ -1,8 +1,7 @@
 package com.iflove.common.security;
 
-import com.iflove.user.dao.UserDao;
-import com.iflove.user.domain.entity.User;
-import com.iflove.user.service.cache.UserInfoCache;
+import com.iflove.api.user.dao.UserDao;
+import com.iflove.api.user.domain.entity.User;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,6 +1,6 @@
 package com.iflove.common.event;
 
-import com.iflove.user.domain.entity.User;
+import com.iflove.api.user.domain.entity.User;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

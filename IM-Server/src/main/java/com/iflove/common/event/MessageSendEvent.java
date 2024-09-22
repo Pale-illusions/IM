@@ -1,6 +1,5 @@
 package com.iflove.common.event;
 
-import com.iflove.chat.domain.entity.Message;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

@@ -3,7 +3,6 @@ package com.iflove.common.security;
 import cn.hutool.jwt.JWTUtil;
 import com.iflove.common.constant.Const;
 import com.iflove.common.constant.RedisKey;
-import com.iflove.user.service.cache.UserInfoCache;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

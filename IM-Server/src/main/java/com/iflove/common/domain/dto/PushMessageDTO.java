@@ -1,7 +1,7 @@
 package com.iflove.common.domain.dto;
 
-import com.iflove.user.domain.enums.WSPushTypeEnum;
-import com.iflove.user.domain.vo.response.ws.WSBaseResp;
+import com.iflove.api.user.domain.enums.WSPushTypeEnum;
+import com.iflove.api.user.domain.vo.response.ws.WSBaseResp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +26,7 @@ public class PushMessageDTO implements Serializable {
     /**
      * 推送类型 1 个人 / 2 全体
      *
-     * @see com.iflove.user.domain.enums.WSPushTypeEnum
+     * @see WSPushTypeEnum
      */
     private Integer pushType;
 

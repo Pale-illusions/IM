@@ -7,10 +7,7 @@ import cn.hutool.jwt.JWTUtil;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
 import com.iflove.api.user.domain.enums.WSRespTypeEnum;
-import com.iflove.api.user.domain.vo.response.ws.WSBaseResp;
-import com.iflove.api.user.domain.vo.response.ws.WSChatMemberResp;
-import com.iflove.api.user.domain.vo.response.ws.WSLoginSuccess;
-import com.iflove.api.user.domain.vo.response.ws.WSOnlineOfflineNotify;
+import com.iflove.api.user.domain.vo.response.ws.*;
 import com.iflove.api.user.service.cache.UserCache;
 import org.springframework.stereotype.Component;
 
@@ -81,5 +78,12 @@ public class WSAdapter {
                 .activeStatus(ChatActiveStatusEnum.OFFLINE.getStatus())
                 .lastOptTime(user.getLastOptTime())
                 .build();
+    }
+
+    public static WSBaseResp<WSFriendApply> buildApplySend(WSFriendApply resp) {
+        WSBaseResp<WSFriendApply> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setData(resp);
+        wsBaseResp.setType(WSRespTypeEnum.FRIEND_APPLY.getType());
+        return wsBaseResp;
     }
 }

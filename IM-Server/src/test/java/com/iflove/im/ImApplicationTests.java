@@ -3,6 +3,7 @@ package com.iflove.im;
 import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.iflove.api.user.domain.entity.User;
+import com.iflove.common.utils.LambdaUtils;
 import com.iflove.oss.MinIOTemplate;
 import com.iflove.oss.domain.OssReq;
 import com.iflove.oss.domain.OssResp;
@@ -61,5 +62,13 @@ class ImApplicationTests {
             }
         }
         return null;
+    }
+
+
+    @Test
+    public void test3() {
+        SFunction<User, ?> function = User::getId;
+        Class<?> returnType = LambdaUtils.getReturnType(function);
+        System.out.println(returnType);
     }
 }

@@ -1,7 +1,7 @@
 package com.iflove.api.user.domain.entity;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;

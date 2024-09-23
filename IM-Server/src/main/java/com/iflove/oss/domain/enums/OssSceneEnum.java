@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * @author 苍镜月
+ * @version 1.0
+ * @implNote
+ */
 @AllArgsConstructor
 @Getter
 public enum OssSceneEnum {

@@ -8,8 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
+/**
+ * @author 苍镜月
+ * @version 1.0
+ * @implNote
+ */
 @Data
 @Builder
 @AllArgsConstructor

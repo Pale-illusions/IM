@@ -1,7 +1,9 @@
 package com.iflove.api.user.controller;
 
+import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
 import com.iflove.api.user.service.FriendService;
 import com.iflove.common.domain.vo.request.PageBaseReq;
 import com.iflove.common.domain.vo.response.PageBaseResp;
@@ -61,5 +63,46 @@ public class FriendController {
         return friendService.pageApplyFriend(RequestHolder.get().getUid(), request);
     }
 
+    /**
+     * 好友申请未读数
+     * @return {@link RestBean}
+     */
+    @GetMapping("apply/unread")
+    @Operation(summary = "好友申请未读数",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<FriendApplyUnreadResp> unread() {
+        return friendService.unread(RequestHolder.get().getUid());
+    }
+
+    /**
+     * 同意好友申请
+     * @return {@link RestBean}
+     */
+    @PutMapping("apply/approve")
+    @Operation(summary = "同意好友申请",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> applyApprove(@Valid @RequestBody FriendApplyApproveReq req) {
+        return friendService.applyApprove(RequestHolder.get().getUid(), req);
+    }
+
+    /**
+     * 拒绝好友申请
+     * @return {@link RestBean}
+     */
+    @PutMapping("apply/disapprove")
+    @Operation(summary = "拒绝好友申请",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> applyDisapprove(@Valid @RequestBody FriendApplyApproveReq req) {
+        return friendService.applyDisapprove(RequestHolder.get().getUid(), req);
+    }
 
 }

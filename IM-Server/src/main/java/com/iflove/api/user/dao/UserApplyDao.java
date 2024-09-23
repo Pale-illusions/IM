@@ -10,6 +10,7 @@ import com.iflove.api.user.domain.enums.ApplyTypeEnum;
 import com.iflove.api.user.mapper.UserApplyMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,10 +47,28 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
 
     public void readApplies(Long uid, List<Long> applyIds) {
         lambdaUpdate()
-                .set(UserApply::getStatus, ApplyReadStatusEnum.READ.getCode())
-                .eq(UserApply::getStatus, ApplyReadStatusEnum.UNREAD.getCode())
+                .set(UserApply::getReadStatus, ApplyReadStatusEnum.READ.getCode())
+                .eq(UserApply::getReadStatus, ApplyReadStatusEnum.UNREAD.getCode())
                 .in(UserApply::getId, applyIds)
                 .eq(UserApply::getTargetId, uid)
+                .update();
+    }
+
+    public void applyApprove(Long applyId) {
+        lambdaUpdate()
+                .set(UserApply::getStatus, ApplyStatusEnum.AGREE.getCode())
+                .set(UserApply::getUpdateTime, new Date())
+                .eq(UserApply::getId, applyId)
+                .eq(UserApply::getStatus, ApplyStatusEnum.WAIT_APPROVAL.getCode())
+                .update();
+    }
+
+    public void applyDisapprove(Long applyId) {
+        lambdaUpdate()
+                .set(UserApply::getStatus, ApplyStatusEnum.DISAGREE.getCode())
+                .set(UserApply::getUpdateTime, new Date())
+                .eq(UserApply::getId, applyId)
+                .eq(UserApply::getStatus, ApplyStatusEnum.WAIT_APPROVAL.getCode())
                 .update();
     }
 }

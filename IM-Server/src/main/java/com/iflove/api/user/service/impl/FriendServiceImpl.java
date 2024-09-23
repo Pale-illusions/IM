@@ -2,12 +2,16 @@ package com.iflove.api.user.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.google.common.collect.Lists;
 import com.iflove.api.user.dao.UserApplyDao;
 import com.iflove.api.user.dao.UserFriendDao;
 import com.iflove.api.user.domain.entity.UserApply;
 import com.iflove.api.user.domain.entity.UserFriend;
+import com.iflove.api.user.domain.enums.ApplyStatusEnum;
+import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
 import com.iflove.api.user.service.FriendService;
 import com.iflove.api.user.service.adapter.FriendAdapter;
 import com.iflove.common.domain.vo.request.PageBaseReq;
@@ -59,7 +63,8 @@ public class FriendServiceImpl implements FriendService {
         }
         // 判断是否存在申请记录 （我 -> 对方）
         UserApply myFriendApply = userApplyDao.getFriendApply(uid, request.getTargetUid());
-        if (Objects.nonNull(myFriendApply)) {
+        // 存在申请，且申请记录状态不是拒绝，即状态为 待审批 / 同意
+        if (Objects.nonNull(myFriendApply) && !Objects.equals(myFriendApply.getStatus(), ApplyStatusEnum.DISAGREE.getCode())) {
             return RestBean.failure(FriendErrorEnum.EXISTS_FRIEND_APPLY);
         }
         // 判断是否存在申请记录 (对方 -> 我)
@@ -102,4 +107,72 @@ public class FriendServiceImpl implements FriendService {
                 .collect(Collectors.toList());
         userApplyDao.readApplies(uid, applyIds);
     }
+
+    /**
+     * 好友申请未读数
+     * @return {@link RestBean}
+     */
+    @Override
+    public RestBean<FriendApplyUnreadResp> unread(Long uid) {
+        Long unreadCount = userApplyDao.getUnreadCount(uid);
+        return RestBean.success(new FriendApplyUnreadResp(unreadCount));
+    }
+
+    /**
+     * 同意好友申请
+     * @return {@link RestBean}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public RestBean<Void> applyApprove(Long uid, FriendApplyApproveReq req) {
+        UserApply userApply = userApplyDao.getById(req.getApplyId());
+        // 好友申请不存在
+        if (Objects.isNull(userApply) || !Objects.equals(userApply.getTargetId(), uid)) {
+            return RestBean.failure(FriendErrorEnum.MISSING_FRIEND_APPLY);
+        }
+        // 已同意或已拒绝
+        if (!Objects.equals(userApply.getStatus(), ApplyStatusEnum.WAIT_APPROVAL.getCode())) {
+            return RestBean.failure(FriendErrorEnum.OPERATION_FAILURE);
+        }
+        // 同意申请
+        userApplyDao.applyApprove(req.getApplyId());
+        // 创建好友关系
+        createFriends(uid, userApply.getUserId());
+        // TODO 创建一个聊天房间，并发送消息
+
+        return RestBean.success();
+    }
+
+    private void createFriends(Long uid, Long targetId) {
+        UserFriend relation1 = UserFriend.builder()
+                .userId(uid)
+                .friendId(targetId)
+                .build();
+        UserFriend relation2 = UserFriend.builder()
+                .userId(targetId)
+                .friendId(uid)
+                .build();
+        userFriendDao.saveBatch(Lists.newArrayList(relation1, relation2));
+    }
+
+    /**
+     * 拒绝好友申请
+     * @return {@link RestBean}
+     */
+    @Override
+    public RestBean<Void> applyDisapprove(Long uid, FriendApplyApproveReq req) {
+        UserApply userApply = userApplyDao.getById(req.getApplyId());
+        // 好友申请不存在
+        if (Objects.isNull(userApply) || !Objects.equals(userApply.getTargetId(), uid)) {
+            return RestBean.failure(FriendErrorEnum.MISSING_FRIEND_APPLY);
+        }
+        // 已同意或已拒绝
+        if (!Objects.equals(userApply.getStatus(), ApplyStatusEnum.WAIT_APPROVAL.getCode())) {
+            return RestBean.failure(FriendErrorEnum.OPERATION_FAILURE);
+        }
+        // 拒绝申请
+        userApplyDao.applyDisapprove(req.getApplyId());
+        return RestBean.success();
+    }
+
 }

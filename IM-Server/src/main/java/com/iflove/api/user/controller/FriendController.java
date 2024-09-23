@@ -1,7 +1,9 @@
 package com.iflove.api.user.controller;
 
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
+import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
+import com.iflove.api.user.domain.vo.request.friend.FriendDeleteReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
 import com.iflove.api.user.service.FriendService;
@@ -79,6 +81,7 @@ public class FriendController {
 
     /**
      * 同意好友申请
+     * @param req 好友申请同意请求
      * @return {@link RestBean}
      */
     @PutMapping("apply/approve")
@@ -93,6 +96,7 @@ public class FriendController {
 
     /**
      * 拒绝好友申请
+     * @param req 好友申请拒绝请求
      * @return {@link RestBean}
      */
     @PutMapping("apply/disapprove")
@@ -101,8 +105,22 @@ public class FriendController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success"),
     })
-    public RestBean<Void> applyDisapprove(@Valid @RequestBody FriendApplyApproveReq req) {
+    public RestBean<Void> applyDisapprove(@Valid @RequestBody FriendApplyDisapproveReq req) {
         return friendService.applyDisapprove(RequestHolder.get().getUid(), req);
     }
 
+    /**
+     * 删除好友
+     * @param req 好友删除请求
+     * @return {@link RestBean}
+     */
+    @DeleteMapping("delete")
+    @Operation(summary = "删除好友",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> delete(@Valid @RequestBody FriendDeleteReq req) {
+        return friendService.deleteFriend(RequestHolder.get().getUid(), req.getTargetUid());
+    }
 }

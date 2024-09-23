@@ -15,6 +15,7 @@ public enum FriendErrorEnum implements ErrorEnum{
     SELF_APPLY_FORBIDDEN(20003, "不能添加自己为好友"),
     MISSING_FRIEND_APPLY(20004, "好友申请不存在"),
     OPERATION_FAILURE(20005, "操作失败"),
+    FRIEND_NOT_EXIST(20006, "好友不存在"),
     ;
 
     private final Integer code;

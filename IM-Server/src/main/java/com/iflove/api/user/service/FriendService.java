@@ -1,6 +1,7 @@
 package com.iflove.api.user.service;
 
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
+import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
@@ -39,13 +40,24 @@ public interface FriendService {
 
     /**
      * 同意好友申请
+     * @param req 好友申请同意请求
      * @return {@link RestBean}
      */
     RestBean<Void> applyApprove(Long uid, FriendApplyApproveReq req);
 
     /**
      * 拒绝好友申请
+     * @param req 好友申请拒绝请求
      * @return {@link RestBean}
      */
-    RestBean<Void> applyDisapprove(Long uid, FriendApplyApproveReq req);
+    RestBean<Void> applyDisapprove(Long uid, FriendApplyDisapproveReq req);
+
+    /**
+     * 删除好友
+     * @param uid 用户id
+     * @param targetUid 好友id
+     * @return {@link RestBean}
+     */
+    RestBean<Void> deleteFriend(Long uid, Long targetUid);
+
 }

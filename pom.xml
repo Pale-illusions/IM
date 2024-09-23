@@ -37,6 +37,11 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- aop -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
         <!-- 消息队列 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

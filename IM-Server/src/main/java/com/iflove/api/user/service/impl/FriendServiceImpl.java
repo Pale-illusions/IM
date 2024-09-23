@@ -9,6 +9,7 @@ import com.iflove.api.user.domain.entity.UserApply;
 import com.iflove.api.user.domain.entity.UserFriend;
 import com.iflove.api.user.domain.enums.ApplyStatusEnum;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
+import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
@@ -20,6 +21,7 @@ import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.event.UserApplyEvent;
 import com.iflove.common.exception.FriendErrorEnum;
 import jakarta.annotation.Resource;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,17 +63,19 @@ public class FriendServiceImpl implements FriendService {
         if (Objects.nonNull(isFriend)) {
             return RestBean.failure(FriendErrorEnum.ALREADY_FRIENDS);
         }
-        // 判断是否存在申请记录 （我 -> 对方）
+        // 判断是否存在申请记录 （我 -> 对方） 且 申请状态为 待审批
         UserApply myFriendApply = userApplyDao.getFriendApply(uid, request.getTargetUid());
-        // 存在申请，且申请记录状态不是拒绝，即状态为 待审批 / 同意
-        if (Objects.nonNull(myFriendApply) && !Objects.equals(myFriendApply.getStatus(), ApplyStatusEnum.DISAGREE.getCode())) {
+        // 存在申请
+        if (Objects.nonNull(myFriendApply)) {
             return RestBean.failure(FriendErrorEnum.EXISTS_FRIEND_APPLY);
         }
         // 判断是否存在申请记录 (对方 -> 我)
         UserApply friendApply = userApplyDao.getFriendApply(request.getTargetUid(), uid);
         // 如果存在，直接同意
         if (Objects.nonNull(friendApply)) {
-            // TODO 同意申请
+            // 获取当前执行的对象的代理实例(确保事务正确执行)，同意申请
+            ((FriendService) AopContext.currentProxy()).applyApprove(uid, new FriendApplyApproveReq(friendApply.getId()));
+            return RestBean.success();
         }
         UserApply userApply = FriendAdapter.buildFriendApply(uid, request);
         userApplyDao.save(userApply);
@@ -120,6 +124,7 @@ public class FriendServiceImpl implements FriendService {
 
     /**
      * 同意好友申请
+     * @param req 好友申请同意请求
      * @return {@link RestBean}
      */
     @Transactional(rollbackFor = Exception.class)
@@ -157,10 +162,11 @@ public class FriendServiceImpl implements FriendService {
 
     /**
      * 拒绝好友申请
+     * @param req 好友申请拒绝请求
      * @return {@link RestBean}
      */
     @Override
-    public RestBean<Void> applyDisapprove(Long uid, FriendApplyApproveReq req) {
+    public RestBean<Void> applyDisapprove(Long uid, FriendApplyDisapproveReq req) {
         UserApply userApply = userApplyDao.getById(req.getApplyId());
         // 好友申请不存在
         if (Objects.isNull(userApply) || !Objects.equals(userApply.getTargetId(), uid)) {
@@ -174,5 +180,32 @@ public class FriendServiceImpl implements FriendService {
         userApplyDao.applyDisapprove(req.getApplyId());
         return RestBean.success();
     }
+
+    /**
+     * 删除好友
+     * @param uid 用户id
+     * @param targetUid 好友id
+     * @return {@link RestBean}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public RestBean<Void> deleteFriend(Long uid, Long targetUid) {
+        // 获取 (我 -> 对方) 和 (对方 -> 我) 好友关系
+        List<UserFriend> relations = userFriendDao.getUserFriend(uid, targetUid);
+        // 好友关系不存在
+        if (CollectionUtil.isEmpty(relations)) {
+            return RestBean.failure(FriendErrorEnum.FRIEND_NOT_EXIST);
+        }
+        List<Long> relationsId = relations
+                .stream()
+                .map(UserFriend::getId)
+                .collect(Collectors.toList());
+        // 删除好友
+        userFriendDao.removeByIds(relationsId);
+        // TODO 删除单聊房间
+
+        return RestBean.success();
+    }
+
 
 }

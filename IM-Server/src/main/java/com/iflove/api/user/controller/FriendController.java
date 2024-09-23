@@ -6,8 +6,11 @@ import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendDeleteReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
 import com.iflove.api.user.service.FriendService;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.request.PageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
@@ -51,12 +54,12 @@ public class FriendController {
     }
 
     /**
-     * 获取好友申请列表
+     * 获取好友申请列表 (基础分页)
      * @param request 基础翻页请求
      * @return {@link RestBean}<{@link PageBaseResp}<{@link FriendApplyResp}>
      */
     @GetMapping("apply/page")
-    @Operation(summary = "好友申请列表",
+    @Operation(summary = "好友申请列表 (基础分页)",
             security = {@SecurityRequirement(name = "Authorization")})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success"),
@@ -122,5 +125,20 @@ public class FriendController {
     })
     public RestBean<Void> delete(@Valid @RequestBody FriendDeleteReq req) {
         return friendService.deleteFriend(RequestHolder.get().getUid(), req.getTargetUid());
+    }
+
+    /**
+     * 好友列表 (游标分页)
+     * @param req 好友删除请求
+     * @return {@link RestBean}
+     */
+    @GetMapping("page")
+    @Operation(summary = "好友列表 (游标分页)",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<CursorPageBaseResp<FriendInfoResp>> friendList(@Valid CursorPageBaseReq req) {
+        return friendService.friendList(RequestHolder.get().getUid(), req);
     }
 }

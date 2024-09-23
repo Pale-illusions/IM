@@ -5,7 +5,10 @@ import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.request.PageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
@@ -60,4 +63,10 @@ public interface FriendService {
      */
     RestBean<Void> deleteFriend(Long uid, Long targetUid);
 
+    /**
+     * 好友列表 (游标分页)
+     * @param req 好友删除请求
+     * @return {@link RestBean}
+     */
+    RestBean<CursorPageBaseResp<FriendInfoResp>> friendList(Long uid, CursorPageBaseReq req);
 }

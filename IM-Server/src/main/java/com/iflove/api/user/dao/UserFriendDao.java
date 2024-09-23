@@ -3,6 +3,9 @@ package com.iflove.api.user.dao;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.user.domain.entity.UserFriend;
 import com.iflove.api.user.mapper.UserFriendMapper;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
+import com.iflove.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +32,11 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
                 .eq(UserFriend::getFriendId, uid)
                 .eq(UserFriend::getUserId, targetUid)
                 .list();
+    }
+
+    public CursorPageBaseResp<UserFriend> getFriendPage(Long uid, CursorPageBaseReq req) {
+        return CursorUtils.getCursorPageByMysql(this, req,
+                wrapper -> wrapper.eq(UserFriend::getUserId, uid), UserFriend::getId);
     }
 }
 

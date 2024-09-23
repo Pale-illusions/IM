@@ -4,7 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
 import com.iflove.api.user.dao.UserApplyDao;
+import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.dao.UserFriendDao;
+import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.entity.UserApply;
 import com.iflove.api.user.domain.entity.UserFriend;
 import com.iflove.api.user.domain.enums.ApplyStatusEnum;
@@ -13,9 +15,12 @@ import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
 import com.iflove.api.user.service.FriendService;
 import com.iflove.api.user.service.adapter.FriendAdapter;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.request.PageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.event.UserApplyEvent;
@@ -41,6 +46,8 @@ public class FriendServiceImpl implements FriendService {
     UserFriendDao userFriendDao;
     @Resource
     UserApplyDao userApplyDao;
+    @Resource
+    UserDao userDao;
     @Resource
     ApplicationEventPublisher applicationEventPublisher;
 
@@ -207,5 +214,25 @@ public class FriendServiceImpl implements FriendService {
         return RestBean.success();
     }
 
-
+    /**
+     * 好友列表 (游标分页)
+     * @param req 好友删除请求
+     * @return {@link RestBean}
+     */
+    @Override
+    public RestBean<CursorPageBaseResp<FriendInfoResp>> friendList(Long uid, CursorPageBaseReq req) {
+        // 查询好友列表
+        CursorPageBaseResp<UserFriend> friendPage = userFriendDao.getFriendPage(uid, req);
+        if (CollectionUtil.isEmpty(friendPage.getList())) {
+            return RestBean.success(CursorPageBaseResp.empty());
+        }
+        List<Long> friendIds = friendPage.getList()
+                .stream()
+                .map(UserFriend::getFriendId)
+                .collect(Collectors.toList());
+        List<User> userList = userDao.getFriendList(friendIds);
+        return RestBean.success(
+            CursorPageBaseResp.init(friendPage, FriendAdapter.buildFriendList(friendPage.getList(), userList))
+        );
+    }
 }

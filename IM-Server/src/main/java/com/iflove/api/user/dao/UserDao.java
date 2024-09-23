@@ -5,6 +5,8 @@ import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
 * @author IFLOVE
 * @description 针对表【user(用户表)】的数据库操作Service实现
@@ -16,6 +18,13 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
         return lambdaQuery()
                 .eq(User::getName, name)
                 .one();
+    }
+
+    public List<User> getFriendList(List<Long> friendIds) {
+        return lambdaQuery()
+                .in(User::getId, friendIds)
+                .select(User::getId, User::getStatus, User::getName, User::getAvatar)
+                .list();
     }
 }
 

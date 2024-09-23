@@ -31,7 +31,7 @@ public class AuthorizeController {
      * 用户登录
      * @param name 用户名
      * @param password 密码
-     * @return 用户信息结果集
+     * @return {@link RestBean}<{@link UserLoginInfoResp}
      */
     @PostMapping("login")
     @Operation(summary = "登录", description = "用户登录", security = {})
@@ -48,7 +48,7 @@ public class AuthorizeController {
     /**
      * 用户注册
      * @param userRegisterVO 注册信息
-     * @return 结果集
+     * @return {@link RestBean}
      */
     @PostMapping("register")
     @Operation(summary = "注册", description = "用户注册", security = {})

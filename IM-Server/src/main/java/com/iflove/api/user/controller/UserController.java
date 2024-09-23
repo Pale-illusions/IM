@@ -32,7 +32,7 @@ public class UserController {
     /**
      * 用户登出
      * @param request http请求
-     * @return 结果集
+     * @return {@link RestBean}
      */
     @GetMapping("logout")
     @Operation(summary = "用户登出",
@@ -52,7 +52,7 @@ public class UserController {
     /**
      * 重置密码
      * @param password 新密码
-     * @return 结果集
+     * @return {@link RestBean}
      */
     @PostMapping("reset")
     @Operation(summary = "重置密码",
@@ -70,8 +70,8 @@ public class UserController {
     }
 
     /**
-     * 获取自己用户详情
-     * @return 结果集
+     * 获取自己用户信息
+     * @return {@link RestBean}<{@link UserInfoResp}
      */
     @GetMapping("/userinfo/me")
     @Operation(summary = "获取当前用户信息",
@@ -87,9 +87,9 @@ public class UserController {
     }
 
     /**
-     * 获取他人用户信息
-     * @param id 用户ID
-     * @return 结果集
+     * 获取他人信息
+     * @param id 用户id
+     * @return {@link RestBean}<{@link UserInfoResp}
      */
     @GetMapping("/userinfo/{id}")
     @Operation(summary = "获取他人用户信息",
@@ -109,7 +109,7 @@ public class UserController {
     /**
      * 上传头像
      * @param url 头像下载链接
-     * @return 结果集
+     * @return {@link RestBean}
      */
     @PostMapping("uploadAvatar")
     @Operation(summary = "上传头像",

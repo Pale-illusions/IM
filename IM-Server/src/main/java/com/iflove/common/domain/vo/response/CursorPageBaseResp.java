@@ -18,16 +18,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(name = "游标翻页返回")
+@Schema(description = "游标翻页返回")
 public class CursorPageBaseResp<T> {
 
-    @Schema(name = "游标")
+    @Schema(description = "游标")
     private String cursor;
 
-    @Schema(name = "是否是最后一页")
+    @Schema(description = "是否是最后一页")
     private Boolean isLast = Boolean.FALSE;
 
-    @Schema(name = "数据列表")
+    @Schema(description = "数据列表")
     private List<T> list;
 
     public static <T> CursorPageBaseResp<T> init(CursorPageBaseResp cursorPage, List<T> list) {

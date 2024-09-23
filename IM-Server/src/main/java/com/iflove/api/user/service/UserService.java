@@ -15,41 +15,42 @@ public interface UserService {
      * 用户登录
      * @param username 用户名
      * @param password 密码
-     * @return 用户信息结果集
+     * @return {@link RestBean}<{@link UserLoginInfoResp}
      */
     RestBean<UserLoginInfoResp> login(String username, String password);
+
     /**
      * 用户登出
      * @param token token
-     * @return 结果集
+     * @return {@link RestBean}
      */
     RestBean<Void> logout(String token);
 
     /**
      * 用户注册
      * @param userRegisterVO 注册信息
-     * @return 结果集
+     * @return {@link RestBean}
      */
     RestBean<Void> register(UserRegisterVO userRegisterVO);
 
     /**
-     * 密码重置
-     * @param password 密码
-     * @return 结果集
+     * 重置密码
+     * @param password 新密码
+     * @return {@link RestBean}
      */
     RestBean<Void> reset(String password);
 
     /**
-     * 获取用户详情
+     * 获取用户信息
      * @param uid 用户id
-     * @return 结果集
+     * @return {@link RestBean}<{@link UserInfoResp}
      */
     RestBean<UserInfoResp> getUserInfo(Long uid);
 
     /**
      * 上传头像
      * @param url 头像下载链接
-     * @return 结果集
+     * @return {@link RestBean}
      */
     RestBean<Void> uploadAvatar(String url, Long uid);
 }

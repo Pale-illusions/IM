@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
      * 用户登录
      * @param username 用户名
      * @param password 密码
-     * @return 用户信息结果集
+     * @return {@link RestBean}<{@link UserLoginInfoResp}
      */
     @Override
     public RestBean<UserLoginInfoResp> login(String username, String password) {
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 用户登出
      * @param token token
-     * @return 结果集
+     * @return {@link RestBean}
      */
     @Override
     public RestBean<Void> logout(String token) {
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 用户注册
      * @param userRegisterVO 注册信息
-     * @return
+     * @return {@link RestBean}
      */
     @Transactional
     @Override
@@ -114,8 +114,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 重置密码
-     * @param password 密码
-     * @return 结果集
+     * @param password 新密码
+     * @return {@link RestBean}
      */
     @Transactional
     @Override
@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 获取用户信息
      * @param uid 用户id
-     * @return
+     * @return {@link RestBean}<{@link UserInfoResp}
      */
     @Override
     public RestBean<UserInfoResp> getUserInfo(Long uid) {
@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 上传头像
      * @param url 头像下载链接
-     * @return 结果集
+     * @return {@link RestBean}
      */
     @Transactional
     @Override

@@ -13,8 +13,10 @@ import com.iflove.api.user.domain.enums.ApplyStatusEnum;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
+import com.iflove.api.user.domain.vo.request.friend.FriendCheckReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendCheckResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
 import com.iflove.api.user.service.FriendService;
 import com.iflove.api.user.service.adapter.FriendAdapter;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -216,8 +219,8 @@ public class FriendServiceImpl implements FriendService {
 
     /**
      * 好友列表 (游标分页)
-     * @param req 好友删除请求
-     * @return {@link RestBean}
+     * @param req 游标分页请求
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link FriendInfoResp}
      */
     @Override
     public RestBean<CursorPageBaseResp<FriendInfoResp>> friendList(Long uid, CursorPageBaseReq req) {
@@ -233,6 +236,30 @@ public class FriendServiceImpl implements FriendService {
         List<User> userList = userDao.getFriendList(friendIds);
         return RestBean.success(
             CursorPageBaseResp.init(friendPage, FriendAdapter.buildFriendList(friendPage.getList(), userList))
+        );
+    }
+
+    /**
+     * 批量判断是否是自己的好友
+     * @param uid 用户id
+     * @param req 请求
+     * @return {@link RestBean}<{@link FriendCheckResp}
+     */
+    @Override
+    public RestBean<FriendCheckResp> check(Long uid, FriendCheckReq req) {
+        List<UserFriend> friendList = userFriendDao.getByFriends(uid, req.getUidList());
+
+        Set<Long> friendIdSet = friendList.stream().map(UserFriend::getFriendId).collect(Collectors.toSet());
+        List<FriendCheckResp.FriendCheck> friendCheckList = req.getUidList().stream()
+                .map(id -> {
+                    FriendCheckResp.FriendCheck friendCheck = new FriendCheckResp.FriendCheck();
+                    friendCheck.setIsFriend(friendIdSet.contains(id));
+                    friendCheck.setUid(id);
+                    return friendCheck;
+                })
+                .collect(Collectors.toList());
+        return RestBean.success(
+                new FriendCheckResp(friendCheckList)
         );
     }
 }

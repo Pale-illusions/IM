@@ -1,11 +1,9 @@
 package com.iflove.api.user.controller;
 
-import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
-import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
-import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
-import com.iflove.api.user.domain.vo.request.friend.FriendDeleteReq;
+import com.iflove.api.user.domain.vo.request.friend.*;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendCheckResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
 import com.iflove.api.user.service.FriendService;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
@@ -37,6 +35,21 @@ import org.springframework.web.bind.annotation.*;
 public class FriendController {
     @Resource
     FriendService friendService;
+
+    /**
+     * 批量判断是否是自己的好友
+     * @param req 请求
+     * @return {@link RestBean}<{@link FriendCheckResp}
+     */
+    @GetMapping("check")
+    @Operation(summary = "批量判断是否是自己的好友",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<FriendCheckResp> check(@Valid FriendCheckReq req) {
+        return friendService.check(RequestHolder.get().getUid(), req);
+    }
 
     /**
      * 申请好友
@@ -129,8 +142,8 @@ public class FriendController {
 
     /**
      * 好友列表 (游标分页)
-     * @param req 好友删除请求
-     * @return {@link RestBean}
+     * @param req 游标分页请求
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link FriendInfoResp}
      */
     @GetMapping("page")
     @Operation(summary = "好友列表 (游标分页)",

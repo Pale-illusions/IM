@@ -3,16 +3,26 @@ package com.iflove.im;
 import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.iflove.api.user.domain.entity.User;
+import com.iflove.api.user.domain.vo.request.friend.FriendCheckReq;
+import com.iflove.api.user.domain.vo.response.friend.FriendCheckResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
+import com.iflove.api.user.service.FriendService;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
+import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.LambdaUtils;
 import com.iflove.oss.MinIOTemplate;
 import com.iflove.oss.domain.OssReq;
 import com.iflove.oss.domain.OssResp;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 class ImApplicationTests {
@@ -70,5 +80,19 @@ class ImApplicationTests {
         SFunction<User, ?> function = User::getId;
         Class<?> returnType = LambdaUtils.getReturnType(function);
         System.out.println(returnType);
+    }
+
+
+
+    @Resource
+    FriendService friendService;
+
+
+    @Test
+    public void test4() {
+        FriendCheckReq friendCheckReq = new FriendCheckReq(List.of(1L, 2L));
+        RestBean<FriendCheckResp> check = friendService.check(1L, friendCheckReq);
+        System.out.println();
+        System.out.println(check);
     }
 }

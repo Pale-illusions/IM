@@ -3,8 +3,10 @@ package com.iflove.api.user.service;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyApproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyDisapproveReq;
 import com.iflove.api.user.domain.vo.request.friend.FriendApplyReq;
+import com.iflove.api.user.domain.vo.request.friend.FriendCheckReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendApplyUnreadResp;
+import com.iflove.api.user.domain.vo.response.friend.FriendCheckResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.request.PageBaseReq;
@@ -65,8 +67,16 @@ public interface FriendService {
 
     /**
      * 好友列表 (游标分页)
-     * @param req 好友删除请求
-     * @return {@link RestBean}
+     * @param req 游标分页请求
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link FriendInfoResp}
      */
     RestBean<CursorPageBaseResp<FriendInfoResp>> friendList(Long uid, CursorPageBaseReq req);
+
+    /**
+     * 批量判断是否是自己的好友
+     * @param uid 用户id
+     * @param req 请求
+     * @return {@link RestBean}<{@link FriendCheckResp}
+     */
+    RestBean<FriendCheckResp> check(Long uid, FriendCheckReq req);
 }

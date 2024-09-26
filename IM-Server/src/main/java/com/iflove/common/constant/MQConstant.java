@@ -5,18 +5,17 @@ package com.iflove.common.constant;
  * @version 1.0
  * @implNote 消息队列常量
  */
-public class MQConstant {
-    /**
-     * 消息发送
-     */
-    public static final String MSG_SEND_QUEUE = "message_send_queue";
-    public static final String MSG_SEND_EXCHANGE = "message_send_exchange";
-    public static final String MSG_SEND_KEY = "message_send_key";
+public interface MQConstant {
 
     /**
-     * 消息接收
+     * 消息发送mq
      */
-    public static final String MSG_PUSH_QUEUE = "message_push_queue";
-    public static final String MSG_PUSH_EXCHANGE = "message_push_exchange";
-    public static final String MSG_PUSH_KEY = "message_push_key";
+    String SEND_MSG_TOPIC = "chat_send_msg";
+    String SEND_MSG_GROUP = "chat_send_msg_group";
+
+    /**
+     * push用户
+     */
+    String PUSH_TOPIC = "websocket_push";
+    String PUSH_GROUP = "websocket_push_group";
 }

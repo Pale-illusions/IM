@@ -1,5 +1,6 @@
 package com.iflove.api.chat.domain.vo.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,16 +10,19 @@ import lombok.NoArgsConstructor;
 /**
  * @author 苍镜月
  * @version 1.0
- * @implNote
+ * @implNote 消息发送请求体
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "消息发送请求体")
 public class ChatMessageReq {
+    @Schema(description = "房间id")
     @NotNull
     private Long roomId;
 
+    @Schema(description = "消息类型")
     @NotNull
     private Integer msgType;
 
@@ -26,6 +30,7 @@ public class ChatMessageReq {
      * 消息内容，类型不同传值不同
      * @see
      */
+    @Schema(description = "消息内容")
     @NotNull
     private Object body;
 }

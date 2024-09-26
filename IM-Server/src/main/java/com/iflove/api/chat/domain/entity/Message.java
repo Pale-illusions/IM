@@ -6,14 +6,19 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
+
+import lombok.*;
 
 /**
  * 消息表
  * @TableName message
  */
-@TableName(value ="message")
+@TableName(value ="message", autoResultMap = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Message implements Serializable {
     /**
      * id
@@ -50,6 +55,11 @@ public class Message implements Serializable {
      * 与回复的消息间隔多少条
      */
     private Integer gapCount;
+
+    /**
+     * 消息类型
+     */
+    private Integer type;
 
     /**
      * 扩展信息

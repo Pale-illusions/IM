@@ -4,8 +4,10 @@ import com.iflove.api.user.domain.enums.WSPushTypeEnum;
 import com.iflove.api.user.service.WebSocketService;
 import com.iflove.common.domain.dto.PushMessageDTO;
 import jakarta.annotation.Resource;
-import org.springframework.amqp.core.ExchangeTypes;
-import org.springframework.amqp.rabbit.annotation.*;
+import org.apache.rocketmq.spring.annotation.MessageModel;
+import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
+
+import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 
 import static com.iflove.common.constant.MQConstant.*;
@@ -15,19 +17,13 @@ import static com.iflove.common.constant.MQConstant.*;
  * @version 1.0
  * @implNote 响应消息推送消息队列
  */
+@RocketMQMessageListener(topic = PUSH_TOPIC, consumerGroup = PUSH_GROUP, messageModel = MessageModel.BROADCASTING)
 @Component
-public class MsgPushConsumer {
+public class MsgPushConsumer implements RocketMQListener<PushMessageDTO> {
     @Resource
     WebSocketService webSocketService;
 
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = MSG_PUSH_QUEUE,
-                    durable = "true",
-                    arguments = @Argument(name = "x-queue-mode",
-                            value = "lazy")),
-            exchange = @Exchange(name = MSG_PUSH_EXCHANGE, type = ExchangeTypes.DIRECT),
-            key = {MSG_PUSH_KEY}
-    ))
+    @Override
     public void onMessage(PushMessageDTO message) {
         WSPushTypeEnum type = WSPushTypeEnum.of(message.getPushType());
         switch (type) {

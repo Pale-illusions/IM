@@ -1,7 +1,9 @@
 package com.iflove.common.service.MQ;
 
 import jakarta.annotation.Resource;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,27 +11,15 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @implNote 消息队列工具类
  */
+// TODO 将 RabbitMQ 改为 RocketMQ
+
 @Component
 public class MQProducer {
     @Resource
-    RabbitTemplate rabbitTemplate;
+    private RocketMQTemplate rocketMQTemplate;
 
-    /**
-     * 发送消息到指定的队列
-     * @param queueName 队列名
-     * @param message 消息
-     */
-    public void sendMessage(String queueName, Object message) {
-        rabbitTemplate.convertAndSend(queueName, message);
-    }
-
-    /**
-     * 发送消息到指定的交换机
-     * @param exchangeName 交换机
-     * @param routingKey 指定路由键
-     * @param message 消息
-     */
-    public void sendMessageToExchange(String exchangeName, String routingKey, Object message) {
-        rabbitTemplate.convertAndSend(exchangeName, routingKey, message);
+    public void sendMsg(String topic, Object body) {
+        Message<Object> build = MessageBuilder.withPayload(body).build();
+        rocketMQTemplate.send(topic, build);
     }
 }

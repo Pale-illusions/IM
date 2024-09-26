@@ -1,14 +1,3 @@
-spring:
-  rabbitmq:
-    addresses: localhost
-    username: guest
-    password: guest
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/im
-    username: root
-    password: bbb123=6
-
 mybatis-plus:
   # xml地址
   mapper-locations: classpath:mapper/**/*.xml
@@ -17,40 +6,33 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #开启驼峰命名法
     map-underscore-to-camel-case: true
-server:
-  port: 8081
 
 # minio相关配置
 oss:
   enabled: true
   type: minio
-  endpoint: http://localhost:9005
-  access-key: GehNalA86EyHbLXEoQUk
-  secret-key: PI2LUYwtAHlNspvOjMnSQ18jbEab2zieoqwVKOAj
-  bucketName: test
+  endpoint: http://47.99.73.85:9000
+  access-key: qdNFZVP3xP5ajBpG
+  secret-key: 4rllwlmP54uDA9BW3EWJKfl3gSjqyU0N
+  bucketName: im-bucket
 
-# springdoc-openapi项目配置
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
-  api-docs:
-    path: /v3/api-docs
-  group-configs:
-    - group: 'default'
-      paths-to-match: '/**'
-      packages-to-scan:
-        - com.iflove.api.user.controller
-        - com.iflove.api.chat.controller
-        - com.iflove.api.video.controller
-        - com.iflove.api.social.controller
-        - com.iflove.api.interactive.controller
-        - com.iflove.oss.controller
+# rocketmq
+rocketmq:
+  name-server: 47.99.73.85:9876
+  access-key: admin050119
+  secret-key: Cjy050119
 
-knife4j:
-  enable: true
-  setting:
-    language: zh_cn
-    enable-version: true
-    enable-swagger-models: true
+IM:
+  # mysql
+  mysql:
+    ip: 47.99.73.85
+    port: 3306
+    db: IM
+    username: root
+    password: Cjy050119
+  # redis
+  redis:
+    host: 47.99.73.85
+    port: 6379
+    password: Cjy050119
+

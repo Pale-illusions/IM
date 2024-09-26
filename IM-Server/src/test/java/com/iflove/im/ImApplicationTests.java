@@ -2,6 +2,10 @@ package com.iflove.im;
 
 import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.iflove.api.chat.dao.MessageDao;
+import com.iflove.api.chat.domain.entity.Message;
+import com.iflove.api.chat.domain.enums.MessageStatusEnum;
+import com.iflove.api.chat.service.adapter.MessageAdapter;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.vo.request.friend.FriendCheckReq;
 import com.iflove.api.user.domain.vo.response.friend.FriendCheckResp;
@@ -94,5 +98,21 @@ class ImApplicationTests {
         RestBean<FriendCheckResp> check = friendService.check(1L, friendCheckReq);
         System.out.println();
         System.out.println(check);
+    }
+
+    @Resource
+    MessageDao messageDao;
+
+    @Test
+    public void test5() {
+        Message message = Message
+                .builder()
+                .fromUid(1L)
+                .roomId(1L)
+                .type(0)
+                .status(MessageStatusEnum.NORMAL.getStatus())
+                .build();
+        messageDao.save(message);
+        System.out.println(message);
     }
 }

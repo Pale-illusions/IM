@@ -27,7 +27,7 @@ public class PushServiceImpl implements PushService {
      */
     @Override
     public void sendPushMsg(WSBaseResp<?> msg, List<Long> uidList) {
-        mqProducer.sendMessage(MQConstant.MSG_PUSH_QUEUE, new PushMessageDTO(msg, uidList));
+        mqProducer.sendMsg(MQConstant.PUSH_TOPIC, new PushMessageDTO(msg, uidList));
     }
 
     /**
@@ -37,7 +37,7 @@ public class PushServiceImpl implements PushService {
      */
     @Override
     public void sendPushMsg(WSBaseResp<?> msg, Long uid) {
-        mqProducer.sendMessage(MQConstant.MSG_PUSH_QUEUE, new PushMessageDTO(msg, uid));
+        mqProducer.sendMsg(MQConstant.PUSH_TOPIC, new PushMessageDTO(msg, uid));
     }
 
     /**
@@ -46,6 +46,6 @@ public class PushServiceImpl implements PushService {
      */
     @Override
     public void sendPushMsg(WSBaseResp<?> msg) {
-        mqProducer.sendMessage(MQConstant.MSG_PUSH_QUEUE, new PushMessageDTO(msg));
+        mqProducer.sendMsg(MQConstant.PUSH_TOPIC, new PushMessageDTO(msg));
     }
 }

@@ -19,7 +19,8 @@ import java.util.List;
 public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
 
     public UserFriend getByFriend(Long uid, Long targetUid) {
-        return lambdaQuery().eq(UserFriend::getUserId, uid)
+        return lambdaQuery()
+                .eq(UserFriend::getUserId, uid)
                 .eq(UserFriend::getFriendId, targetUid)
                 .one();
     }

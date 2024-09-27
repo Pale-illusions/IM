@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 房间表
@@ -14,6 +18,9 @@ import lombok.Data;
  */
 @TableName(value ="room")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Room implements Serializable {
     /**
      * id
@@ -22,12 +29,7 @@ public class Room implements Serializable {
     private Long id;
 
     /**
-     * 会话名
-     */
-    private String name;
-
-    /**
-     * 会话类型 1大群聊 2沸点
+     * 会话类型 1 群聊 2 单聊
      */
     private Integer type;
 
@@ -35,6 +37,11 @@ public class Room implements Serializable {
      * 最后活跃时间-排序
      */
     private Date activeTime;
+
+    /**
+     * 最后一条消息id
+     */
+    private Long lastMsgId;
 
     /**
      * 创建时间

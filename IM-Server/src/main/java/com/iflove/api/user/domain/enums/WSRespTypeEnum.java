@@ -18,7 +18,7 @@ public enum WSRespTypeEnum {
     LOGIN_SUCCESS(1, "登录成功", WSLoginSuccess.class),
     MESSAGE(2, "新消息", WSMessage.class),
     INVALID_TOKEN(3, "非法Token, 登录失败", null),
-    ONLINE_OFFLINE_NOTIFY(4, "上下限通知", WSOnlineOfflineNotify.class),
+    ONLINE_OFFLINE_NOTIFY(4, "上下线通知", WSOnlineOfflineNotify.class),
     FRIEND_APPLY(5, "好友申请", WSFriendApply.class),
     ;
 

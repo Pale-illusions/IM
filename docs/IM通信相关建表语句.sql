@@ -12,7 +12,7 @@ CREATE TABLE `user_apply`(
     `status` INT NOT NULL DEFAULT 0 COMMENT '申请状态 0 待审批 / 1 同意 / 2 拒绝',
     `read_status` INT NOT NULL DEFAULT 0 COMMENT '阅读状态 0 未读 / 1 已读',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '修改时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户申请表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `user_apply` ADD INDEX `user_apply_target_id_read_status_index`(`target_id`, `read_status`);
@@ -30,7 +30,7 @@ CREATE TABLE `user_friend`(
     `friend_id` BIGINT NOT NULL COMMENT '好友id',
     `delete_status` INT NOT NULL DEFAULT 0 COMMENT '逻辑删除 0 正常 / 1 删除',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '更新时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '更新时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户好友表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `user_friend` ADD INDEX `user_friend_user_id_friend_id_index`(`user_id`, `friend_id`);
@@ -48,7 +48,7 @@ CREATE TABLE `contact`(
     `active_time` DATETIME NULL COMMENT '消息最后更新的时间',
     `last_msg_id` BIGINT NULL COMMENT '会话最新消息id',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '更新时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '更新时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会话表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `contact` ADD INDEX `contact_room_id_read_time_index`(`room_id`, `read_time`);
@@ -61,8 +61,8 @@ DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(64) NOT NULL COMMENT '角色名称',
-    `create_time` DATETIME NOT NULL DEFAULT Now(),
-    `update_time` DATETIME NOT NULL DEFAULT Now()
+    `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '更新时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `role` ADD INDEX `role_create_time_index`(`create_time`);
@@ -78,7 +78,7 @@ CREATE TABLE `room_friend`(
     `room_key` VARCHAR(64) NOT NULL COMMENT '房间key由两个uid拼接，先做排序uid1_uid2',
     `status` INT NOT NULL  COMMENT '房间状态 0正常 1禁用(删好友了禁用)',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '修改时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '单聊表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `room_friend` ADD INDEX `room_friend_room_id_index`(`room_id`);
@@ -96,7 +96,7 @@ CREATE TABLE `group_member`(
     `user_id` BIGINT NOT NULL COMMENT '成员uid',
     `role` INT NOT NULL default 3 COMMENT '成员角色 1群主 2管理员 3普通成员',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '修改时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '群聊成员表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `group_member` ADD INDEX `group_member_group_id_role_index`(`group_id`, `role`);
@@ -108,11 +108,11 @@ ALTER TABLE
 DROP TABLE IF EXISTS `room`;
 CREATE TABLE `room`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'id',
-    `name` VARCHAR(64) NOT NULL COMMENT '会话名',
-    `type` INT NOT NULL  COMMENT '会话类型 1大群聊 2沸点',
+    `type` INT NOT NULL  COMMENT '会话类型 1 群聊 2 单聊',
     `active_time` DATETIME NOT NULL DEFAULT Now() COMMENT '最后活跃时间-排序',
+    `last_msg_id` bigint null comment '最后一条消息id',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '修改时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '房间表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `room` ADD INDEX `room_active_time_index`(`active_time`);
@@ -127,7 +127,7 @@ CREATE TABLE `user_role`(
     `user_id` BIGINT NOT NULL COMMENT 'user id',
     `role_id` BIGINT NOT NULL COMMENT '角色 id',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '更新时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '更新时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户权限表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `user_role` ADD INDEX `user_role_user_id_index`(`user_id`);
@@ -149,7 +149,7 @@ CREATE TABLE `user`(
     `ip_info` JSON NULL COMMENT 'ip信息',
     `status` INT NULL DEFAULT '0'  COMMENT '在线状态 0 在线 / 1 下线',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '修改时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `user` ADD UNIQUE `user_name_unique`(`name`);
@@ -166,7 +166,7 @@ CREATE TABLE `room_group`(
     `avatar` VARCHAR(256) NOT NULL COMMENT '群头像',
     `delete_status` INT NOT NULL DEFAULT '0'  COMMENT '逻辑删除(0-正常,1-删除)',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '修改时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '群聊表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `room_group` ADD INDEX `room_group_room_id_index`(`room_id`);
@@ -187,7 +187,7 @@ CREATE TABLE `message`(
     `type` INT NULL DEFAULT 1 COMMENT '消息类型',
     `extra` JSON NULL COMMENT '扩展信息',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() COMMENT '修改时间'
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
 ALTER TABLE
     `message` ADD INDEX `message_room_id_index`(`room_id`);

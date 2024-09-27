@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  * @implNote 消息队列工具类
  */
-// TODO 将 RabbitMQ 改为 RocketMQ
 
 @Component
 public class MQProducer {
@@ -22,4 +21,6 @@ public class MQProducer {
         Message<Object> build = MessageBuilder.withPayload(body).build();
         rocketMQTemplate.send(topic, build);
     }
+
+    // TODO 实现发送安全消息
 }

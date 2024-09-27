@@ -18,10 +18,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Schema(description = "消息发送请求体")
 public class ChatMessageReq {
+    /**
+     * 房间id
+     */
     @Schema(description = "房间id")
     @NotNull
     private Long roomId;
 
+    /**
+     * 消息类型
+     * @see com.iflove.api.chat.domain.enums.MessageTypeEnum
+     */
     @Schema(description = "消息类型")
     @NotNull
     private Integer msgType;

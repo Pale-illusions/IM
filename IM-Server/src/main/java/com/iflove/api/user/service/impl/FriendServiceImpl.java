@@ -3,6 +3,10 @@ package com.iflove.api.user.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Lists;
+import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.service.ChatService;
+import com.iflove.api.chat.service.RoomService;
+import com.iflove.api.chat.service.adapter.MessageAdapter;
 import com.iflove.api.user.dao.UserApplyDao;
 import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.dao.UserFriendDao;
@@ -46,13 +50,17 @@ import java.util.stream.Collectors;
 @Service
 public class FriendServiceImpl implements FriendService {
     @Resource
-    UserFriendDao userFriendDao;
+    private UserFriendDao userFriendDao;
     @Resource
-    UserApplyDao userApplyDao;
+    private UserApplyDao userApplyDao;
     @Resource
-    UserDao userDao;
+    private UserDao userDao;
     @Resource
-    ApplicationEventPublisher applicationEventPublisher;
+    private RoomService roomService;
+    @Resource
+    private ChatService chatService;
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 申请好友
@@ -134,12 +142,14 @@ public class FriendServiceImpl implements FriendService {
 
     /**
      * 同意好友申请
+     * @param uid 被请求方id
      * @param req 好友申请同意请求
      * @return {@link RestBean}
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public RestBean<Void> applyApprove(Long uid, FriendApplyApproveReq req) {
+        // 注意：userApply 的 targetId 为 被请求方， userId 为 请求发起方
         UserApply userApply = userApplyDao.getById(req.getApplyId());
         // 好友申请不存在
         if (Objects.isNull(userApply) || !Objects.equals(userApply.getTargetId(), uid)) {
@@ -153,8 +163,10 @@ public class FriendServiceImpl implements FriendService {
         userApplyDao.applyApprove(req.getApplyId());
         // 创建好友关系
         createFriends(uid, userApply.getUserId());
-        // TODO 创建一个聊天房间，并发送消息
-
+        // 创建单聊房间
+        RoomFriend roomFriend = roomService.createRoomFriend(List.of(uid, userApply.getUserId()));
+        // 发送聊天初始消息
+        chatService.sendMsg(MessageAdapter.buildApplyApproveMsg(roomFriend.getRoomId()), uid);
         return RestBean.success();
     }
 

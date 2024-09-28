@@ -224,8 +224,8 @@ public class FriendServiceImpl implements FriendService {
                 .collect(Collectors.toList());
         // 删除好友
         userFriendDao.removeByIds(relationsId);
-        // TODO 删除单聊房间
-
+        // 删除单聊房间
+        roomService.disableRoomFriend(List.of(uid, targetUid));
         return RestBean.success();
     }
 

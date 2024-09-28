@@ -54,6 +54,7 @@ public class NettyWebsocketServer {
      */
     @PreDestroy
     public void destory() {
+        // FIXME 服务器强制关闭，redis中在线用户表任然存在，无法将在线用户转为离线用户
         Future<?> future = bossGroup.shutdownGracefully();
         Future<?> future1 = workerGroup.shutdownGracefully();
         future.syncUninterruptibly();
@@ -77,7 +78,7 @@ public class NettyWebsocketServer {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         // 30 秒 客户端未向服务端发送心跳则关闭连接
-                        // TODO 测试关闭心跳检查，记得改回去
+                        // FIXME 测试关闭心跳检查，记得改回去
 //                        pipeline.addLast(new IdleStateHandler(30, 0, 0));
                         // 因为使用http协议，所以需要使用http的编码器，解码器
                         pipeline.addLast(new HttpServerCodec());

@@ -18,4 +18,10 @@ public interface RoomService {
      * @return {@link RoomFriend}
      */
     RoomFriend createRoomFriend(List<Long> uidList);
+
+    /**
+     * 禁用一个单聊房间
+     * @param uidList 好友uid
+     */
+    void disableRoomFriend(List<Long> uidList);
 }

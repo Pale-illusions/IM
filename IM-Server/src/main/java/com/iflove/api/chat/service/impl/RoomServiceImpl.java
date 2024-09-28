@@ -56,6 +56,22 @@ public class RoomServiceImpl implements RoomService {
         return roomFriend;
     }
 
+    /**
+     * 禁用一个单聊房间
+     * @param uidList 好友uid
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void disableRoomFriend(List<Long> uidList) {
+        // 如果 uidList 为空 或 人数不为 2
+        if (CollectionUtil.isEmpty(uidList) || uidList.size() != 2) {
+            throw new ValidationException("房间禁用失败，好友人数错误");
+        }
+        // 生成 房间key 格式 {较小的uid,较大的uid}
+        String key = ChatAdapter.generateRoomKey(uidList);
+        roomFriendDao.disableRoomFriend(key);
+    }
+
     private RoomFriend createRoomFriend(Long RoomId, List<Long> uidList) {
         RoomFriend insert = ChatAdapter.buildRoomFriend(RoomId, uidList);
         roomFriendDao.save(insert);

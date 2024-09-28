@@ -33,6 +33,13 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
                 .select(RoomFriend::getUserId1, RoomFriend::getUserId2)
                 .one();
     }
+
+    public void disableRoomFriend(String key) {
+        lambdaUpdate()
+                .set(RoomFriend::getStatus, NormalOrNoEnum.FORBIDDEN.getStatus())
+                .eq(RoomFriend::getRoomKey, key)
+                .update();
+    }
 }
 
 

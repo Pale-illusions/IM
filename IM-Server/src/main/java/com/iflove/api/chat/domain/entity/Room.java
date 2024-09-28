@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.iflove.api.chat.domain.enums.RoomTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,4 +57,14 @@ public class Room implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    @JsonIgnore
+    public boolean isRoomFriend() {
+        return RoomTypeEnum.of(type).equals(RoomTypeEnum.FRIEND);
+    }
+
+    @JsonIgnore
+    public boolean isRoomGroup() {
+        return RoomTypeEnum.of(type).equals(RoomTypeEnum.GROUP);
+    }
 }

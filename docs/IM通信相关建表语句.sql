@@ -92,7 +92,7 @@ ALTER TABLE
 DROP TABLE IF EXISTS `group_member`;
 CREATE TABLE `group_member`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'id',
-    `group_id` BIGINT NOT NULL COMMENT '群主id',
+    `group_id` BIGINT NOT NULL COMMENT '群聊id',
     `user_id` BIGINT NOT NULL COMMENT '成员uid',
     `role` INT NOT NULL default 3 COMMENT '成员角色 1群主 2管理员 3普通成员',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',

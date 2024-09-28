@@ -17,7 +17,14 @@ public class RedisKey {
     // 离线用户列表
     public static final String OFFLINE_UID_ZSET = "offline";
     // 用户信息
-    public static final String USER_INFO_STRING = "userInfo:%d";
+    public static final String USER_INFO_STRING = "userInfo:uid_%d";
+    // 房间信息
+    public static final String ROOM_INFO_STRING = "roomInfo:roomId_%d";
+    // 单聊房间信息
+    public static final String ROOM_FRIEND_STRING = "room:roomFriend:roomId_%d";
+    // 群聊房间信息
+    public static final String ROOM_GROUP_STRING = "room:roomGroup:roomId_%d";
+
 
     public static String getKey(String key, Object... objects) {
         return BASE_KEY + String.format(key, objects);

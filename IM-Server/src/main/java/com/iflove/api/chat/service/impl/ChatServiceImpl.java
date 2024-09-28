@@ -32,7 +32,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Long sendMsg(ChatMessageReq request, Long uid) {
         // TODO 单聊 -> 好友关系校验 / 群聊 -> 群成员校验
-
+        checkRoom(request, uid);
         // TODO 处理不同类型的消息的业务逻辑
 
         // TODO 简单文本消息处理，后续需更改逻辑，增加敏感词过滤功能
@@ -43,5 +43,9 @@ public class ChatServiceImpl implements ChatService {
         // 发送消息发送事件
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, message.getId()));
         return message.getId();
+    }
+
+    private void checkRoom(ChatMessageReq request, Long uid) {
+
     }
 }

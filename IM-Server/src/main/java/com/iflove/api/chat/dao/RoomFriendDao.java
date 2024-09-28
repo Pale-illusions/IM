@@ -6,6 +6,8 @@ import com.iflove.api.chat.mapper.RoomFriendMapper;
 import com.iflove.common.domain.enums.NormalOrNoEnum;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
 * @author IFLOVE
 * @description 针对表【room_friend(单聊表)】的数据库操作Service实现
@@ -39,6 +41,12 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
                 .set(RoomFriend::getStatus, NormalOrNoEnum.FORBIDDEN.getStatus())
                 .eq(RoomFriend::getRoomKey, key)
                 .update();
+    }
+
+    public List<RoomFriend> listByRoomIds(List<Long> roomIds) {
+        return lambdaQuery()
+                .in(RoomFriend::getRoomId, roomIds)
+                .list();
     }
 }
 

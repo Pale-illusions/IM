@@ -5,6 +5,8 @@ import com.iflove.api.chat.domain.entity.RoomGroup;
 import com.iflove.api.chat.mapper.RoomGroupMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
 * @author IFLOVE
 * @description 针对表【room_group(群聊表)】的数据库操作Service实现
@@ -13,6 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoomGroupDao extends ServiceImpl<RoomGroupMapper, RoomGroup> {
 
+    public List<RoomGroup> listByRoomIds(List<Long> roomIds) {
+        return lambdaQuery()
+                .in(RoomGroup::getRoomId, roomIds)
+                .list();
+    }
 }
 
 

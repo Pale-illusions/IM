@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.iflove.api.chat.domain.entity.msg.MessageExtra;
 import lombok.*;
 
 /**
@@ -37,34 +39,23 @@ public class Message implements Serializable {
     private Long fromUid;
 
     /**
-     * 消息内容
-     */
-    private String content;
-
-    /**
-     * 回复的消息id
-     */
-    private Long replyMsgId;
-
-    /**
      * 消息状态 0正常 1删除
+     * @see com.iflove.api.chat.domain.enums.MessageStatusEnum
      */
     private Integer status;
 
     /**
-     * 与回复的消息间隔多少条
-     */
-    private Integer gapCount;
-
-    /**
      * 消息类型
+     * @see com.iflove.api.chat.domain.enums.MessageTypeEnum
      */
     private Integer type;
 
     /**
      * 扩展信息
+     * @see com.iflove.api.chat.domain.entity.msg.MessageExtra
      */
-    private Object extra;
+    @TableField(value = "extra", typeHandler = JacksonTypeHandler.class)
+    private MessageExtra extra;
 
     /**
      * 创建时间

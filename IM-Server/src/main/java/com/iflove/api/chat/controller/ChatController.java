@@ -42,9 +42,10 @@ public class ChatController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success"),
     })
-    public RestBean<Void> sendMsg(@Valid @RequestBody ChatMessageReq request) {
+    public RestBean<ChatMessageResp> sendMsg(@Valid @RequestBody ChatMessageReq request) {
         Long msgId = chatService.sendMsg(request, RequestHolder.get().getUid());
-        // TODO 消息返回逻辑
-        return RestBean.success();
+        // 消息返回逻辑
+        return RestBean.success(chatService.getMsgResp(msgId));
     }
+
 }

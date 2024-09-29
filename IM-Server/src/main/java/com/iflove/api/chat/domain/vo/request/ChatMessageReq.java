@@ -35,7 +35,7 @@ public class ChatMessageReq {
 
     /**
      * 消息内容，类型不同传值不同
-     * @see
+     * @see com.iflove.api.chat.domain.entity.msg
      */
     @Schema(description = "消息内容")
     @NotNull

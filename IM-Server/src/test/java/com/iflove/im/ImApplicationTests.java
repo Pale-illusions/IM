@@ -1,5 +1,6 @@
 package com.iflove.im;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.iflove.api.chat.dao.MessageDao;
@@ -114,5 +115,29 @@ class ImApplicationTests {
                 .build();
         messageDao.save(message);
         System.out.println(message);
+    }
+
+    @Test
+    public void test6() {
+        Object a = "123";
+        if (String.class.isAssignableFrom(a.getClass())) {
+            System.out.println((String) a);
+            System.out.println("success");
+        } else {
+            System.out.println("fail");
+        }
+        Object b = new Message();
+        if (Message.class.isAssignableFrom(b.getClass())) {
+            System.out.println((Message) b);
+            System.out.println("success");
+        } else {
+            System.out.println("fail");
+        }
+    }
+
+
+    @Test
+    public void test7() {
+        System.out.println(1);
     }
 }

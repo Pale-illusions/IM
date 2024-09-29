@@ -8,6 +8,7 @@ import com.iflove.api.chat.domain.entity.RoomFriend;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
 import com.iflove.api.chat.service.RoomService;
 import com.iflove.api.chat.service.adapter.ChatAdapter;
+import com.iflove.api.chat.service.cache.RoomFriendCache;
 import com.iflove.common.domain.enums.NormalOrNoEnum;
 import jakarta.annotation.Resource;
 import jakarta.validation.ValidationException;
@@ -28,6 +29,8 @@ public class RoomServiceImpl implements RoomService {
     private RoomFriendDao roomFriendDao;
     @Resource
     private RoomDao roomDao;
+    @Resource
+    private RoomFriendCache roomFriendCache;
 
     /**
      * 创建一个单聊房间
@@ -70,6 +73,8 @@ public class RoomServiceImpl implements RoomService {
         // 生成 房间key 格式 {较小的uid,较大的uid}
         String key = ChatAdapter.generateRoomKey(uidList);
         roomFriendDao.disableRoomFriend(key);
+        // 删除单聊房间缓存
+        roomFriendCache.delete(roomFriendDao.getByKey(key).getRoomId());
     }
 
     private RoomFriend createRoomFriend(Long RoomId, List<Long> uidList) {
@@ -87,6 +92,8 @@ public class RoomServiceImpl implements RoomService {
     private void restoreRoomIfNeed(RoomFriend room) {
         if (Objects.equals(room.getStatus(), NormalOrNoEnum.FORBIDDEN.getStatus())) {
             roomFriendDao.restoreRoom(room.getId());
+            // 删除单聊房间缓存
+            roomFriendCache.delete(room.getRoomId());
         }
     }
 }

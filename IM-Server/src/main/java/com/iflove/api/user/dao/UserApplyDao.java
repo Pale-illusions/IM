@@ -57,7 +57,6 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
     public void applyApprove(Long applyId) {
         lambdaUpdate()
                 .set(UserApply::getStatus, ApplyStatusEnum.AGREE.getCode())
-                .set(UserApply::getUpdateTime, new Date())
                 .eq(UserApply::getId, applyId)
                 .eq(UserApply::getStatus, ApplyStatusEnum.WAIT_APPROVAL.getCode())
                 .update();
@@ -66,7 +65,6 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
     public void applyDisapprove(Long applyId) {
         lambdaUpdate()
                 .set(UserApply::getStatus, ApplyStatusEnum.DISAGREE.getCode())
-                .set(UserApply::getUpdateTime, new Date())
                 .eq(UserApply::getId, applyId)
                 .eq(UserApply::getStatus, ApplyStatusEnum.WAIT_APPROVAL.getCode())
                 .update();

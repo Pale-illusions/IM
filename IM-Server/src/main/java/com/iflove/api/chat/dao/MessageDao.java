@@ -2,7 +2,12 @@ package com.iflove.api.chat.dao;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.chat.domain.entity.Message;
+import com.iflove.api.chat.domain.enums.MessageStatusEnum;
+import com.iflove.api.chat.domain.vo.request.ChatMessagePageReq;
 import com.iflove.api.chat.mapper.MessageMapper;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
+import com.iflove.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,7 +17,12 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class MessageDao extends ServiceImpl<MessageMapper, Message> {
-
+    public CursorPageBaseResp<Message> getCursorpage(Long roomId, CursorPageBaseReq req) {
+        return CursorUtils.getCursorPageByMysql(this, req, wrapper -> {
+            wrapper.eq(Message::getRoomId, roomId);
+            wrapper.eq(Message::getStatus, MessageStatusEnum.NORMAL.getStatus());
+        }, Message::getId);
+    }
 }
 
 

@@ -1,8 +1,10 @@
 package com.iflove.api.chat.controller;
 
+import com.iflove.api.chat.domain.vo.request.ChatMessagePageReq;
 import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.api.chat.service.ChatService;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author 苍镜月
@@ -48,4 +47,18 @@ public class ChatController {
         return RestBean.success(chatService.getMsgResp(msgId));
     }
 
+    /**
+     * 消息列表
+     * @param req 消息列表游标分页请求
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatMessageResp}
+     */
+    @GetMapping("msg/page")
+    @Operation(summary = "消息列表",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<CursorPageBaseResp<ChatMessageResp>> getMsgPage(@Valid ChatMessagePageReq req) {
+        return chatService.getMsgPage(req, RequestHolder.get().getUid());
+    }
 }

@@ -1,8 +1,10 @@
 package com.iflove.api.chat.service;
 
 import com.iflove.api.chat.domain.entity.Message;
+import com.iflove.api.chat.domain.vo.request.ChatMessagePageReq;
 import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
 /**
@@ -32,4 +34,12 @@ public interface ChatService {
      * @return {@link ChatMessageResp}
      */
     ChatMessageResp getMsgResp(Message message);
+
+    /**
+     * 消息列表
+     * @param req 消息列表游标分页请求
+     * @param uid 用户id
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatMessageResp}
+     */
+    RestBean<CursorPageBaseResp<ChatMessageResp>> getMsgPage(ChatMessagePageReq req, Long uid);
 }

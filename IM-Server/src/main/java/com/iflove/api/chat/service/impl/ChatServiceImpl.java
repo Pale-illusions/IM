@@ -5,6 +5,7 @@ import com.iflove.api.chat.dao.MessageDao;
 import com.iflove.api.chat.domain.entity.Message;
 import com.iflove.api.chat.domain.entity.Room;
 import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.domain.vo.request.ChatMessagePageReq;
 import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.api.chat.service.ChatService;
@@ -16,6 +17,8 @@ import com.iflove.api.chat.service.cache.RoomGroupCache;
 import com.iflove.api.chat.service.strategy.AbstractMsgHandler;
 import com.iflove.api.chat.service.strategy.MsgHandlerFactory;
 import com.iflove.common.domain.enums.NormalOrNoEnum;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
+import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.event.MessageSendEvent;
 import jakarta.annotation.Resource;
 import jakarta.validation.ValidationException;
@@ -58,7 +61,7 @@ public class ChatServiceImpl implements ChatService {
     @Transactional(rollbackFor = Exception.class)
     public Long sendMsg(ChatMessageReq request, Long uid) {
         // 单聊 -> 好友关系校验 / 群聊 -> 群成员校验
-        checkRoom(request, uid);
+        checkRoom(request.getRoomId(), uid);
         // 处理不同类型的消息
         AbstractMsgHandler<?> msgHandler = MsgHandlerFactory.getStrategyNonNull(request.getMsgType());
         Long msgId = msgHandler.checkAndSaveMsg(request, uid);
@@ -67,8 +70,8 @@ public class ChatServiceImpl implements ChatService {
         return msgId;
     }
 
-    private void checkRoom(ChatMessageReq request, Long uid) {
-        Room room = roomCache.get(request.getRoomId());
+    private void checkRoom(Long roomId, Long uid) {
+        Room room = roomCache.get(roomId);
         // 单聊处理逻辑
         if (room.isRoomFriend()) {
             RoomFriend roomFriend = roomFriendCache.get(room.getId());
@@ -119,5 +122,23 @@ public class ChatServiceImpl implements ChatService {
         }
         return MessageAdapter.buildMessageResp(messages);
     }
+
+    /**
+     * 消息列表
+     * @param req 消息列表游标分页请求
+     * @param uid 用户id
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatMessageResp}
+     */
+    @Override
+    public RestBean<CursorPageBaseResp<ChatMessageResp>> getMsgPage(ChatMessagePageReq req, Long uid) {
+        // 单聊 -> 好友关系校验 / 群聊 -> 群成员校验
+        checkRoom(req.getRoomId(), uid);
+        CursorPageBaseResp<Message> cursorPage = messageDao.getCursorpage(req.getRoomId(), req);
+        if (cursorPage.isEmpty()) {
+            return RestBean.success(CursorPageBaseResp.empty());
+        }
+        return RestBean.success(CursorPageBaseResp.init(cursorPage, getMsgRespBatch(cursorPage.getList())));
+    }
+
 
 }

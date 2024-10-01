@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.iflove</groupId>
-        <artifactId>IM</artifactId>
+        <artifactId>IM-Tools</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>IM-Server</artifactId>
+    <artifactId>IM-Transaction</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -23,15 +23,6 @@
             <artifactId>IM-Common-Starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.iflove</groupId>
-            <artifactId>IM-Oss-Starter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.iflove</groupId>
-            <artifactId>IM-Transaction</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
+
 </project>

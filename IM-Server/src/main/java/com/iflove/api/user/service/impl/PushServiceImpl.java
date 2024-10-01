@@ -3,7 +3,7 @@ package com.iflove.api.user.service.impl;
 import com.iflove.api.user.domain.vo.response.ws.WSBaseResp;
 import com.iflove.common.constant.MQConstant;
 import com.iflove.common.domain.dto.PushMessageDTO;
-import com.iflove.common.service.MQ.MQProducer;
+import com.iflove.transaction.service.MQProducer;
 import com.iflove.api.user.service.PushService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;

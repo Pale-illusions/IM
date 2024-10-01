@@ -61,4 +61,6 @@ public class ChatController {
     public RestBean<CursorPageBaseResp<ChatMessageResp>> getMsgPage(@Valid ChatMessagePageReq req) {
         return chatService.getMsgPage(req, RequestHolder.get().getUid());
     }
+
+
 }

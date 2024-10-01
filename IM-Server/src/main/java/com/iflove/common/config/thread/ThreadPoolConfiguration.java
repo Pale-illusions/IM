@@ -1,5 +1,7 @@
 package com.iflove.common.config.thread;
 
+import com.iflove.transaction.annotation.SecureInvokeConfigurer;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,7 +20,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Configuration
 @EnableAsync
-public class ThreadPoolConfiguration implements AsyncConfigurer {
+public class ThreadPoolConfiguration implements AsyncConfigurer, SecureInvokeConfigurer {
     // 项目共用线程池
     public static final String IM_EXECUTOR = "IMExecutor";
     // websocket 通信线程池
@@ -26,6 +28,11 @@ public class ThreadPoolConfiguration implements AsyncConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {
+        return IMExecutor();
+    }
+
+    @Override
+    public Executor getSecureInvokeExecutor() {
         return IMExecutor();
     }
 

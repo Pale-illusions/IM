@@ -20,9 +20,12 @@ import com.iflove.oss.MinIOTemplate;
 import com.iflove.oss.domain.OssReq;
 import com.iflove.oss.domain.OssResp;
 import jakarta.annotation.Resource;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.MessageBuilder;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -135,9 +138,5 @@ class ImApplicationTests {
         }
     }
 
-
-    @Test
-    public void test7() {
-        System.out.println(1);
-    }
+    
 }

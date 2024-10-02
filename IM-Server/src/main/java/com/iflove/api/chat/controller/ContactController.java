@@ -3,6 +3,8 @@ package com.iflove.api.chat.controller;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.api.chat.service.RoomService;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +34,21 @@ public class ContactController {
     @Resource
     private RoomAppService roomService;
 
+    /**
+     * 会话列表
+     * @param req 游标分页请求
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatRoomResp}
+     */
+    @GetMapping("page")
+    @Operation(summary = "会话列表",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<CursorPageBaseResp<ChatRoomResp>> getContactPage(@Valid CursorPageBaseReq req) {
+        Long uid = RequestHolder.get().getUid();
+        return roomService.getContactPage(req, uid);
+    }
 
     /**
      * 会话详情(房间id)

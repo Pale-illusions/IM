@@ -1,6 +1,8 @@
 package com.iflove.api.chat.service;
 
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
 /**
@@ -9,6 +11,12 @@ import com.iflove.common.domain.vo.response.RestBean;
  * @implNote
  */
 public interface RoomAppService {
+    /**
+     * 会话列表
+     * @param req 游标分页请求
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatRoomResp}
+     */
+    RestBean<CursorPageBaseResp<ChatRoomResp>> getContactPage(CursorPageBaseReq req, Long uid);
 
     /**
      * 会话详情(房间id)
@@ -23,4 +31,5 @@ public interface RoomAppService {
      * @return {@link RestBean}<{@link ChatRoomResp}
      */
     RestBean<ChatRoomResp> getContactDetailByFriend(Long uid, Long friendId);
+
 }

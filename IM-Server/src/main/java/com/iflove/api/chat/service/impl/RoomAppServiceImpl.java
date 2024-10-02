@@ -16,6 +16,8 @@ import com.iflove.api.chat.service.strategy.AbstractMsgHandler;
 import com.iflove.api.chat.service.strategy.MsgHandlerFactory;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.service.cache.UserInfoCache;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.FriendErrorEnum;
 import com.iflove.common.exception.RoomErrorEnum;
@@ -49,6 +51,32 @@ public class RoomAppServiceImpl implements RoomAppService {
     @Resource
     private RoomService roomService;
 
+    /**
+     * 会话列表
+     * @param req 游标分页请求
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatRoomResp}
+     */
+    @Override
+    public RestBean<CursorPageBaseResp<ChatRoomResp>> getContactPage(CursorPageBaseReq req, Long uid) {
+        // 获取用户会话列表
+        CursorPageBaseResp<Contact> contactPage = contactDao.getContactPage(req, uid);
+        if (CollectionUtil.isEmpty(contactPage.getList())) {
+            return RestBean.success(CursorPageBaseResp.empty());
+        }
+        // 组装返回
+        return RestBean.success(
+                CursorPageBaseResp.init(
+                        contactPage,
+                        this.buildContactResp(
+                                uid,
+                                contactPage.getList()
+                                        .stream()
+                                        .map(Contact::getRoomId)
+                                        .collect(Collectors.toList())
+                        )
+                )
+        );
+    }
 
     /**
      * 会话详情(房间id)
@@ -80,6 +108,7 @@ public class RoomAppServiceImpl implements RoomAppService {
         }
         return RestBean.success(this.buildContactResp(uid, Collections.singletonList(roomFriend.getRoomId())).get(0));
     }
+
 
     /**
      * 构建会话详情
@@ -172,7 +201,7 @@ public class RoomAppServiceImpl implements RoomAppService {
                         RoomGroup roomGroup = groupRoomMap.get(room.getId());
                         roomBaseInfo.setAvatar(roomGroup.getAvatar());
                         roomBaseInfo.setName(roomGroup.getName());
-                        // 单聊 群头像 为 好友头像，群名称 为 好友名称
+                    // 单聊 群头像 为 好友头像，群名称 为 好友名称
                     } else if (RoomTypeEnum.of(room.getType()) == RoomTypeEnum.FRIEND) {
                         User user = friendRoomMap.get(room.getId());
                         roomBaseInfo.setAvatar(user.getAvatar());

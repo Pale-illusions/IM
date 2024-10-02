@@ -3,6 +3,9 @@ package com.iflove.api.chat.dao;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.chat.domain.entity.Contact;
 import com.iflove.api.chat.mapper.ContactMapper;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
+import com.iflove.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +23,12 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
                 .in(Contact::getRoomId, roomIds)
                 .eq(Contact::getUserId, uid)
                 .list();
+    }
+
+    public CursorPageBaseResp<Contact> getContactPage(CursorPageBaseReq req, Long uid) {
+        return CursorUtils.getCursorPageByMysql(this, req, wrapper -> {
+            wrapper.eq(Contact::getUserId, uid);
+        }, Contact::getActiveTime);
     }
 }
 

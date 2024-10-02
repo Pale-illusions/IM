@@ -20,6 +20,7 @@ public enum MessageTypeEnum {
     IMG(2, "图片"),
     FILE(3, "文件"),
     VIDEO(4, "视频"),
+    SYSTEM(5, "系统消息"),
     ;
 
     private final Integer type;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @author 苍镜月
  * @version 1.0
- * @implNote
+ * @implNote 聊天相关接口
  */
 @Validated
 @RestController

@@ -2,6 +2,8 @@ package com.iflove.api.chat.service;
 
 
 import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
+import com.iflove.common.domain.vo.response.RestBean;
 
 import java.util.List;
 
@@ -24,4 +26,12 @@ public interface RoomService {
      * @param uidList 好友uid
      */
     void disableRoomFriend(List<Long> uidList);
+
+    /**
+     * 获取好友房间
+     * @param uid 用户id
+     * @param friendId 好友id
+     * @return 好友房间
+     */
+    RoomFriend getFriendRoom(Long uid, Long friendId);
 }

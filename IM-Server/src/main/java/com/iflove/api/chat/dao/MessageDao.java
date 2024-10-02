@@ -10,6 +10,9 @@ import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.Objects;
+
 /**
 * @author IFLOVE
 * @description 针对表【message(消息表)】的数据库操作Service实现
@@ -22,6 +25,13 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
             wrapper.eq(Message::getRoomId, roomId);
             wrapper.eq(Message::getStatus, MessageStatusEnum.NORMAL.getStatus());
         }, Message::getId);
+    }
+
+    public Long getUnReadCount(Long roomId, Date readTime) {
+        return lambdaQuery()
+                .eq(Message::getRoomId, roomId)
+                .gt(Objects.nonNull(readTime), Message::getCreateTime, readTime)
+                .count();
     }
 }
 

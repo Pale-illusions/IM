@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 /**
  * @author 苍镜月
  * @version 1.0
- * @implNote 登录错误 enum
+ * @implNote 用户错误枚举
  */
 @AllArgsConstructor
 public enum UserErrorEnum implements ErrorEnum {

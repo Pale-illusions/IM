@@ -5,23 +5,24 @@ import lombok.AllArgsConstructor;
 /**
  * @author 苍镜月
  * @version 1.0
- * @implNote 服务错误枚举
+ * @implNote 会话错误枚举
  */
 @AllArgsConstructor
-public enum CommonErrorEnum implements ErrorEnum {
-    SYSTEM_ERROR(501, "服务器出错，请联系管理员"),
-    PARAM_VALID(502, "参数校验失败"),
+public enum RoomErrorEnum implements ErrorEnum {
+    ROOM_NOT_EXIST(30001, "房间号有误"),
+
     ;
+
     private final Integer code;
     private final String msg;
 
     @Override
     public Integer getErrorCode() {
-        return this.code;
+        return code;
     }
 
     @Override
     public String getErrorMsg() {
-        return this.msg;
+        return msg;
     }
 }

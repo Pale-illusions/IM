@@ -1,22 +1,35 @@
 package com.iflove.api.chat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.iflove.api.chat.dao.MessageDao;
 import com.iflove.api.chat.dao.RoomDao;
 import com.iflove.api.chat.dao.RoomFriendDao;
+import com.iflove.api.chat.domain.dto.RoomBaseInfo;
+import com.iflove.api.chat.domain.entity.Message;
 import com.iflove.api.chat.domain.entity.Room;
 import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.domain.entity.RoomGroup;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
+import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.service.RoomService;
 import com.iflove.api.chat.service.adapter.ChatAdapter;
+import com.iflove.api.chat.service.cache.MsgCache;
+import com.iflove.api.chat.service.cache.RoomCache;
 import com.iflove.api.chat.service.cache.RoomFriendCache;
+import com.iflove.api.chat.service.cache.RoomGroupCache;
+import com.iflove.api.user.domain.entity.User;
+import com.iflove.api.user.service.cache.UserInfoCache;
 import com.iflove.common.domain.enums.NormalOrNoEnum;
+import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.exception.RoomErrorEnum;
 import jakarta.annotation.Resource;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author 苍镜月
@@ -75,6 +88,18 @@ public class RoomServiceImpl implements RoomService {
         roomFriendDao.disableRoomFriend(key);
         // 删除单聊房间缓存
         roomFriendCache.delete(roomFriendDao.getByKey(key).getRoomId());
+    }
+
+    /**
+     * 获取好友房间
+     * @param uid 用户id
+     * @param friendId 好友id
+     * @return 好友房间
+     */
+    @Override
+    public RoomFriend getFriendRoom(Long uid, Long friendId) {
+        String key = ChatAdapter.generateRoomKey(List.of(uid, friendId));
+        return roomFriendDao.getByKey(key);
     }
 
     private RoomFriend createRoomFriend(Long RoomId, List<Long> uidList) {

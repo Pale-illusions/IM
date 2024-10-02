@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * @author 苍镜月
  * @version 1.0
- * @implNote
+ * @implNote 好友错误枚举
  */
 @AllArgsConstructor
 public enum FriendErrorEnum implements ErrorEnum{
@@ -16,6 +16,7 @@ public enum FriendErrorEnum implements ErrorEnum{
     MISSING_FRIEND_APPLY(20004, "好友申请不存在"),
     OPERATION_FAILURE(20005, "操作失败"),
     FRIEND_NOT_EXIST(20006, "好友不存在"),
+    NOT_FRIEND_YET(20007, "还不是好友");
     ;
 
     private final Integer code;

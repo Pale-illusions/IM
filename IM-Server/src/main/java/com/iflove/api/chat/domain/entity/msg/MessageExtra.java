@@ -31,4 +31,6 @@ public class MessageExtra implements Serializable {
     private ImgMsgDTO imgMsgDTO;
     //文件消息
     private VideoMsgDTO videoMsgDTO;
+    // 系统消息
+    private SystemMsgDTO systemMsgDTO;
 }

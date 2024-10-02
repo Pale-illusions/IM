@@ -42,4 +42,5 @@ public interface ChatService {
      * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatMessageResp}
      */
     RestBean<CursorPageBaseResp<ChatMessageResp>> getMsgPage(ChatMessagePageReq req, Long uid);
+
 }

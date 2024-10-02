@@ -2,13 +2,16 @@ package com.iflove.api.chat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.iflove.api.chat.dao.ContactDao;
+import com.iflove.api.chat.dao.GroupMemberDao;
 import com.iflove.api.chat.dao.MessageDao;
 import com.iflove.api.chat.domain.dto.RoomBaseInfo;
 import com.iflove.api.chat.domain.entity.*;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
+import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.api.chat.service.RoomService;
+import com.iflove.api.chat.service.adapter.RoomAdapter;
 import com.iflove.api.chat.service.cache.RoomCache;
 import com.iflove.api.chat.service.cache.RoomFriendCache;
 import com.iflove.api.chat.service.cache.RoomGroupCache;
@@ -19,11 +22,14 @@ import com.iflove.api.user.service.cache.UserInfoCache;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.event.GroupMemberAddEvent;
 import com.iflove.common.exception.FriendErrorEnum;
 import com.iflove.common.exception.RoomErrorEnum;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
@@ -50,6 +56,10 @@ public class RoomAppServiceImpl implements RoomAppService {
     private ContactDao contactDao;
     @Resource
     private RoomService roomService;
+    @Resource
+    private GroupMemberDao groupMemberDao;
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 会话列表
@@ -107,6 +117,30 @@ public class RoomAppServiceImpl implements RoomAppService {
             return RestBean.failure(FriendErrorEnum.NOT_FRIEND_YET);
         }
         return RestBean.success(this.buildContactResp(uid, Collections.singletonList(roomFriend.getRoomId())).get(0));
+    }
+
+    /**
+     * 创建群聊
+     * @param req 创建请求
+     * @return {@link RestBean}<{@link Long}
+     */
+    @Override
+    @Transactional
+    public RestBean<Long> createGroup(GroupCreateReq req, Long uid) {
+        // 去重且过滤创始人
+        List<Long> distinctUidList = req.getUidList().stream().distinct().filter(o -> !Objects.equals(uid, o)).collect(Collectors.toList());
+        // 群聊人数必须大于2
+        if (CollectionUtil.isEmpty(distinctUidList) || distinctUidList.size() == 1) {
+            return RestBean.failure(RoomErrorEnum.GROUP_NUMBER_INSUFFICIENT);
+        }
+        // 创建群聊
+        RoomGroup roomGroup = roomService.createRoomGroup(uid);
+        // 批量保存群成员
+        List<GroupMember> groupMembers = RoomAdapter.buildGroupMemberBatch(distinctUidList, roomGroup.getId());
+        groupMemberDao.saveBatch(groupMembers);
+        // 发送邀请加群信息
+        applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, groupMembers, roomGroup, uid));
+        return RestBean.success(roomGroup.getRoomId());
     }
 
 

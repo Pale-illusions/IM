@@ -44,7 +44,7 @@ CREATE TABLE `contact`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `user_id` BIGINT NOT NULL COMMENT '用户id',
     `room_id` BIGINT NOT NULL COMMENT '房间id',
-    `read_time` DATETIME NOT NULL COMMENT '阅读到的时间',
+    `read_time` DATETIME NOT NULL DEFAULT Now() COMMENT '阅读到的时间',
     `active_time` DATETIME NULL COMMENT '消息最后更新的时间',
     `last_msg_id` BIGINT NULL COMMENT '会话最新消息id',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
@@ -163,7 +163,7 @@ CREATE TABLE `room_group`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'id',
     `room_id` BIGINT NOT NULL COMMENT '房间id',
     `name` VARCHAR(16) NOT NULL COMMENT '群名称',
-    `avatar` VARCHAR(256) NOT NULL COMMENT '群头像',
+    `avatar` VARCHAR(256) NULL COMMENT '群头像',
     `delete_status` INT NOT NULL DEFAULT '0'  COMMENT '逻辑删除(0-正常,1-删除)',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'

@@ -25,9 +25,11 @@ public class GroupMemberCache {
 
     @Cacheable(cacheNames = "member", key = "'groupMember'+#roomId")
     public List<Long> getMemberUidList(Long roomId) {
-        RoomGroup roomGroup = roomGroupDao.getById(roomId);
-        if (Objects.isNull(roomGroup)) return null;
-        return groupMemberDao.getMemberUidList(roomId);
+        RoomGroup roomGroup = roomGroupDao.getByRoomId(roomId);
+        if (Objects.isNull(roomGroup)) {
+            return null;
+        }
+        return groupMemberDao.getMemberUidList(roomGroup.getId());
     }
 
     @CacheEvict(cacheNames = "member", key = "'groupMember'+#roomId")

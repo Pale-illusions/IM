@@ -2,7 +2,9 @@ package com.iflove.api.chat.service.adapter;
 
 import com.iflove.api.chat.domain.entity.Room;
 import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.domain.entity.RoomGroup;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
+import com.iflove.api.user.domain.entity.User;
 import com.iflove.common.domain.enums.NormalOrNoEnum;
 
 import java.util.List;
@@ -40,6 +42,14 @@ public class ChatAdapter {
                 .userId2(collect.get(1))
                 .roomKey(generateRoomKey(collect))
                 .status(NormalOrNoEnum.NORMAL.getStatus())
+                .build();
+    }
+
+    public static RoomGroup buildRoomGroup(User user, Long id) {
+        return RoomGroup.builder()
+                .name(user.getName() + "的群组")
+                .avatar(user.getAvatar())
+                .roomId(id)
                 .build();
     }
 }

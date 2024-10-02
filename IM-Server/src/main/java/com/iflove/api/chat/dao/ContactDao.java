@@ -8,7 +8,9 @@ import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author IFLOVE
@@ -29,6 +31,10 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
         return CursorUtils.getCursorPageByMysql(this, req, wrapper -> {
             wrapper.eq(Contact::getUserId, uid);
         }, Contact::getActiveTime);
+    }
+
+    public void refreshOrCreateActiveTime(Long roomId, List<Long> memberUidList, Long messageId, Date msgCreateTime) {
+        baseMapper.refreshOrCreateActiveTime(roomId, memberUidList, messageId, msgCreateTime);
     }
 }
 

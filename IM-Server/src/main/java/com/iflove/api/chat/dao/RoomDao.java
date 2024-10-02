@@ -5,6 +5,8 @@ import com.iflove.api.chat.domain.entity.Room;
 import com.iflove.api.chat.mapper.RoomMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
 * @author IFLOVE
 * @description 针对表【room(房间表)】的数据库操作Service实现
@@ -12,7 +14,13 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class RoomDao extends ServiceImpl<RoomMapper, Room> {
-
+    public void refreshActiveTime(Long roomId, Long messageId, Date msgCreateTime) {
+        lambdaUpdate()
+                .eq(Room::getId, roomId)
+                .set(Room::getLastMsgId, messageId)
+                .set(Room::getActiveTime, msgCreateTime)
+                .update();
+    }
 }
 
 

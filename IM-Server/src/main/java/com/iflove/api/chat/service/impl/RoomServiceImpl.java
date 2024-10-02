@@ -1,14 +1,10 @@
 package com.iflove.api.chat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.iflove.api.chat.dao.MessageDao;
-import com.iflove.api.chat.dao.RoomDao;
-import com.iflove.api.chat.dao.RoomFriendDao;
+import com.iflove.api.chat.dao.*;
 import com.iflove.api.chat.domain.dto.RoomBaseInfo;
-import com.iflove.api.chat.domain.entity.Message;
-import com.iflove.api.chat.domain.entity.Room;
-import com.iflove.api.chat.domain.entity.RoomFriend;
-import com.iflove.api.chat.domain.entity.RoomGroup;
+import com.iflove.api.chat.domain.entity.*;
+import com.iflove.api.chat.domain.enums.GroupRoleEnum;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.service.RoomService;
@@ -44,6 +40,12 @@ public class RoomServiceImpl implements RoomService {
     private RoomDao roomDao;
     @Resource
     private RoomFriendCache roomFriendCache;
+    @Resource
+    private UserInfoCache userInfoCache;
+    @Resource
+    private RoomGroupDao roomGroupDao;
+    @Resource
+    private GroupMemberDao groupMemberDao;
 
     /**
      * 创建一个单聊房间
@@ -100,6 +102,31 @@ public class RoomServiceImpl implements RoomService {
     public RoomFriend getFriendRoom(Long uid, Long friendId) {
         String key = ChatAdapter.generateRoomKey(List.of(uid, friendId));
         return roomFriendDao.getByKey(key);
+    }
+
+    /**
+     * 创建群聊
+     * @param uid 用户id
+     * @return 群聊
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RoomGroup createRoomGroup(Long uid) {
+        // TODO 可能可以做个创建群聊数量限制？
+        User user = userInfoCache.get(uid);
+        // 创建 房间
+        Room room = createRoom(RoomTypeEnum.GROUP);
+        // 保存群聊信息
+        RoomGroup roomGroup = ChatAdapter.buildRoomGroup(user, room.getId());
+        roomGroupDao.save(roomGroup);
+        // 保存群主信息
+        GroupMember leader = GroupMember.builder()
+                .role(GroupRoleEnum.LEADER.getType())
+                .groupId(roomGroup.getId())
+                .userId(uid)
+                .build();
+        groupMemberDao.save(leader);
+        return roomGroup;
     }
 
     private RoomFriend createRoomFriend(Long RoomId, List<Long> uidList) {

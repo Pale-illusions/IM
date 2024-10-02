@@ -20,6 +20,12 @@ public class RoomGroupDao extends ServiceImpl<RoomGroupMapper, RoomGroup> {
                 .in(RoomGroup::getRoomId, roomIds)
                 .list();
     }
+
+    public RoomGroup getByRoomId(Long roomId) {
+        return lambdaQuery()
+                .eq(RoomGroup::getRoomId, roomId)
+                .one();
+    }
 }
 
 

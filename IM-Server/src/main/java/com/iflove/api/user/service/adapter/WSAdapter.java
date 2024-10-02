@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.NumberWithFormat;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.jwt.JWTUtil;
+import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
 import com.iflove.api.user.domain.enums.WSRespTypeEnum;
@@ -84,6 +85,13 @@ public class WSAdapter {
         WSBaseResp<WSFriendApply> wsBaseResp = new WSBaseResp<>();
         wsBaseResp.setData(resp);
         wsBaseResp.setType(WSRespTypeEnum.FRIEND_APPLY.getType());
+        return wsBaseResp;
+    }
+
+    public static WSBaseResp<ChatMessageResp> buildMsgSend(ChatMessageResp msgResp) {
+        WSBaseResp<ChatMessageResp> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.MESSAGE.getType());
+        wsBaseResp.setData(msgResp);
         return wsBaseResp;
     }
 }

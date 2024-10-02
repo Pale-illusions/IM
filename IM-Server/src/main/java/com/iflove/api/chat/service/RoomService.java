@@ -2,6 +2,7 @@ package com.iflove.api.chat.service;
 
 
 import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.domain.entity.RoomGroup;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
@@ -34,4 +35,11 @@ public interface RoomService {
      * @return 好友房间
      */
     RoomFriend getFriendRoom(Long uid, Long friendId);
+
+    /**
+     * 创建群聊
+     * @param uid 用户id
+     * @return 群聊
+     */
+    RoomGroup createRoomGroup(Long uid);
 }

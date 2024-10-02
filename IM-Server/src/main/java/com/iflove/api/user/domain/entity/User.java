@@ -21,6 +21,9 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 public class User implements Serializable {
+    // 系统id
+    public static final Long SYSTEM_UID = -1L;
+
     /**
      * 用户id
      */

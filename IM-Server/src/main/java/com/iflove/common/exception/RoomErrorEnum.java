@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 public enum RoomErrorEnum implements ErrorEnum {
     ROOM_NOT_EXIST(30001, "房间号有误"),
     GROUP_NUMBER_INSUFFICIENT(30002, "群聊建群人数必须大于2"),
+    NOT_IN_GROUP(30003, "您不是群成员"),
     ;
 
     private final Integer code;

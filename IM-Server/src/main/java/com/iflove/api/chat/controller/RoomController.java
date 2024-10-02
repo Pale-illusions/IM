@@ -1,6 +1,7 @@
 package com.iflove.api.chat.controller;
 
 import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
+import com.iflove.api.chat.domain.vo.request.MemberAddReq;
 import com.iflove.api.chat.service.GroupMemberService;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.common.domain.vo.response.RestBean;
@@ -13,10 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author 苍镜月
@@ -49,5 +47,21 @@ public class RoomController {
     public RestBean<Long> createGroup(@Valid @RequestBody GroupCreateReq req) {
         Long uid = RequestHolder.get().getUid();
         return roomService.createGroup(req, uid);
+    }
+
+    /**
+     * 邀请成员
+     * @param req 邀请成员请求体
+     * @return {@link RestBean}
+     */
+    @PostMapping("group/member")
+    @Operation(summary = "邀请成员",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> addMember(@Valid @RequestBody MemberAddReq req) {
+        Long uid = RequestHolder.get().getUid();
+        return roomService.addMember(req, uid);
     }
 }

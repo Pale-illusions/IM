@@ -56,6 +56,8 @@ ALTER TABLE
     `contact` ADD INDEX `contact_create_time_index`(`create_time`);
 ALTER TABLE
     `contact` ADD INDEX `contact_update_time_index`(`update_time`);
+ALTER TABLE contact
+    ADD UNIQUE KEY unique_user_room (user_id, room_id);
 
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role`(

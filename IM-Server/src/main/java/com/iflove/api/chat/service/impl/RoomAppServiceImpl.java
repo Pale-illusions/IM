@@ -8,10 +8,13 @@ import com.iflove.api.chat.domain.dto.RoomBaseInfo;
 import com.iflove.api.chat.domain.entity.*;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
 import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
+import com.iflove.api.chat.domain.vo.request.MemberAddReq;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.api.chat.service.RoomService;
+import com.iflove.api.chat.service.adapter.MemberAdapter;
 import com.iflove.api.chat.service.adapter.RoomAdapter;
+import com.iflove.api.chat.service.cache.GroupMemberCache;
 import com.iflove.api.chat.service.cache.RoomCache;
 import com.iflove.api.chat.service.cache.RoomFriendCache;
 import com.iflove.api.chat.service.cache.RoomGroupCache;
@@ -60,6 +63,8 @@ public class RoomAppServiceImpl implements RoomAppService {
     private GroupMemberDao groupMemberDao;
     @Resource
     private ApplicationEventPublisher applicationEventPublisher;
+    @Resource
+    private GroupMemberCache groupMemberCache;
 
     /**
      * 会话列表
@@ -127,6 +132,7 @@ public class RoomAppServiceImpl implements RoomAppService {
     @Override
     @Transactional
     public RestBean<Long> createGroup(GroupCreateReq req, Long uid) {
+        // TODO 好友过滤
         // 去重且过滤创始人
         List<Long> distinctUidList = req.getUidList().stream().distinct().filter(o -> !Objects.equals(uid, o)).collect(Collectors.toList());
         // 群聊人数必须大于2
@@ -138,9 +144,39 @@ public class RoomAppServiceImpl implements RoomAppService {
         // 批量保存群成员
         List<GroupMember> groupMembers = RoomAdapter.buildGroupMemberBatch(distinctUidList, roomGroup.getId());
         groupMemberDao.saveBatch(groupMembers);
-        // 发送邀请加群信息
+        // 发布群成员添加事件
         applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, groupMembers, roomGroup, uid));
         return RestBean.success(roomGroup.getRoomId());
+    }
+
+    /**
+     * 邀请成员
+     * @param req 邀请成员请求体
+     * @return {@link RestBean}
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RestBean<Void> addMember(MemberAddReq req, Long uid) {
+        // TODO 好友过滤
+        Room room = roomCache.get(req.getRoomId());
+        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
+        // 房间不存在
+        if (Objects.isNull(room) || Objects.isNull(roomGroup)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
+        // 不是群成员
+        List<Long> memberUidList = groupMemberCache.getMemberUidList(req.getRoomId());
+        HashSet<Long> existUids = new HashSet<>(memberUidList);
+        if (!existUids.contains(uid)) return RestBean.failure(RoomErrorEnum.NOT_IN_GROUP);
+        // 过滤已存在的群成员，并去重
+        List<Long> newAddUidList = req.getUidList().stream().filter(o -> !existUids.contains(o)).distinct().collect(Collectors.toList());
+        // 新成员集合为空
+        if (CollectionUtil.isEmpty(newAddUidList)) return RestBean.success();
+        // 保存新成员
+        // FIXME 成员不存在, 报错, 后续应做到过滤不存在, 并返回提示信息
+        List<GroupMember> groupMembers = RoomAdapter.buildGroupMemberBatch(newAddUidList, roomGroup.getId());
+        groupMemberDao.saveBatch(groupMembers);
+        // 发布群成员添加事件
+        applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, groupMembers, roomGroup, uid));
+        return RestBean.success();
     }
 
 

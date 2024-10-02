@@ -25,4 +25,16 @@ public class MemberAdapter {
                 .build());
         return wsBaseResp;
     }
+
+    public static WSBaseResp<WSMemberChange> buildMemberDelWS(Long roomId, Long target) {
+        WSBaseResp<WSMemberChange> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.MEMBER_CHANGE.getType());
+        wsBaseResp.setData(WSMemberChange.builder()
+                .uid(target)
+                .roomId(roomId)
+                .changeType(WSMemberChange.CHANGE_TYPE_REMOVE)
+                .build()
+        );
+        return wsBaseResp;
+    }
 }

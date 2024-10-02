@@ -6,9 +6,11 @@ import com.iflove.api.chat.dao.GroupMemberDao;
 import com.iflove.api.chat.dao.MessageDao;
 import com.iflove.api.chat.domain.dto.RoomBaseInfo;
 import com.iflove.api.chat.domain.entity.*;
+import com.iflove.api.chat.domain.enums.GroupRoleEnum;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
 import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
 import com.iflove.api.chat.domain.vo.request.MemberAddReq;
+import com.iflove.api.chat.domain.vo.request.MemberDelReq;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.api.chat.service.RoomService;
@@ -26,6 +28,7 @@ import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.event.GroupMemberAddEvent;
+import com.iflove.common.event.GroupMemberDelEvent;
 import com.iflove.common.exception.FriendErrorEnum;
 import com.iflove.common.exception.RoomErrorEnum;
 import jakarta.annotation.Resource;
@@ -177,6 +180,61 @@ public class RoomAppServiceImpl implements RoomAppService {
         // 发布群成员添加事件
         applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, groupMembers, roomGroup, uid));
         return RestBean.success();
+    }
+
+    /**
+     * 删除成员
+     * @param req 删除成员请求体
+     * @return {@link RestBean}
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RestBean<Void> delMember(MemberDelReq req, Long uid) {
+        // 不能移除自己
+        if (Objects.equals(uid, req.getUid())) return RestBean.failure(RoomErrorEnum.OPERATE_ON_SELF);
+        Room room = roomCache.get(req.getRoomId());
+        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
+        // 房间不存在
+        if (Objects.isNull(room) || Objects.isNull(roomGroup)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
+        // 操作者不是群成员
+        GroupMember self = groupMemberDao.getMember(roomGroup.getId(), uid);
+        if (Objects.isNull(self)) return RestBean.failure(RoomErrorEnum.NOT_IN_GROUP);
+        // 操作对象不是群成员
+        GroupMember target = groupMemberDao.getMember(roomGroup.getId(), req.getUid());
+        if (Objects.isNull(target)) return RestBean.failure(RoomErrorEnum.MEMBER_NOT_EXIST);
+        // 判断权限
+        // 1. 群主无法被移除
+        if (isLeader(target)) return RestBean.failure(RoomErrorEnum.PERMISSION_NOT_GRANTED);
+        // 2. 管理员 判断是否是群主操作
+        if (isManager(target) && !isLeader(self)) return RestBean.failure(RoomErrorEnum.PERMISSION_NOT_GRANTED);
+        // 3. 普通成员 判断是否有权限操作
+        if (!hasPower(self)) return RestBean.failure(RoomErrorEnum.PERMISSION_NOT_GRANTED);
+        // 移除 操作对象
+        groupMemberDao.removeById(target.getId());
+        // 移除 操作对象 会话
+        contactDao.removeByRoomIdAndUserId(roomGroup.getRoomId(), target.getUserId());
+        // 发布 成员移除 事件
+        applicationEventPublisher.publishEvent(new GroupMemberDelEvent(this, target.getUserId(), roomGroup));
+        return RestBean.success();
+    }
+
+    /**
+     * 判断是否为群主
+     */
+    private boolean isLeader(GroupMember member) {
+        return Objects.equals(member.getRole(), GroupRoleEnum.LEADER.getType());
+    }
+    /**
+     * 判断是否为群管理员
+     */
+    private boolean isManager(GroupMember member) {
+        return Objects.equals(member.getRole(), GroupRoleEnum.MANAGER.getType());
+    }
+    /**
+     * 判断是否拥有操作权限 (即是否为群主或管理员)
+     */
+    private boolean hasPower(GroupMember member) {
+        return GroupRoleEnum.ADMIN_LIST.contains(member.getRole());
     }
 
 

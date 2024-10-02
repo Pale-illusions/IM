@@ -2,6 +2,7 @@ package com.iflove.api.chat.service;
 
 import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
 import com.iflove.api.chat.domain.vo.request.MemberAddReq;
+import com.iflove.api.chat.domain.vo.request.MemberDelReq;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
@@ -47,4 +48,11 @@ public interface RoomAppService {
      * @return {@link RestBean}
      */
     RestBean<Void> addMember(MemberAddReq req, Long uid);
+
+    /**
+     * 删除成员
+     * @param req 删除成员请求体
+     * @return {@link RestBean}
+     */
+    RestBean<Void> delMember(MemberDelReq req, Long uid);
 }

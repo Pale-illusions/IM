@@ -36,6 +36,13 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
     public void refreshOrCreateActiveTime(Long roomId, List<Long> memberUidList, Long messageId, Date msgCreateTime) {
         baseMapper.refreshOrCreateActiveTime(roomId, memberUidList, messageId, msgCreateTime);
     }
+
+    public void removeByRoomIdAndUserId(Long roomId, Long userId) {
+        lambdaUpdate()
+                .eq(Contact::getRoomId, roomId)
+                .eq(Contact::getUserId, userId)
+                .remove();
+    }
 }
 
 

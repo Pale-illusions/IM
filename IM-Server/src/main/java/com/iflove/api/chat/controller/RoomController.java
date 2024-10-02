@@ -2,6 +2,7 @@ package com.iflove.api.chat.controller;
 
 import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
 import com.iflove.api.chat.domain.vo.request.MemberAddReq;
+import com.iflove.api.chat.domain.vo.request.MemberDelReq;
 import com.iflove.api.chat.service.GroupMemberService;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.common.domain.vo.response.RestBean;
@@ -31,7 +32,8 @@ public class RoomController {
     @Resource
     private GroupMemberService groupMemberService;
 
-    // TODO 添加管理，撤销管理员，移除成员，添加成员，退出群聊，群成员列表，群组详情，解散群聊
+    // TODO 添加管理，撤销管理员，移除成员，，退出群聊，群成员列表，群组详情，解散群聊
+    // 已完成: 添加成员
 
     /**
      * 创建群聊
@@ -63,5 +65,21 @@ public class RoomController {
     public RestBean<Void> addMember(@Valid @RequestBody MemberAddReq req) {
         Long uid = RequestHolder.get().getUid();
         return roomService.addMember(req, uid);
+    }
+
+    /**
+     * 删除成员
+     * @param req 删除成员请求体
+     * @return {@link RestBean}
+     */
+    @DeleteMapping("group/member")
+    @Operation(summary = "删除成员",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> delMember(@Valid @RequestBody MemberDelReq req) {
+        Long uid = RequestHolder.get().getUid();
+        return roomService.delMember(req, uid);
     }
 }

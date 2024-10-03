@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ValidationException.class)
     public RestBean<Void> badCredentialException(ValidationException e) {
         log.warn("Resolve [{}: {}]", e.getClass().getName(), e.getMessage());
-        return RestBean.failure(CommonErrorEnum.PARAM_VALID);
+        return RestBean.failure(502, e.getMessage());
     }
 
     /**

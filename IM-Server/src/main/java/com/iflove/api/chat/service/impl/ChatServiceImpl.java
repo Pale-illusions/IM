@@ -1,21 +1,18 @@
 package com.iflove.api.chat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.iflove.api.chat.dao.GroupMemberDao;
 import com.iflove.api.chat.dao.MessageDao;
-import com.iflove.api.chat.domain.entity.Message;
-import com.iflove.api.chat.domain.entity.Room;
-import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.domain.entity.*;
 import com.iflove.api.chat.domain.vo.request.msg.ChatMessagePageReq;
 import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.api.chat.service.ChatService;
 import com.iflove.api.chat.service.adapter.MessageAdapter;
-import com.iflove.api.chat.service.cache.MsgCache;
-import com.iflove.api.chat.service.cache.RoomCache;
-import com.iflove.api.chat.service.cache.RoomFriendCache;
-import com.iflove.api.chat.service.cache.RoomGroupCache;
+import com.iflove.api.chat.service.cache.*;
 import com.iflove.api.chat.service.strategy.AbstractMsgHandler;
 import com.iflove.api.chat.service.strategy.MsgHandlerFactory;
+import com.iflove.api.user.domain.entity.User;
 import com.iflove.common.domain.enums.NormalOrNoEnum;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
@@ -50,6 +47,8 @@ public class ChatServiceImpl implements ChatService {
     private RoomGroupCache roomGroupCache;
     @Resource
     private MsgCache msgCache;
+    @Resource
+    private GroupMemberDao groupMemberDao;
 
     /**
      * 发送消息
@@ -72,6 +71,7 @@ public class ChatServiceImpl implements ChatService {
 
     private void checkRoom(Long roomId, Long uid) {
         Room room = roomCache.get(roomId);
+        if (Objects.isNull(room)) throw new ValidationException("房间不存在");
         // 单聊处理逻辑
         if (room.isRoomFriend()) {
             RoomFriend roomFriend = roomFriendCache.get(room.getId());
@@ -84,9 +84,14 @@ public class ChatServiceImpl implements ChatService {
                 throw new ValidationException("您和对方还不是好友");
             }
         }
-        // TODO 群聊处理逻辑
+        // 群聊处理逻辑
         if (room.isRoomGroup()) {
-
+            RoomGroup roomGroup = roomGroupCache.get(roomId);
+            GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
+            // 保证系统消息正确发送
+            if (Objects.isNull(member) && !Objects.equals(uid, User.SYSTEM_UID)) {
+                throw new ValidationException("您不是群成员");
+            }
         }
     }
 
@@ -139,6 +144,4 @@ public class ChatServiceImpl implements ChatService {
         }
         return RestBean.success(CursorPageBaseResp.init(cursorPage, getMsgRespBatch(cursorPage.getList())));
     }
-
-
 }

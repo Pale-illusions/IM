@@ -5,7 +5,6 @@ import com.iflove.api.user.dao.OfflineMessageDao;
 import com.iflove.api.user.domain.entity.OfflineMessage;
 import com.iflove.api.user.domain.enums.WSRespTypeEnum;
 import com.iflove.api.user.domain.vo.response.ws.OfflineMessageExtra;
-import com.iflove.api.user.domain.vo.response.ws.WSMessage;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 

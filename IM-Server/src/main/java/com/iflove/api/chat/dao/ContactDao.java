@@ -43,6 +43,13 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
                 .in(CollectionUtil.isNotEmpty(uidList), Contact::getUserId, uidList)
                 .remove();
     }
+
+    public Contact get(Long uid, Long roomId) {
+        return lambdaQuery()
+                .eq(Contact::getUserId, uid)
+                .eq(Contact::getRoomId, roomId)
+                .one();
+    }
 }
 
 

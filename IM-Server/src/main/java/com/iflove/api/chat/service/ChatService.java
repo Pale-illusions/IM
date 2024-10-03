@@ -43,4 +43,11 @@ public interface ChatService {
      */
     RestBean<CursorPageBaseResp<ChatMessageResp>> getMsgPage(ChatMessagePageReq req, Long uid);
 
+    /**
+     * 消息阅读上报
+     * @param roomId 房间id
+     * @param uid 用户id
+     * @return {@link RestBean}
+     */
+    RestBean<Void> msgRead(Long roomId, Long uid);
 }

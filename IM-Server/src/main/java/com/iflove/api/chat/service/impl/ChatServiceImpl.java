@@ -1,8 +1,7 @@
 package com.iflove.api.chat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.iflove.api.chat.dao.GroupMemberDao;
-import com.iflove.api.chat.dao.MessageDao;
+import com.iflove.api.chat.dao.*;
 import com.iflove.api.chat.domain.entity.*;
 import com.iflove.api.chat.domain.vo.request.msg.ChatMessagePageReq;
 import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
@@ -17,16 +16,14 @@ import com.iflove.common.domain.enums.NormalOrNoEnum;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.event.MessageSendEvent;
+import com.iflove.common.exception.RoomErrorEnum;
 import jakarta.annotation.Resource;
 import jakarta.validation.ValidationException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author 苍镜月
@@ -46,9 +43,13 @@ public class ChatServiceImpl implements ChatService {
     @Resource
     private RoomGroupCache roomGroupCache;
     @Resource
-    private MsgCache msgCache;
+    private ContactDao contactDao;
     @Resource
     private GroupMemberDao groupMemberDao;
+    @Resource
+    private RoomFriendDao roomFriendDao;
+    @Resource
+    private RoomGroupDao roomGroupDao;
 
     /**
      * 发送消息
@@ -143,5 +144,46 @@ public class ChatServiceImpl implements ChatService {
             return RestBean.success(CursorPageBaseResp.empty());
         }
         return RestBean.success(CursorPageBaseResp.init(cursorPage, getMsgRespBatch(cursorPage.getList())));
+    }
+
+    /**
+     * 消息阅读上报
+     * @param roomId 房间id
+     * @param uid 用户id
+     * @return {@link RestBean}
+     */
+    @Override
+    @Transactional
+    public RestBean<Void> msgRead(Long roomId, Long uid) {
+        // 检查房间是否存在
+        Room room = roomCache.get(roomId);
+        if (Objects.isNull(room)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
+        Contact contact = contactDao.get(uid, roomId);
+        // 存在会话, 更新阅读时间
+        if (Objects.nonNull(contact)) {
+            contactDao.updateById(Contact.builder()
+                    .id(contact.getId())
+                    .readTime(new Date())
+                    .build());
+        } else {
+            // 单聊校验
+            RoomFriend roomFriend = roomFriendDao.getByRoomId(roomId);
+            if (!Objects.equals(uid, roomFriend.getUserId1()) && !Objects.equals(uid, roomFriend.getUserId2())) {
+                return RestBean.failure(RoomErrorEnum.NOT_IN_GROUP);
+            }
+            // 群聊校验
+            RoomGroup roomGroup = roomGroupDao.getByRoomId(roomId);
+            GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
+            if (Objects.isNull(member)) {
+                return RestBean.failure(RoomErrorEnum.NOT_IN_GROUP);
+            }
+            // 校验通过, 新建会话
+            contactDao.save(Contact.builder()
+                    .userId(uid)
+                    .roomId(roomId)
+                    .readTime(new Date())
+                    .build());
+        }
+        return RestBean.success();
     }
 }

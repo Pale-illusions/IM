@@ -56,12 +56,6 @@ public class MsgSendConsumer implements RocketMQListener<SendMessageDTO> {
     @Resource
     private ContactDao contactDao;
 
-    // TODO 测试, 需要删除
-//    @Override
-//    public void onMessage(SendMessageDTO dto) {
-//        log.info("message:{}", dto);
-//    }
-
     @Override
     public void onMessage(SendMessageDTO dto) {
         Message message = messageDao.getById(dto.getMsgId());

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,5 +63,19 @@ public class ChatController {
         return chatService.getMsgPage(req, RequestHolder.get().getUid());
     }
 
-
+    /**
+     * 消息阅读上报
+     * @param roomId 房间id
+     * @return {@link RestBean}
+     */
+    @PutMapping("msg/read/{roomId}")
+    @Operation(summary = "消息阅读上报",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> msgRead(@PathVariable @NotNull Long roomId) {
+        Long uid = RequestHolder.get().getUid();
+        return chatService.msgRead(roomId, uid);
+    }
 }

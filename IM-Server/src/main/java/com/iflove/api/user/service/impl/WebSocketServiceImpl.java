@@ -146,6 +146,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void sendToUid(WSBaseResp<?> wsBaseResp, Long uid) {
         CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
         if (CollectionUtil.isEmpty(channels)) {
+            // TODO 实现离线消息
             log.info("用户: {} 不在线", uid);
             return;
         }

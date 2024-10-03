@@ -24,11 +24,9 @@ public class UserApplyListener {
     @Resource
     PushService pushService;
 
-    // 保证事务完成之后推送
     @Async
     @TransactionalEventListener(classes = UserApplyEvent.class, fallbackExecution = true)
     public void notifyFriend(UserApplyEvent event) {
-        // TODO 事务逻辑
         UserApply userApply = event.getUserApply();
         Long unreadCount = userApplyDao.getUnreadCount(userApply.getTargetId());
         pushService.sendPushMsg(WSAdapter.buildApplySend(new WSFriendApply(userApply.getUserId(), unreadCount)), userApply.getTargetId());

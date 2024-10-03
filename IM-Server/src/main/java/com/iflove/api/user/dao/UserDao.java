@@ -38,6 +38,13 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
             wrapper.in(CollectionUtil.isNotEmpty(memberUidList), User::getId, memberUidList);
         }, User::getLastOptTime);
     }
+
+    public Long getOnlineCount(List<Long> memberUidList) {
+        return lambdaQuery()
+                .eq(User::getStatus, ChatActiveStatusEnum.ONLINE.getStatus())
+                .in(CollectionUtil.isNotEmpty(memberUidList), User::getId, memberUidList)
+                .count();
+    }
 }
 
 

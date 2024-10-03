@@ -20,6 +20,7 @@ public enum GroupRoleEnum {
     LEADER(1, "群主"),
     MANAGER(2, "管理"),
     MEMBER(3, "普通成员"),
+    NOT_IN_GROUP(4, "不在群聊内"),
     ;
 
     private final Integer type;

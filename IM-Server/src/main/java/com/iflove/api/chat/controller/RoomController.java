@@ -7,6 +7,7 @@ import com.iflove.api.chat.domain.vo.request.member.MemberAddReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberPageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
+import com.iflove.api.chat.domain.vo.response.GroupInfoResp;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -130,5 +132,21 @@ public class RoomController {
     public RestBean<Void> revokeAdmin(@Valid @RequestBody AdminRevokeReq req) {
         Long uid = RequestHolder.get().getUid();
         return roomService.revokeAdmin(uid, req);
+    }
+
+    /**
+     * 群组详情
+     * @param roomId 房间id
+     * @return {@link RestBean}<{@link GroupInfoResp}
+     */
+    @GetMapping("group/{roomId}")
+    @Operation(summary = "群组详情",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<GroupInfoResp> getGroupDetail(@PathVariable @NotNull Long roomId) {
+        Long uid = RequestHolder.get().getUid();
+        return roomService.getGroupDetail(uid, roomId);
     }
 }

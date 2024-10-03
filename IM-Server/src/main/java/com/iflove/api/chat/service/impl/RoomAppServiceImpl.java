@@ -18,6 +18,7 @@ import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberPageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
+import com.iflove.api.chat.domain.vo.response.GroupInfoResp;
 import com.iflove.api.chat.service.ChatService;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.api.chat.service.RoomService;
@@ -33,6 +34,7 @@ import com.iflove.api.chat.service.strategy.MsgHandlerFactory;
 import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
+import com.iflove.api.user.service.cache.UserCache;
 import com.iflove.api.user.service.cache.UserInfoCache;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
@@ -79,8 +81,6 @@ public class RoomAppServiceImpl implements RoomAppService {
     private GroupMemberCache groupMemberCache;
     @Resource
     private UserDao userDao;
-    @Resource
-    private RoomGroupDao roomGroupDao;
 
     /**
      * 会话列表
@@ -247,7 +247,7 @@ public class RoomAppServiceImpl implements RoomAppService {
     @Override
     @Transactional
     public RestBean<Void> addAdmin(Long uid, AdminAddReq req) {
-        RoomGroup roomGroup = roomGroupDao.getByRoomId(req.getRoomId());
+        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
         // 房间不存在
         if (Objects.isNull(roomGroup)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
         // 判断用户是否在群中
@@ -268,7 +268,7 @@ public class RoomAppServiceImpl implements RoomAppService {
      */
     @Override
     public RestBean<Void> revokeAdmin(Long uid, AdminRevokeReq req) {
-        RoomGroup roomGroup = roomGroupDao.getByRoomId(req.getRoomId());
+        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
         // 房间不存在
         if (Objects.isNull(roomGroup)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
         // 判断用户是否在群中
@@ -279,6 +279,41 @@ public class RoomAppServiceImpl implements RoomAppService {
         // 撤销管理员
         groupMemberDao.revokeAdmin(roomGroup.getId(), req.getUidList());
         return RestBean.success();
+    }
+
+    /**
+     * 群组详情
+     * @param uid 用户id
+     * @param roomId 房间id
+     * @return {@link RestBean}<{@link GroupInfoResp}
+     */
+    @Override
+    public RestBean<GroupInfoResp> getGroupDetail(Long uid, Long roomId) {
+        RoomGroup roomGroup = roomGroupCache.get(roomId);
+        Room room = roomCache.get(roomId);
+        // 房间不存在
+        if (Objects.isNull(roomGroup) || Objects.isNull(room)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
+        // 获取群聊在线人数
+        List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+        Long onlineCount = userDao.getOnlineCount(memberUidList);
+        GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
+        // 获取用户 role
+        Integer role;
+        if (Objects.isNull(member)) {
+            role = GroupRoleEnum.NOT_IN_GROUP.getType();
+        } else {
+            role = member.getRole();
+        }
+        // 组装结果
+        return RestBean.success(
+                GroupInfoResp.builder()
+                        .groupName(roomGroup.getName())
+                        .avatar(roomGroup.getAvatar())
+                        .onlineNum(onlineCount)
+                        .role(role)
+                        .roomId(roomId)
+                        .build()
+        );
     }
 
     /**

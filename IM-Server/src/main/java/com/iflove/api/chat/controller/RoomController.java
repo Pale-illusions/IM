@@ -1,5 +1,7 @@
 package com.iflove.api.chat.controller;
 
+import com.iflove.api.chat.domain.vo.request.admin.AdminAddReq;
+import com.iflove.api.chat.domain.vo.request.admin.AdminRevokeReq;
 import com.iflove.api.chat.domain.vo.request.member.GroupCreateReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberAddReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
@@ -32,8 +34,8 @@ public class RoomController {
     @Resource
     private RoomAppService roomService;
 
-    // TODO 添加管理，撤销管理员，，，退出群聊，群成员列表，群组详情，解散群聊
-    // 已完成: 添加成员 移除成员
+    // TODO ，，，退出群聊，，群组详情，解散群聊
+    // 已完成: 添加成员 移除成员 群成员列表 添加管理，撤销管理员
 
     /**
      * 创建群聊
@@ -96,5 +98,37 @@ public class RoomController {
     })
     public RestBean<CursorPageBaseResp<ChatMemberResp>> getMemberPage(@Valid MemberPageReq req) {
         return roomService.getMemberPage(req);
+    }
+
+    /**
+     * 添加管理员
+     * @param req 添加管理员请求体
+     * @return {@link RestBean}
+     */
+    @PutMapping("group/admin")
+    @Operation(summary = "添加管理员",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> addAdmin(@Valid @RequestBody AdminAddReq req) {
+        Long uid = RequestHolder.get().getUid();
+        return roomService.addAdmin(uid, req);
+    }
+
+    /**
+     * 撤销管理员
+     * @param req 撤销管理员请求体
+     * @return {@link RestBean}
+     */
+    @DeleteMapping("group/admin")
+    @Operation(summary = "撤销管理员",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> revokeAdmin(@Valid @RequestBody AdminRevokeReq req) {
+        Long uid = RequestHolder.get().getUid();
+        return roomService.revokeAdmin(uid, req);
     }
 }

@@ -2,6 +2,7 @@ package com.iflove.api.chat.dao;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.chat.domain.entity.GroupMember;
+import com.iflove.api.chat.domain.enums.GroupRoleEnum;
 import com.iflove.api.chat.mapper.GroupMemberMapper;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,26 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .select(GroupMember::getUserId, GroupMember::getRole)
                 .list();
         return list.stream().collect(Collectors.toMap(GroupMember::getUserId, GroupMember::getRole));
+    }
+
+    public void addAdmin(Long groupId, List<Long> uidList) {
+        List<Long> distinctUidList = uidList.stream().distinct().collect(Collectors.toList());;
+        lambdaUpdate()
+                .eq(GroupMember::getGroupId, groupId)
+                .eq(GroupMember::getRole, GroupRoleEnum.MEMBER.getType())
+                .in(GroupMember::getUserId, distinctUidList)
+                .set(GroupMember::getRole, GroupRoleEnum.MANAGER.getType())
+                .update();
+    }
+
+    public void revokeAdmin(Long groupId, List<Long> uidList) {
+        List<Long> distinctUidList = uidList.stream().distinct().collect(Collectors.toList());;
+        lambdaUpdate()
+                .eq(GroupMember::getGroupId, groupId)
+                .eq(GroupMember::getRole, GroupRoleEnum.MANAGER.getType())
+                .in(GroupMember::getUserId, distinctUidList)
+                .set(GroupMember::getRole, GroupRoleEnum.MEMBER.getType())
+                .update();
     }
 }
 

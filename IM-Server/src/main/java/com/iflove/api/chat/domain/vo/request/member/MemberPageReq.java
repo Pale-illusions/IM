@@ -1,4 +1,4 @@
-package com.iflove.api.chat.domain.vo.request;
+package com.iflove.api.chat.domain.vo.request.member;
 
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,14 +11,15 @@ import lombok.NoArgsConstructor;
 /**
  * @author 苍镜月
  * @version 1.0
- * @implNote 消息列表请求
+ * @implNote 成员列表请求体
  */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessagePageReq extends CursorPageBaseReq {
+@Builder
+@Schema(description = "成员列表请求体")
+public class MemberPageReq extends CursorPageBaseReq {
+    @Schema(description = "房间号")
     @NotNull
-    @Schema(description = "房间id")
     private Long roomId;
 }

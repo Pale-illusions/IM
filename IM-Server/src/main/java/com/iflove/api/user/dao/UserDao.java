@@ -1,8 +1,13 @@
 package com.iflove.api.user.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.user.domain.entity.User;
+import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
 import com.iflove.api.user.mapper.UserMapper;
+import com.iflove.common.domain.vo.request.CursorPageBaseReq;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
+import com.iflove.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +30,13 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
                 .in(User::getId, friendIds)
                 .select(User::getId, User::getStatus, User::getName, User::getAvatar)
                 .list();
+    }
+
+    public CursorPageBaseResp<User> getCursorPage(List<Long> memberUidList, CursorPageBaseReq cursorPageBaseReq, ChatActiveStatusEnum chatActiveStatusEnum) {
+        return CursorUtils.getCursorPageByMysql(this, cursorPageBaseReq, wrapper -> {
+            wrapper.eq(User::getStatus, chatActiveStatusEnum.getStatus());
+            wrapper.in(CollectionUtil.isNotEmpty(memberUidList), User::getId, memberUidList);
+        }, User::getLastOptTime);
     }
 }
 

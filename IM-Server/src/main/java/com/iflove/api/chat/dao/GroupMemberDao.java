@@ -6,6 +6,7 @@ import com.iflove.api.chat.mapper.GroupMemberMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -16,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> {
 
-    public List<Long> getMemberUidList(Long roomId) {
+    public List<Long> getMemberUidList(Long groupId) {
         return lambdaQuery()
-                .eq(GroupMember::getGroupId, roomId)
+                .eq(GroupMember::getGroupId, groupId)
                 .select(GroupMember::getUserId)
                 .list()
                 .stream()
@@ -31,6 +32,15 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .eq(GroupMember::getGroupId, groupId)
                 .eq(GroupMember::getUserId, uid)
                 .one();
+    }
+
+    public Map<Long, Integer> getMemberMapRole(Long groupId, List<Long> uidList) {
+        List<GroupMember> list = lambdaQuery()
+                .eq(GroupMember::getGroupId, groupId)
+                .in(GroupMember::getUserId, uidList)
+                .select(GroupMember::getUserId, GroupMember::getRole)
+                .list();
+        return list.stream().collect(Collectors.toMap(GroupMember::getUserId, GroupMember::getRole));
     }
 }
 

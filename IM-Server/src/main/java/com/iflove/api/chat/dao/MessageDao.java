@@ -3,7 +3,6 @@ package com.iflove.api.chat.dao;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.chat.domain.entity.Message;
 import com.iflove.api.chat.domain.enums.MessageStatusEnum;
-import com.iflove.api.chat.domain.vo.request.ChatMessagePageReq;
 import com.iflove.api.chat.mapper.MessageMapper;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;

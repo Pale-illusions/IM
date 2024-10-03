@@ -1,10 +1,15 @@
 package com.iflove.api.chat.service.adapter;
 
+import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.enums.WSRespTypeEnum;
 import com.iflove.api.user.domain.vo.response.ws.WSBaseResp;
 import com.iflove.api.user.domain.vo.response.ws.WSMemberChange;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 苍镜月
@@ -36,5 +41,14 @@ public class MemberAdapter {
                 .build()
         );
         return wsBaseResp;
+    }
+
+    public static List<ChatMemberResp> buildMember(List<User> list) {
+        return list.stream().map(a -> ChatMemberResp.builder()
+                .activeStatus(a.getStatus())
+                .lastOptTime(a.getLastOptTime())
+                .uid(a.getId())
+                .build())
+                .collect(Collectors.toList());
     }
 }

@@ -5,7 +5,7 @@ import com.iflove.api.chat.domain.entity.Message;
 import com.iflove.api.chat.domain.entity.msg.TextMsgDTO;
 import com.iflove.api.chat.domain.enums.MessageStatusEnum;
 import com.iflove.api.chat.domain.enums.MessageTypeEnum;
-import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.api.chat.service.strategy.AbstractMsgHandler;
 import com.iflove.api.chat.service.strategy.MsgHandlerFactory;

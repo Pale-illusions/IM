@@ -1,8 +1,8 @@
 package com.iflove.api.chat.service;
 
 import com.iflove.api.chat.domain.entity.Message;
-import com.iflove.api.chat.domain.vo.request.ChatMessagePageReq;
-import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessagePageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;

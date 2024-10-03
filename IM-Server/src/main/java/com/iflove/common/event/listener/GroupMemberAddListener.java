@@ -2,7 +2,7 @@ package com.iflove.common.event.listener;
 
 import com.iflove.api.chat.domain.entity.GroupMember;
 import com.iflove.api.chat.domain.entity.RoomGroup;
-import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
 import com.iflove.api.chat.service.ChatService;
 import com.iflove.api.chat.service.adapter.MemberAdapter;
 import com.iflove.api.chat.service.adapter.RoomAdapter;

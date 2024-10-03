@@ -5,7 +5,7 @@ import com.iflove.api.chat.domain.entity.RoomGroup;
 import com.iflove.api.chat.domain.entity.msg.SystemMsgDTO;
 import com.iflove.api.chat.domain.enums.GroupRoleEnum;
 import com.iflove.api.chat.domain.enums.MessageTypeEnum;
-import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
 import com.iflove.api.user.domain.entity.User;
 
 import java.util.List;

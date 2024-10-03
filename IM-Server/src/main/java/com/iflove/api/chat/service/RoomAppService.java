@@ -1,8 +1,10 @@
 package com.iflove.api.chat.service;
 
-import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
-import com.iflove.api.chat.domain.vo.request.MemberAddReq;
-import com.iflove.api.chat.domain.vo.request.MemberDelReq;
+import com.iflove.api.chat.domain.vo.request.member.GroupCreateReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberAddReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberPageReq;
+import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
@@ -55,4 +57,11 @@ public interface RoomAppService {
      * @return {@link RestBean}
      */
     RestBean<Void> delMember(MemberDelReq req, Long uid);
+
+    /**
+     * 成员列表
+     * @param req 成员列表请求体
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatMemberResp}
+     */
+    RestBean<CursorPageBaseResp<ChatMemberResp>> getMemberPage(MemberPageReq req);
 }

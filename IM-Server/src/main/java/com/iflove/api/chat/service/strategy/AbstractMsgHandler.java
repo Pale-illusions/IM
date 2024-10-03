@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.iflove.api.chat.dao.MessageDao;
 import com.iflove.api.chat.domain.entity.Message;
 import com.iflove.api.chat.domain.enums.MessageTypeEnum;
-import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
 import com.iflove.api.chat.service.adapter.MessageAdapter;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -15,7 +15,6 @@ import jakarta.validation.Validator;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Set;
 

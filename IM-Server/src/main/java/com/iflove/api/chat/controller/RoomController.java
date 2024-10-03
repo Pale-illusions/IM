@@ -1,10 +1,12 @@
 package com.iflove.api.chat.controller;
 
-import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
-import com.iflove.api.chat.domain.vo.request.MemberAddReq;
-import com.iflove.api.chat.domain.vo.request.MemberDelReq;
-import com.iflove.api.chat.service.GroupMemberService;
+import com.iflove.api.chat.domain.vo.request.member.GroupCreateReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberAddReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberPageReq;
+import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
 import com.iflove.api.chat.service.RoomAppService;
+import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,11 +31,9 @@ import org.springframework.web.bind.annotation.*;
 public class RoomController {
     @Resource
     private RoomAppService roomService;
-    @Resource
-    private GroupMemberService groupMemberService;
 
-    // TODO 添加管理，撤销管理员，移除成员，，退出群聊，群成员列表，群组详情，解散群聊
-    // 已完成: 添加成员
+    // TODO 添加管理，撤销管理员，，，退出群聊，群成员列表，群组详情，解散群聊
+    // 已完成: 添加成员 移除成员
 
     /**
      * 创建群聊
@@ -81,5 +81,20 @@ public class RoomController {
     public RestBean<Void> delMember(@Valid @RequestBody MemberDelReq req) {
         Long uid = RequestHolder.get().getUid();
         return roomService.delMember(req, uid);
+    }
+
+    /**
+     * 成员列表
+     * @param req 成员列表请求体
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatMemberResp}
+     */
+    @GetMapping("group/member/page")
+    @Operation(summary = "成员列表",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<CursorPageBaseResp<ChatMemberResp>> getMemberPage(@Valid MemberPageReq req) {
+        return roomService.getMemberPage(req);
     }
 }

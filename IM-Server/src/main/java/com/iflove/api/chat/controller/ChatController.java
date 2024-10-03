@@ -1,7 +1,7 @@
 package com.iflove.api.chat.controller;
 
-import com.iflove.api.chat.domain.vo.request.ChatMessagePageReq;
-import com.iflove.api.chat.domain.vo.request.ChatMessageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessagePageReq;
+import com.iflove.api.chat.domain.vo.request.msg.ChatMessageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.api.chat.service.ChatService;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;

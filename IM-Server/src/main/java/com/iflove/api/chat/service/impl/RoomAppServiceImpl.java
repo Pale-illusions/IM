@@ -1,6 +1,7 @@
 package com.iflove.api.chat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Pair;
 import com.iflove.api.chat.dao.ContactDao;
 import com.iflove.api.chat.dao.GroupMemberDao;
 import com.iflove.api.chat.dao.MessageDao;
@@ -8,10 +9,13 @@ import com.iflove.api.chat.domain.dto.RoomBaseInfo;
 import com.iflove.api.chat.domain.entity.*;
 import com.iflove.api.chat.domain.enums.GroupRoleEnum;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
-import com.iflove.api.chat.domain.vo.request.GroupCreateReq;
-import com.iflove.api.chat.domain.vo.request.MemberAddReq;
-import com.iflove.api.chat.domain.vo.request.MemberDelReq;
+import com.iflove.api.chat.domain.vo.request.member.GroupCreateReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberAddReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
+import com.iflove.api.chat.domain.vo.request.member.MemberPageReq;
+import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
+import com.iflove.api.chat.service.ChatService;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.api.chat.service.RoomService;
 import com.iflove.api.chat.service.adapter.MemberAdapter;
@@ -20,9 +24,12 @@ import com.iflove.api.chat.service.cache.GroupMemberCache;
 import com.iflove.api.chat.service.cache.RoomCache;
 import com.iflove.api.chat.service.cache.RoomFriendCache;
 import com.iflove.api.chat.service.cache.RoomGroupCache;
+import com.iflove.api.chat.service.helper.ChatMemberHelper;
 import com.iflove.api.chat.service.strategy.AbstractMsgHandler;
 import com.iflove.api.chat.service.strategy.MsgHandlerFactory;
+import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.entity.User;
+import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
 import com.iflove.api.user.service.cache.UserInfoCache;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
@@ -32,7 +39,6 @@ import com.iflove.common.event.GroupMemberDelEvent;
 import com.iflove.common.exception.FriendErrorEnum;
 import com.iflove.common.exception.RoomErrorEnum;
 import jakarta.annotation.Resource;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +74,8 @@ public class RoomAppServiceImpl implements RoomAppService {
     private ApplicationEventPublisher applicationEventPublisher;
     @Resource
     private GroupMemberCache groupMemberCache;
+    @Resource
+    private UserDao userDao;
 
     /**
      * 会话列表
@@ -83,16 +91,7 @@ public class RoomAppServiceImpl implements RoomAppService {
         }
         // 组装返回
         return RestBean.success(
-                CursorPageBaseResp.init(
-                        contactPage,
-                        this.buildContactResp(
-                                uid,
-                                contactPage.getList()
-                                        .stream()
-                                        .map(Contact::getRoomId)
-                                        .collect(Collectors.toList())
-                        )
-                )
+                CursorPageBaseResp.init(contactPage, this.buildContactResp(uid, contactPage.getList().stream().map(Contact::getRoomId).collect(Collectors.toList())))
         );
     }
 
@@ -216,6 +215,67 @@ public class RoomAppServiceImpl implements RoomAppService {
         // 发布 成员移除 事件
         applicationEventPublisher.publishEvent(new GroupMemberDelEvent(this, target.getUserId(), roomGroup));
         return RestBean.success();
+    }
+
+    /**
+     * 成员列表
+     * @param req 成员列表请求体
+     * @return {@link RestBean}<{@link CursorPageBaseResp}<{@link ChatMemberResp}
+     */
+    @Override
+    public RestBean<CursorPageBaseResp<ChatMemberResp>> getMemberPage(MemberPageReq req) {
+        Room room = roomCache.get(req.getRoomId());
+        // 房间不存在
+        if (Objects.isNull(room)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
+
+        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
+        List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
+        return RestBean.success(this.getMemberPage(memberUidList, req));
+    }
+
+    /**
+     * 获取成员列表分页
+     * 排序方式为 最后操作时间 (降序)
+     * 在线列表在上方, 离线列表在下方
+     * 在线列表不足以满足分页大小时, 从离线列表补充缺少的部分
+     */
+    private CursorPageBaseResp<ChatMemberResp> getMemberPage(List<Long> memberUidList, MemberPageReq req) {
+        Pair<ChatActiveStatusEnum, String> pair = ChatMemberHelper.getCursorPair(req.getCursor());
+        ChatActiveStatusEnum activeStatusEnum = pair.getKey();
+        String timeCursor = pair.getValue();
+        List<ChatMemberResp> resultList = new ArrayList<>(); // 最终列表
+        Boolean isLast = Boolean.FALSE;
+        // 查询在线列表
+        if (activeStatusEnum == ChatActiveStatusEnum.ONLINE) {
+            CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(req.getPageSize(), timeCursor), ChatActiveStatusEnum.ONLINE);
+            // 添加在线列表
+            resultList.addAll(MemberAdapter.buildMember(cursorPage.getList()));
+            // 如果是最后一页, 从离线列表补充缺少的部分
+            if (cursorPage.getIsLast()) {
+                activeStatusEnum = ChatActiveStatusEnum.OFFLINE;
+                Integer leftSize = req.getPageSize() - cursorPage.getList().size();
+                cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(leftSize, null), ChatActiveStatusEnum.OFFLINE);
+                resultList.addAll(MemberAdapter.buildMember(cursorPage.getList()));
+            }
+            timeCursor = cursorPage.getCursor();
+            isLast = cursorPage.getIsLast();
+        }
+        // 查询离线列表
+        else if (activeStatusEnum == ChatActiveStatusEnum.OFFLINE) {
+            CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(memberUidList, new CursorPageBaseReq(req.getPageSize(), timeCursor), ChatActiveStatusEnum.OFFLINE);
+            // 添加离线列表
+            resultList.addAll(MemberAdapter.buildMember(cursorPage.getList()));
+            timeCursor = cursorPage.getCursor();
+            isLast = cursorPage.getIsLast();
+        }
+        if (resultList.isEmpty()) return CursorPageBaseResp.empty();
+        // 获取群成员角色
+        List<Long> uidList = resultList.stream().map(ChatMemberResp::getUid).collect(Collectors.toList());
+        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
+        Map<Long, Integer> uidRoleMap = groupMemberDao.getMemberMapRole(roomGroup.getId(), uidList);
+        resultList.forEach(member -> member.setRole(uidRoleMap.get(member.getUid())));
+        // 组装结果
+        return new CursorPageBaseResp<>(ChatMemberHelper.generateCursor(activeStatusEnum, timeCursor), isLast, resultList);
     }
 
     /**

@@ -113,6 +113,7 @@ CREATE TABLE `room`(
     `type` INT NOT NULL  COMMENT '会话类型 1 群聊 2 单聊',
     `active_time` DATETIME NOT NULL DEFAULT Now() COMMENT '最后活跃时间-排序',
     `last_msg_id` bigint null comment '最后一条消息id',
+    `delete_status` int default 0 not null comment '逻辑删除 0 正常 / 1 删除',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '房间表' ROW_FORMAT = Dynamic;

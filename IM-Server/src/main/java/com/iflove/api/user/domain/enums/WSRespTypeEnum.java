@@ -18,6 +18,7 @@ public enum WSRespTypeEnum {
     ONLINE_OFFLINE_NOTIFY(4, "上下线通知", WSOnlineOfflineNotify.class),
     FRIEND_APPLY(5, "好友申请", WSFriendApply.class),
     MEMBER_CHANGE(6, "群成员变动", WSMemberChange.class),
+    GROUP_DISMISSED(7, "群聊解散", WSGroupDismissedResp.class),
     ;
 
     private final Integer type;

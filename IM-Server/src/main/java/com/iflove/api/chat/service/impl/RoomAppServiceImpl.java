@@ -5,13 +5,10 @@ import cn.hutool.core.lang.Pair;
 import com.iflove.api.chat.dao.ContactDao;
 import com.iflove.api.chat.dao.GroupMemberDao;
 import com.iflove.api.chat.dao.MessageDao;
-import com.iflove.api.chat.dao.RoomGroupDao;
 import com.iflove.api.chat.domain.dto.RoomBaseInfo;
 import com.iflove.api.chat.domain.entity.*;
 import com.iflove.api.chat.domain.enums.GroupRoleEnum;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
-import com.iflove.api.chat.domain.vo.request.admin.AdminAddReq;
-import com.iflove.api.chat.domain.vo.request.admin.AdminRevokeReq;
 import com.iflove.api.chat.domain.vo.request.member.GroupCreateReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberAddReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
@@ -19,7 +16,6 @@ import com.iflove.api.chat.domain.vo.request.member.MemberPageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
 import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.domain.vo.response.GroupInfoResp;
-import com.iflove.api.chat.service.ChatService;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.api.chat.service.RoomService;
 import com.iflove.api.chat.service.adapter.MemberAdapter;
@@ -34,7 +30,6 @@ import com.iflove.api.chat.service.strategy.MsgHandlerFactory;
 import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
-import com.iflove.api.user.service.cache.UserCache;
 import com.iflove.api.user.service.cache.UserInfoCache;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
@@ -216,7 +211,7 @@ public class RoomAppServiceImpl implements RoomAppService {
         // 移除 操作对象
         groupMemberDao.removeById(target.getId());
         // 移除 操作对象 会话
-        contactDao.removeByRoomIdAndUserId(roomGroup.getRoomId(), target.getUserId());
+        contactDao.removeByRoomId(roomGroup.getRoomId(), Collections.singletonList(target.getUserId()));
         // 发布 成员移除 事件
         applicationEventPublisher.publishEvent(new GroupMemberDelEvent(this, target.getUserId(), roomGroup));
         return RestBean.success();
@@ -236,49 +231,6 @@ public class RoomAppServiceImpl implements RoomAppService {
         RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
         List<Long> memberUidList = groupMemberDao.getMemberUidList(roomGroup.getId());
         return RestBean.success(this.getMemberPage(memberUidList, req));
-    }
-
-    /**
-     * 添加管理员
-     * @param uid 用户id
-     * @param req 添加管理员请求体
-     * @return {@link RestBean}
-     */
-    @Override
-    @Transactional
-    public RestBean<Void> addAdmin(Long uid, AdminAddReq req) {
-        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
-        // 房间不存在
-        if (Objects.isNull(roomGroup)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
-        // 判断用户是否在群中
-        GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
-        if (Objects.isNull(member)) return RestBean.failure(RoomErrorEnum.MEMBER_NOT_EXIST);
-        // 判断用户是否为群主
-        if (!isLeader(member)) return RestBean.failure(RoomErrorEnum.PERMISSION_NOT_GRANTED);
-        // 添加管理员
-        groupMemberDao.addAdmin(roomGroup.getId(), req.getUidList());
-        return RestBean.success();
-    }
-
-    /**
-     * 撤销管理员
-     * @param uid 用户id
-     * @param req 撤销管理员请求体
-     * @return {@link RestBean}
-     */
-    @Override
-    public RestBean<Void> revokeAdmin(Long uid, AdminRevokeReq req) {
-        RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
-        // 房间不存在
-        if (Objects.isNull(roomGroup)) return RestBean.failure(RoomErrorEnum.ROOM_NOT_EXIST);
-        // 判断用户是否在群中
-        GroupMember member = groupMemberDao.getMember(roomGroup.getId(), uid);
-        if (Objects.isNull(member)) return RestBean.failure(RoomErrorEnum.MEMBER_NOT_EXIST);
-        // 判断用户是否为群主
-        if (!isLeader(member)) return RestBean.failure(RoomErrorEnum.PERMISSION_NOT_GRANTED);
-        // 撤销管理员
-        groupMemberDao.revokeAdmin(roomGroup.getId(), req.getUidList());
-        return RestBean.success();
     }
 
     /**

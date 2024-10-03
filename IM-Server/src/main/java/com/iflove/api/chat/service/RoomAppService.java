@@ -75,22 +75,6 @@ public interface RoomAppService {
     RestBean<CursorPageBaseResp<ChatMemberResp>> getMemberPage(MemberPageReq req);
 
     /**
-     * 添加管理员
-     * @param uid 用户id
-     * @param req 添加管理员请求体
-     * @return {@link RestBean}
-     */
-    RestBean<Void> addAdmin(Long uid, AdminAddReq req);
-
-    /**
-     * 撤销管理员
-     * @param uid 用户id
-     * @param req 撤销管理员请求体
-     * @return {@link RestBean}
-     */
-    RestBean<Void> revokeAdmin(Long uid, AdminRevokeReq req);
-
-    /**
      * 群组详情
      * @param uid 用户id
      * @param roomId 房间id

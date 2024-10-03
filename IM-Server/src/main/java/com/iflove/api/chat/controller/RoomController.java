@@ -8,6 +8,7 @@ import com.iflove.api.chat.domain.vo.request.member.MemberDelReq;
 import com.iflove.api.chat.domain.vo.request.member.MemberPageReq;
 import com.iflove.api.chat.domain.vo.response.ChatMemberResp;
 import com.iflove.api.chat.domain.vo.response.GroupInfoResp;
+import com.iflove.api.chat.service.GroupMemberService;
 import com.iflove.api.chat.service.RoomAppService;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
@@ -35,9 +36,8 @@ import org.springframework.web.bind.annotation.*;
 public class RoomController {
     @Resource
     private RoomAppService roomService;
-
-    // TODO ，，，退出群聊，，群组详情，解散群聊
-    // 已完成: 添加成员 移除成员 群成员列表 添加管理，撤销管理员
+    @Resource
+    private GroupMemberService groupMemberService;
 
     /**
      * 创建群聊
@@ -115,7 +115,7 @@ public class RoomController {
     })
     public RestBean<Void> addAdmin(@Valid @RequestBody AdminAddReq req) {
         Long uid = RequestHolder.get().getUid();
-        return roomService.addAdmin(uid, req);
+        return groupMemberService.addAdmin(uid, req);
     }
 
     /**
@@ -131,7 +131,7 @@ public class RoomController {
     })
     public RestBean<Void> revokeAdmin(@Valid @RequestBody AdminRevokeReq req) {
         Long uid = RequestHolder.get().getUid();
-        return roomService.revokeAdmin(uid, req);
+        return groupMemberService.revokeAdmin(uid, req);
     }
 
     /**
@@ -148,5 +148,21 @@ public class RoomController {
     public RestBean<GroupInfoResp> getGroupDetail(@PathVariable @NotNull Long roomId) {
         Long uid = RequestHolder.get().getUid();
         return roomService.getGroupDetail(uid, roomId);
+    }
+
+    /**
+     * 退出群聊
+     * @param roomId 房间id
+     * @return {@link RestBean}
+     */
+    @DeleteMapping("group/member/exit/{roomId}")
+    @Operation(summary = "退出群聊",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> exitGroup(@PathVariable @NotNull Long roomId) {
+        Long uid = RequestHolder.get().getUid();
+        return groupMemberService.exitGroup(roomId, uid);
     }
 }

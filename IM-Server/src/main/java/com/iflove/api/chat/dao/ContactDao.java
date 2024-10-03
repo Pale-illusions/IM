@@ -1,5 +1,6 @@
 package com.iflove.api.chat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.chat.domain.entity.Contact;
 import com.iflove.api.chat.mapper.ContactMapper;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * @author IFLOVE
@@ -37,10 +37,10 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
         baseMapper.refreshOrCreateActiveTime(roomId, memberUidList, messageId, msgCreateTime);
     }
 
-    public void removeByRoomIdAndUserId(Long roomId, Long userId) {
+    public void removeByRoomId(Long roomId, List<Long> uidList) {
         lambdaUpdate()
                 .eq(Contact::getRoomId, roomId)
-                .eq(Contact::getUserId, userId)
+                .in(CollectionUtil.isNotEmpty(uidList), Contact::getUserId, uidList)
                 .remove();
     }
 }

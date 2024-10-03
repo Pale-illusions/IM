@@ -1,5 +1,6 @@
 package com.iflove.api.chat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.chat.domain.entity.GroupMember;
 import com.iflove.api.chat.domain.enums.GroupRoleEnum;
@@ -62,6 +63,13 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .in(GroupMember::getUserId, distinctUidList)
                 .set(GroupMember::getRole, GroupRoleEnum.MEMBER.getType())
                 .update();
+    }
+
+    public void removeByGroupId(Long groupId, List<Long> uidList) {
+        lambdaUpdate()
+                .eq(GroupMember::getGroupId, groupId)
+                .in(CollectionUtil.isNotEmpty(uidList), GroupMember::getUserId, uidList)
+                .remove();
     }
 }
 

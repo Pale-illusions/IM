@@ -1,9 +1,7 @@
 package com.iflove.api.chat.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -44,6 +42,13 @@ public class Room implements Serializable {
      * 最后一条消息id
      */
     private Long lastMsgId;
+
+    /**
+     * 逻辑删除(0-正常,1-删除)
+     */
+    @TableField("delete_status")
+    @TableLogic(value = "0", delval = "1")
+    private Integer deleteStatus;
 
     /**
      * 创建时间

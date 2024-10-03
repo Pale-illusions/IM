@@ -1,5 +1,6 @@
 package com.iflove.api.chat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.chat.domain.entity.Message;
 import com.iflove.api.chat.domain.enums.MessageStatusEnum;
@@ -10,6 +11,7 @@ import com.iflove.common.utils.CursorUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -31,6 +33,13 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .eq(Message::getRoomId, roomId)
                 .gt(Objects.nonNull(readTime), Message::getCreateTime, readTime)
                 .count();
+    }
+
+    public void removeByRoomId(Long roomId, List<Object> uidList) {
+        lambdaUpdate()
+                .eq(Message::getRoomId, roomId)
+                .in(CollectionUtil.isNotEmpty(uidList), Message::getFromUid, uidList)
+                .remove();
     }
 }
 

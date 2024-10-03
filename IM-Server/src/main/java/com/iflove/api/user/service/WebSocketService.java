@@ -34,7 +34,7 @@ public interface WebSocketService {
      * @param wsBaseResp 消息体
      * @param uid 对象uid
      */
-    void sendToUid(WSBaseResp<?> wsBaseResp, Long uid);
+    <T> void sendToUid(WSBaseResp<T> wsBaseResp, Long uid);
 
     /**
      * 推送消息给所有

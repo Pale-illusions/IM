@@ -1,5 +1,6 @@
 package com.iflove.api.user.domain.enums;
 
+import com.iflove.api.chat.domain.vo.response.ChatMessageResp;
 import com.iflove.api.user.domain.vo.response.ws.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Getter;
 @Getter
 public enum WSRespTypeEnum {
     LOGIN_SUCCESS(1, "登录成功", WSLoginSuccess.class),
-    MESSAGE(2, "新消息", WSMessage.class),
+    MESSAGE(2, "新消息", ChatMessageResp.class),
     INVALID_TOKEN(3, "非法Token, 登录失败", null),
     ONLINE_OFFLINE_NOTIFY(4, "上下线通知", WSOnlineOfflineNotify.class),
     FRIEND_APPLY(5, "好友申请", WSFriendApply.class),

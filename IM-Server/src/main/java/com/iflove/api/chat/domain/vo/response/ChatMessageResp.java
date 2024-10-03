@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -19,20 +20,20 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "消息返回体")
-public class ChatMessageResp {
+public class ChatMessageResp implements Serializable {
     @Schema(description = "发送者信息")
     private UserInfo fromUser;
     @Schema(description = "消息详情")
     private Message message;
 
     @Data
-    public static class UserInfo {
+    public static class UserInfo implements Serializable {
         @Schema(description = "用户id")
         private Long uid;
     }
 
     @Data
-    public static class Message {
+    public static class Message implements Serializable {
         @Schema(description = "消息id")
         private Long id;
         @Schema(description = "房间id")

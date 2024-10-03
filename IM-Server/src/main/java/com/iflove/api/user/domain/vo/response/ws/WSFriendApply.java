@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @author 苍镜月
  * @version 1.0
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WSFriendApply {
+public class WSFriendApply implements Serializable {
     // 申请人
     private Long uid;
     // 申请未读数

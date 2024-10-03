@@ -2,6 +2,23 @@ create database if not exists IM;
 
 use IM;
 
+DROP TABLE IF EXISTS `offline_message`;
+CREATE TABLE `offline_message`(
+    `id` bigint not null auto_increment primary key,
+    `user_id` bigint not null comment '消息发送对象uid',
+    `type` int not null comment '消息类型',
+    `data` json null comment '消息内容',
+    `delete_status` INT NOT NULL DEFAULT 0 COMMENT '逻辑删除 0 正常 / 1 删除',
+    `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
+    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '离线消息表' ROW_FORMAT = Dynamic;
+ALTER TABLE
+    `offline_message` ADD INDEX `offline_message_user_id_index`(`user_id`);
+ALTER TABLE
+    `offline_message` ADD INDEX `offline_message_create_time_index`(`create_time`);
+ALTER TABLE
+    `offline_message` ADD INDEX `offline_message_update_time_index`(`update_time`);
+
 DROP TABLE IF EXISTS `user_apply`;
 CREATE TABLE `user_apply`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -225,3 +242,5 @@ ALTER TABLE
     `contact` ADD CONSTRAINT `contact_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);
 ALTER TABLE
     `group_member` ADD CONSTRAINT `group_member_group_id_foreign` FOREIGN KEY(`group_id`) REFERENCES `room_group`(`id`);
+ALTER TABLE
+    `offline_message` ADD CONSTRAINT `offline_message_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);

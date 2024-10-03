@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WSMemberChange {
+public class WSMemberChange implements Serializable {
     public static final Integer CHANGE_TYPE_ADD = 1;
 
     public static final Integer CHANGE_TYPE_REMOVE = 2;

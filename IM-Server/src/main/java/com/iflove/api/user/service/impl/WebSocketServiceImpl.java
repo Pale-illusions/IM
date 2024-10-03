@@ -1,12 +1,18 @@
 package com.iflove.api.user.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.jwt.JWTException;
 import cn.hutool.jwt.JWTUtil;
+import com.iflove.api.user.dao.OfflineMessageDao;
 import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.dto.WSChannelExtraDTO;
+import com.iflove.api.user.domain.entity.OfflineMessage;
 import com.iflove.api.user.domain.vo.response.ws.WSBaseResp;
+import com.iflove.api.user.service.PushService;
 import com.iflove.api.user.service.adapter.WSAdapter;
+import com.iflove.api.user.service.strategy.AbstractOfflineMsgHandler;
+import com.iflove.api.user.service.strategy.OfflineMsgHandlerFactory;
 import com.iflove.common.config.thread.ThreadPoolConfiguration;
 import com.iflove.common.constant.RedisKey;
 import com.iflove.common.event.UserOfflineEvent;
@@ -23,10 +29,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import utils.JsonUtil;
 import utils.RedisUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,6 +69,10 @@ public class WebSocketServiceImpl implements WebSocketService {
     private UserCache userCache;
     @Resource
     private ApplicationEventPublisher applicationEventPublisher;
+    @Resource
+    private PushService pushService;
+    @Resource
+    private OfflineMessageDao offlineMessageDao;
 
 
     /**
@@ -143,10 +157,13 @@ public class WebSocketServiceImpl implements WebSocketService {
      * @param uid 对象uid
      */
     @Override
-    public void sendToUid(WSBaseResp<?> wsBaseResp, Long uid) {
+    @Transactional
+    public <T> void sendToUid(WSBaseResp<T> wsBaseResp, Long uid) {
         CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
         if (CollectionUtil.isEmpty(channels)) {
             // TODO 实现离线消息
+            AbstractOfflineMsgHandler<T> handler = OfflineMsgHandlerFactory.getStrategyNonNull(wsBaseResp.getType());
+            handler.saveOfflineMsg(wsBaseResp, uid);
             log.info("用户: {} 不在线", uid);
             return;
         }
@@ -207,6 +224,17 @@ public class WebSocketServiceImpl implements WebSocketService {
         ONLINE_WS_MAP.computeIfAbsent(channel, k -> new WSChannelExtraDTO()).setUid(uid);
         // 如果不存在则新建，添加channel对象
         ONLINE_UID_MAP.computeIfAbsent(uid, k -> new CopyOnWriteArrayList<>()).add(channel);
+        // 拉取离线消息
+        List<OfflineMessage> offlineMessages = offlineMessageDao.listByUserId(uid);
+        // 发送离线消息
+        offlineMessages.forEach(message -> {
+            WSBaseResp<Object> wsBaseResp = new WSBaseResp<>();
+            wsBaseResp.setType(message.getType());
+            wsBaseResp.setData(message.getData());
+            pushService.sendPushMsg(wsBaseResp, uid);
+            // 删除离线消息
+            offlineMessageDao.removeById(message.getId());
+        });
         NettyUtil.setAttr(channel, NettyUtil.UID, uid);
     }
 

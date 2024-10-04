@@ -5,6 +5,7 @@ import com.iflove.api.chat.domain.entity.Message;
 import com.iflove.api.chat.domain.entity.msg.MessageExtra;
 import com.iflove.api.chat.domain.entity.msg.TextMsgDTO;
 import com.iflove.api.chat.domain.enums.MessageTypeEnum;
+import com.iflove.common.algorithm.sensitiveWord.SensitiveWordBs;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class TextMsgHandler extends AbstractMsgHandler<TextMsgDTO> {
     @Resource
     private MessageDao messageDao;
+    @Resource
+    private SensitiveWordBs sensitiveWordBs;
 
     @Override
     MessageTypeEnum getMsgTypeEnum() {
@@ -32,6 +35,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgDTO> {
         update.setId(message.getId());
         update.setExtra(extra);
         // TODO 实现敏感词过滤功能
+        body.setContent(sensitiveWordBs.filter(body.getContent()));
         extra.setTextMsgDTO(body);
         messageDao.updateById(update);
     }

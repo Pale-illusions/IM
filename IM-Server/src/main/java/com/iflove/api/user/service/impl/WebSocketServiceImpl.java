@@ -161,7 +161,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     public <T> void sendToUid(WSBaseResp<T> wsBaseResp, Long uid) {
         CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
         if (CollectionUtil.isEmpty(channels)) {
-            // TODO 实现离线消息
+            // 实现离线消息
             AbstractOfflineMsgHandler<T> handler = OfflineMsgHandlerFactory.getStrategyNonNull(wsBaseResp.getType());
             handler.saveOfflineMsg(wsBaseResp, uid);
             log.info("用户: {} 不在线", uid);

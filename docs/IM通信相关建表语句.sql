@@ -70,6 +70,8 @@ CREATE TABLE `contact`(
 ALTER TABLE
     `contact` ADD INDEX `contact_room_id_read_time_index`(`room_id`, `read_time`);
 ALTER TABLE
+    `contact` ADD INDEX `contact_user_id_active_time_index`(`user_id`, `active_time`);
+ALTER TABLE
     `contact` ADD INDEX `contact_create_time_index`(`create_time`);
 ALTER TABLE
     `contact` ADD INDEX `contact_update_time_index`(`update_time`);
@@ -244,3 +246,5 @@ ALTER TABLE
     `group_member` ADD CONSTRAINT `group_member_group_id_foreign` FOREIGN KEY(`group_id`) REFERENCES `room_group`(`id`);
 ALTER TABLE
     `offline_message` ADD CONSTRAINT `offline_message_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);
+# 系统用户，用于发送系统消息
+insert into user (id, name, password) values (-1, 'system', '114514');

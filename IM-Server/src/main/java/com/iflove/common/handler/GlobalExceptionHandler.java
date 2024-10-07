@@ -1,6 +1,7 @@
 package com.iflove.common.handler;
 
 import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.exception.BusinessException;
 import com.iflove.common.exception.CommonErrorEnum;
 import com.iflove.common.exception.UserErrorEnum;
 import jakarta.validation.ValidationException;
@@ -21,6 +22,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    /**
+     * 自定义业务异常
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = BusinessException.class)
+    public RestBean<Void> businessExceptionHandler(BusinessException e) {
+        log.warn("business exception！The reason is：{}", e.getMessage(), e);
+        return RestBean.failure(e.getErrorCode(), e.getMessage());
+    }
 
     /**
      * 用户登录验证失败

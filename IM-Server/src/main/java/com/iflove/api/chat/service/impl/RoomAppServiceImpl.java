@@ -31,6 +31,7 @@ import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.domain.enums.ChatActiveStatusEnum;
 import com.iflove.api.user.service.cache.UserInfoCache;
+import com.iflove.common.annotation.RedissonLock;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
@@ -158,6 +159,7 @@ public class RoomAppServiceImpl implements RoomAppService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @RedissonLock(key = "#req.roomId")
     public RestBean<Void> addMember(MemberAddReq req, Long uid) {
         // TODO 好友过滤
         Room room = roomCache.get(req.getRoomId());

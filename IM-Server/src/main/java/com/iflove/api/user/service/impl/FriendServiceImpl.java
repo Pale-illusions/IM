@@ -24,6 +24,7 @@ import com.iflove.api.user.domain.vo.response.friend.FriendCheckResp;
 import com.iflove.api.user.domain.vo.response.friend.FriendInfoResp;
 import com.iflove.api.user.service.FriendService;
 import com.iflove.api.user.service.adapter.FriendAdapter;
+import com.iflove.common.annotation.RedissonLock;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.request.PageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
@@ -70,6 +71,7 @@ public class FriendServiceImpl implements FriendService {
      */
     @Transactional
     @Override
+    @RedissonLock(key = "#uid")
     public RestBean<Void> apply(Long uid, FriendApplyReq request) {
         // 不能添加自己为好友
         if (Objects.equals(uid, request.getTargetUid())) {
@@ -148,6 +150,7 @@ public class FriendServiceImpl implements FriendService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
+    @RedissonLock(key = "#uid")
     public RestBean<Void> applyApprove(Long uid, FriendApplyApproveReq req) {
         // 注意：userApply 的 targetId 为 被请求方， userId 为 请求发起方
         UserApply userApply = userApplyDao.getById(req.getApplyId());
@@ -188,6 +191,8 @@ public class FriendServiceImpl implements FriendService {
      * @return {@link RestBean}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @RedissonLock(key = "#uid")
     public RestBean<Void> applyDisapprove(Long uid, FriendApplyDisapproveReq req) {
         UserApply userApply = userApplyDao.getById(req.getApplyId());
         // 好友申请不存在

@@ -209,6 +209,8 @@ CREATE TABLE `message`(
     `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
 ALTER TABLE
+    `message` ADD INDEX `message_room_id_create_time_index`(`room_id`, `create_time`);
+ALTER TABLE
     `message` ADD INDEX `message_room_id_index`(`room_id`);
 ALTER TABLE
     `message` ADD INDEX `message_from_uid_index`(`from_uid`);
@@ -216,6 +218,8 @@ ALTER TABLE
     `message` ADD INDEX `message_create_time_index`(`create_time`);
 ALTER TABLE
     `message` ADD INDEX `message_update_time_index`(`update_time`);
+
+
 ALTER TABLE
     `room_group` ADD CONSTRAINT `room_group_room_id_foreign` FOREIGN KEY(`room_id`) REFERENCES `room`(`id`);
 ALTER TABLE

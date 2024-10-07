@@ -1,6 +1,8 @@
 package com.iflove.common.interceptor;
 
 import cn.hutool.core.convert.NumberWithFormat;
+import cn.hutool.core.net.NetUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.iflove.common.domain.dto.RequestInfo;
@@ -27,11 +29,10 @@ public class CollectorInterceptor implements HandlerInterceptor {
         RequestInfo info = new RequestInfo();
         String token = request.getHeader("Authorization").substring(7);
         Long uid = ((NumberWithFormat) JWTUtil.parseToken(token).getPayload("uid")).longValue();
-//        log.info("token信息：{}", token);
-//        log.info("uid信息：{}", uid);
+        // 设置uid
         info.setUid(uid);
-        // TODO 在请求上下文中设置IP
-//        info.setIp(ServletUtil.getClientIP(request));
+        // 在请求上下文中设置IP
+        info.setIp(JakartaServletUtil.getClientIP(request));
         RequestHolder.set(info);
         return true;
     }

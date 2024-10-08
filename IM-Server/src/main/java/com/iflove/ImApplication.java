@@ -1,5 +1,8 @@
 package com.iflove;
 
+import cn.hutool.extra.spring.SpringUtil;
+import com.iflove.oss.MinIOTemplate;
+import com.iflove.oss.OssProperties;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;

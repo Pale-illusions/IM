@@ -1,4 +1,4 @@
-package com.iflove.common.algorithm.sensitiveWord;
+package com.iflove.sensitive.service;
 
 import java.util.List;
 

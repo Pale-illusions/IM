@@ -1,7 +1,6 @@
 package com.iflove.common.config.thread;
 
 import com.iflove.transaction.annotation.SecureInvokeConfigurer;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

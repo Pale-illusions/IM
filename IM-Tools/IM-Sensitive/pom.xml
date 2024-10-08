@@ -5,21 +5,24 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.iflove</groupId>
-        <artifactId>IM</artifactId>
+        <artifactId>IM-Tools</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>IM-Tools</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>IM-Transaction</module>
-        <module>IM-Sensitive</module>
-    </modules>
+    <artifactId>IM-Sensitive</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.iflove</groupId>
+            <artifactId>IM-Common-Starter</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>

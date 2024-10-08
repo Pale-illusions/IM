@@ -1,8 +1,8 @@
 package com.iflove.im;
 
-import com.iflove.common.algorithm.sensitiveWord.DFAFilter;
+import com.iflove.sensitive.algorithm.sensitiveWord.filter.ACFilter;
+import com.iflove.sensitive.algorithm.sensitiveWord.filter.DFAFilter;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +12,6 @@ import java.util.List;
  * @version 1.0
  * @implNote
  */
-@SpringBootTest
 public class SensitiveTest {
 
     @Test
@@ -23,20 +22,13 @@ public class SensitiveTest {
         System.out.println(instance.filter("你是白痴吗"));
     }
 
-    @Test
-    public void DFA2() {
-        List<String> sensitiveList = List.of("鸡巴", "烧鸡");
-        DFAFilter instance = DFAFilter.getInstance();
-        instance.loadWord(sensitiveList);
-        System.out.println(instance.filter("喜欢爸爸的大鸡巴吗，小烧鸡"));
-    }
 
     @Test
     public void DFA3() {
         List<String> sensitiveList = List.of("你", "你是", "我", "ok", "HELLO");
         DFAFilter instance = DFAFilter.getInstance();
         instance.loadWord(sensitiveList);
-        System.out.println(instance.filter("hElLo, 我是你的我你ojk, o,k, olk, 你我是, he,.llo"));
+        System.out.println(instance.filter("hElLo, ,bu, he,.llo"));
     }
 
     @Test
@@ -65,4 +57,29 @@ public class SensitiveTest {
                 "\uD83E\uDD24……抱抱你～可爱的老婆～（舔）喜欢～真的好喜欢～……（蹭蹭）脑袋要融化了呢～已经……除了老婆以外～什么都不会想了呢～[爱心]嘿嘿\n" +
                 "\uD83E\uDD24……可爱的老婆……嘿嘿\uD83E\uDD24……可爱的老婆……我的～……嘿嘿\uD83E\uDD24……\n"));
     }
+
+    @Test
+    public void test5() {
+        List<String> sensitiveList = Arrays.asList("abc", "ab", "a", "b", "bwd");
+        DFAFilter instance = DFAFilter.getInstance();
+        instance.loadWord(sensitiveList);
+        System.out.println(instance.filter("a,b,c,aa,b,bwd"));
+    }
+
+    @Test
+    public void AC1() {
+        List<String> sensitiveList = List.of("你", "你是", "我", "ok", "HELLo");
+        ACFilter instance = new ACFilter();
+        instance.loadWord(sensitiveList);
+        System.out.println(instance.filter("hElLo, ,bu, he,.llo"));
+    }
+
+    @Test
+    public void AC2() {
+        List<String> sensitiveList = Arrays.asList("白痴", "你是白痴", "白痴吗");
+        ACFilter instance = new ACFilter();
+        instance.loadWord(sensitiveList);
+        System.out.println(instance.filter("你是白痴吗"));
+    }
+
 }

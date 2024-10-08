@@ -1,6 +1,5 @@
-package com.iflove.sensitive;
+package com.iflove.sensitive.service;
 
-import com.iflove.common.algorithm.sensitiveWord.WordFactory;
 import com.iflove.sensitive.dao.SensitiveWordDao;
 import com.iflove.sensitive.domain.SensitiveWord;
 import jakarta.annotation.Resource;

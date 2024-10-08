@@ -16,6 +16,11 @@ oss:
   secret-key: 4rllwlmP54uDA9BW3EWJKfl3gSjqyU0N
   bucketName: im-bucket
 
+# 敏感词配置
+sensitive:
+  enabled: true
+  type: AC
+
 # rocketmq
 rocketmq:
   name-server: 47.99.73.85:9876

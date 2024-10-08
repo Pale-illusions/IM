@@ -1,9 +1,11 @@
 package com.iflove.oss;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.iflove.oss.domain.OssReq;
 import com.iflove.oss.domain.OssResp;
 import io.minio.*;

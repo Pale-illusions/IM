@@ -33,5 +33,10 @@
             <artifactId>IM-Transaction</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.iflove</groupId>
+            <artifactId>IM-Sensitive</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,4 +1,4 @@
-package com.iflove.common.algorithm.sensitiveWord;
+package com.iflove.sensitive.algorithm.sensitiveWord.filter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * @author 苍镜月
  * @version 1.0
- * @implNote
+ * @implNote DFA算法过滤器
  */
 public class DFAFilter implements SensitiveWordFilter {
     private DFAFilter() {

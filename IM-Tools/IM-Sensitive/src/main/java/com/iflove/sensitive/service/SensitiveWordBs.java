@@ -1,4 +1,7 @@
-package com.iflove.common.algorithm.sensitiveWord;
+package com.iflove.sensitive.service;
+
+import com.iflove.sensitive.algorithm.sensitiveWord.filter.DFAFilter;
+import com.iflove.sensitive.algorithm.sensitiveWord.filter.SensitiveWordFilter;
 
 import java.util.List;
 

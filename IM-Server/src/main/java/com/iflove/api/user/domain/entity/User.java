@@ -86,11 +86,4 @@ public class User implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
-
-    public void refreshIp(String ip) {
-        if (ipInfo == null) {
-            ipInfo = new IpInfo();
-        }
-        ipInfo.refreshIp(ip);
-    }
 }

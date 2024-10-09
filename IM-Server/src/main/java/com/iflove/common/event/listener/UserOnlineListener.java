@@ -47,6 +47,6 @@ public class UserOnlineListener {
         update.setIpInfo(user.getIpInfo());
         update.setStatus(ChatActiveStatusEnum.ONLINE.getStatus());
         userDao.updateById(update);
-        // TODO 更新用户IP
+        userCache.remove(update.getId());
     }
 }

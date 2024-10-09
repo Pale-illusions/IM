@@ -7,6 +7,7 @@ import cn.hutool.jwt.JWTUtil;
 import com.iflove.api.user.dao.OfflineMessageDao;
 import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.dto.WSChannelExtraDTO;
+import com.iflove.api.user.domain.entity.IpInfo;
 import com.iflove.api.user.domain.entity.OfflineMessage;
 import com.iflove.api.user.domain.vo.response.ws.WSBaseResp;
 import com.iflove.api.user.service.PushService;
@@ -20,6 +21,7 @@ import com.iflove.common.event.UserOnlineEvent;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.service.WebSocketService;
 import com.iflove.api.user.service.cache.UserCache;
+import com.iflove.common.utils.IPUtils;
 import com.iflove.websocket.NettyUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -205,15 +207,28 @@ public class WebSocketServiceImpl implements WebSocketService {
     private void loginSuccess(Channel channel, User user, String token) {
         // 更新上线
         this.online(channel, user.getId());
-        // 发送登录成功信息
-        this.sendMsg(channel, WSAdapter.buildWSLoginSuccessResp(user, token));
+        // 判断用户是否已在线
         boolean online = userCache.isOnline(user.getId());
         if (!online) {
             user.setLastOptTime(new Date());
+            String cityInfo = IPUtils.getCityInfo(NettyUtil.getAttr(channel, NettyUtil.IP));
+            // 更新IP
+            user.setIpInfo(IpInfo.init(cityInfo));
             applicationEventPublisher.publishEvent(new UserOnlineEvent(this, user));
+            // 拉取离线消息
+            List<OfflineMessage> offlineMessages = offlineMessageDao.listByUserId(user.getId());
+            // 发送离线消息
+            offlineMessages.forEach(message -> {
+                WSBaseResp<Object> wsBaseResp = new WSBaseResp<>();
+                wsBaseResp.setType(message.getType());
+                wsBaseResp.setData(message.getData());
+                pushService.sendPushMsg(wsBaseResp, user.getId());
+                // 删除离线消息
+                offlineMessageDao.removeById(message.getId());
+            });
         }
-        // TODO 更新IP
-
+        // 发送登录成功信息
+        this.sendMsg(channel, WSAdapter.buildWSLoginSuccessResp(user, token));
     }
 
     /**
@@ -224,17 +239,6 @@ public class WebSocketServiceImpl implements WebSocketService {
         ONLINE_WS_MAP.computeIfAbsent(channel, k -> new WSChannelExtraDTO()).setUid(uid);
         // 如果不存在则新建，添加channel对象
         ONLINE_UID_MAP.computeIfAbsent(uid, k -> new CopyOnWriteArrayList<>()).add(channel);
-        // 拉取离线消息
-        List<OfflineMessage> offlineMessages = offlineMessageDao.listByUserId(uid);
-        // 发送离线消息
-        offlineMessages.forEach(message -> {
-            WSBaseResp<Object> wsBaseResp = new WSBaseResp<>();
-            wsBaseResp.setType(message.getType());
-            wsBaseResp.setData(message.getData());
-            pushService.sendPushMsg(wsBaseResp, uid);
-            // 删除离线消息
-            offlineMessageDao.removeById(message.getId());
-        });
         NettyUtil.setAttr(channel, NettyUtil.UID, uid);
     }
 

@@ -15,6 +15,7 @@ import com.iflove.api.user.service.FriendService;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.utils.IPUtils;
 import com.iflove.common.utils.LambdaUtils;
 import com.iflove.oss.MinIOTemplate;
 import com.iflove.oss.domain.OssReq;
@@ -138,5 +139,5 @@ class ImApplicationTests {
         }
     }
 
-    
+
 }

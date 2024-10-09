@@ -1,6 +1,7 @@
 package com.iflove.api.user.domain.vo.response.ws;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iflove.api.user.domain.entity.IpInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,4 +31,6 @@ public class WSLoginSuccess {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date expireTime;
+
+    private IpInfo ipInfo;
 }

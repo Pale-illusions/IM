@@ -1,6 +1,7 @@
 package com.iflove.api.user.domain.vo.response.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iflove.api.user.domain.entity.IpInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -25,6 +26,9 @@ public class UserInfoResp {
 
     @Schema(description = "用户性别")
     private Integer sex;
+
+    @Schema(description = "IP信息")
+    private IpInfo ipInfo;
 
     @Schema(description = "用户最后上下线时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

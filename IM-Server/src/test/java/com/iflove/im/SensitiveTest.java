@@ -14,13 +14,6 @@ import java.util.List;
  */
 public class SensitiveTest {
 
-    @Test
-    public void DFA1() {
-        List<String> sensitiveList = Arrays.asList("白痴", "你是白痴", "白痴吗");
-        DFAFilter instance = DFAFilter.getInstance();
-        instance.loadWord(sensitiveList);
-        System.out.println(instance.filter("你是白痴吗"));
-    }
 
 
     @Test
@@ -75,7 +68,16 @@ public class SensitiveTest {
     }
 
     @Test
-    public void AC2() {
+    public void DFAMulti() {
+        List<String> sensitiveList = Arrays.asList("白痴", "你是白痴", "白痴吗");
+        DFAFilter instance = DFAFilter.getInstance();
+        instance.loadWord(sensitiveList);
+        System.out.println(instance.filter("你是白痴吗"));
+    }
+
+
+    @Test
+    public void ACMulti() {
         List<String> sensitiveList = Arrays.asList("白痴", "你是白痴", "白痴吗");
         ACFilter instance = new ACFilter();
         instance.loadWord(sensitiveList);

@@ -3,6 +3,7 @@ package com.iflove.api.user.dao;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.user.domain.entity.UserFriend;
 import com.iflove.api.user.mapper.UserFriendMapper;
+import com.iflove.common.domain.enums.NormalOrNoEnum;
 import com.iflove.common.domain.vo.request.CursorPageBaseReq;
 import com.iflove.common.domain.vo.response.CursorPageBaseResp;
 import com.iflove.common.utils.CursorUtils;

@@ -86,8 +86,7 @@ public class FollowServiceImpl implements FollowService {
             throw new BusinessException(FollowErrorEnum.OPERATION_REPEAT);
         }
         // 取关
-        followee.setStatus(SubscribeStatusEnum.UNSUBSCRIBE.getStauts());
-        followDao.updateById(followee);
+        followDao.unsubscribe(followee);
         return RestBean.success();
     }
 }

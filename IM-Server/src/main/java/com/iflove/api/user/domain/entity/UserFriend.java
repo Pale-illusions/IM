@@ -33,13 +33,6 @@ public class UserFriend implements Serializable {
     private Long friendId;
 
     /**
-     * 逻辑删除 0 正常 / 1 删除
-     */
-    @TableField(value = "delete_status")
-    @TableLogic(value = "0", delval = "1")
-    private Integer deleteStatus;
-
-    /**
      * 创建时间
      */
     private Date createTime;

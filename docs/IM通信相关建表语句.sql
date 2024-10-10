@@ -45,7 +45,6 @@ CREATE TABLE `user_friend`(
     `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `user_id` BIGINT NOT NULL COMMENT '用户id',
     `friend_id` BIGINT NOT NULL COMMENT '好友id',
-    `delete_status` INT NOT NULL DEFAULT 0 COMMENT '逻辑删除 0 正常 / 1 删除',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '更新时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户好友表' ROW_FORMAT = Dynamic;

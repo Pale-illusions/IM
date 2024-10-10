@@ -57,6 +57,13 @@ public class FollowDao extends ServiceImpl<FollowMapper, Follow> {
                 .select(Follow::getId, Follow::getStatus)
                 .one();
     }
+
+    public void unsubscribe(Follow followee) {
+        lambdaUpdate()
+                .set(Follow::getStatus, SubscribeStatusEnum.UNSUBSCRIBE.getStauts())
+                .eq(Follow::getId, followee.getId())
+                .update();
+    }
 }
 
 

@@ -49,7 +49,7 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
     }
 
     /**
-     * 获取好友请求
+     * 获取好友请求分页
      * @param uid
      * @param page
      * @return

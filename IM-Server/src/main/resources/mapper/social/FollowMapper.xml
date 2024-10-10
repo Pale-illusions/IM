@@ -4,4 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.iflove.api.social.mapper.FollowMapper">
 
+    <select id="getFriendsPage" resultType="com.iflove.api.social.domain.vo.response.FollowInfoResp">
+        SELECT
+            f1.followee_id AS id,
+            f1.update_time AS followDate
+        FROM
+            follow f1
+                INNER JOIN follow f2
+                           ON f1.follower_id = f2.followee_id
+                               AND f1.followee_id = f2.follower_id
+        WHERE
+            f1.status = 0
+          AND f2.status = 0
+          AND f1.follower_id = #{uid}
+        ORDER BY f1.update_time DESC
+    </select>
 </mapper>

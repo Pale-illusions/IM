@@ -1,5 +1,8 @@
 package com.iflove.api.social.service;
 
+import com.iflove.api.social.domain.vo.response.FollowInfoResp;
+import com.iflove.common.domain.vo.request.PageBaseReq;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
 /**
@@ -23,4 +26,28 @@ public interface FollowService {
      * @return {@link RestBean}
      */
     RestBean<Void> unsubscribe(Long uid, Long targetId);
+
+    /**
+     * 粉丝列表
+     * @param uid 用户id
+     * @param req 分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link FollowInfoResp}
+     */
+    RestBean<PageBaseResp<FollowInfoResp>> followerPage(Long uid, PageBaseReq req);
+
+    /**
+     * 关注列表
+     * @param uid 用户id
+     * @param req 分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link FollowInfoResp}
+     */
+    RestBean<PageBaseResp<FollowInfoResp>> followeePage(Long uid, PageBaseReq req);
+
+    /**
+     * 好友列表
+     * @param uid 用户id
+     * @param req 分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link FollowInfoResp}
+     */
+    RestBean<PageBaseResp<FollowInfoResp>> friendsPage(Long uid, PageBaseReq req);
 }

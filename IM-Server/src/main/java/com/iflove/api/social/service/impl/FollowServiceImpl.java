@@ -1,13 +1,18 @@
 package com.iflove.api.social.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iflove.api.social.dao.FollowDao;
 import com.iflove.api.social.domain.entity.Follow;
 import com.iflove.api.social.domain.enums.SubscribeStatusEnum;
+import com.iflove.api.social.domain.vo.response.FollowInfoResp;
 import com.iflove.api.social.service.FollowService;
 import com.iflove.api.social.service.adapter.FollowAdapter;
 import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.common.annotation.RedissonLock;
+import com.iflove.common.domain.vo.request.PageBaseReq;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.BusinessException;
 import com.iflove.common.exception.FollowErrorEnum;
@@ -88,5 +93,59 @@ public class FollowServiceImpl implements FollowService {
         // 取关
         followDao.unsubscribe(followee);
         return RestBean.success();
+    }
+
+    /**
+     * 粉丝列表
+     * @param uid 用户id
+     * @param req 分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link FollowInfoResp}
+     */
+    @Override
+    public RestBean<PageBaseResp<FollowInfoResp>> followerPage(Long uid, PageBaseReq req) {
+        IPage<Follow> followerPage = followDao.getFollowerPage(uid, req.plusPage());
+        if (CollectionUtil.isEmpty(followerPage.getRecords())) {
+            return RestBean.success(PageBaseResp.empty());
+        }
+        // 返回数据
+        return RestBean.success(
+                PageBaseResp.init(followerPage, FollowAdapter.buildFollowerInfoList(followerPage.getRecords()))
+        );
+    }
+
+    /**
+     * 关注列表
+     * @param uid 用户id
+     * @param req 分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link FollowInfoResp}
+     */
+    @Override
+    public RestBean<PageBaseResp<FollowInfoResp>> followeePage(Long uid, PageBaseReq req) {
+        IPage<Follow> followeePage = followDao.getFolloweePage(uid, req.plusPage());
+        if (CollectionUtil.isEmpty(followeePage.getRecords())) {
+            return RestBean.success(PageBaseResp.empty());
+        }
+        // 返回数据
+        return RestBean.success(
+                PageBaseResp.init(followeePage, FollowAdapter.buildFolloweeInfoList(followeePage.getRecords()))
+        );
+    }
+
+    /**
+     * 好友列表
+     * @param uid 用户id
+     * @param req 分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link FollowInfoResp}
+     */
+    @Override
+    public RestBean<PageBaseResp<FollowInfoResp>> friendsPage(Long uid, PageBaseReq req) {
+        IPage<FollowInfoResp> friendsPage = followDao.getFriendsPage(uid, req.plusPage());
+        if (CollectionUtil.isEmpty(friendsPage.getRecords())) {
+            return RestBean.success(PageBaseResp.empty());
+        }
+        // 返回数据
+        return RestBean.success(
+                PageBaseResp.init(friendsPage, friendsPage.getRecords())
+        );
     }
 }

@@ -4,7 +4,7 @@ import com.iflove.api.user.domain.entity.IpInfo;
 import com.iflove.api.user.domain.vo.response.user.UserLoginInfoResp;
 import com.iflove.api.user.service.UserService;
 import com.iflove.common.domain.vo.response.RestBean;
-import com.iflove.api.user.domain.vo.request.user.UserRegisterVO;
+import com.iflove.api.user.domain.vo.request.user.UserRegisterReq;
 import com.iflove.common.utils.IPUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,7 +54,7 @@ public class AuthorizeController {
 
     /**
      * 用户注册
-     * @param userRegisterVO 注册信息
+     * @param userRegisterReq 注册信息
      * @return {@link RestBean}
      */
     @PostMapping("register")
@@ -64,7 +64,7 @@ public class AuthorizeController {
             @ApiResponse(responseCode = "502", description = "参数校验失败"),
             @ApiResponse(responseCode = "501", description = "服务器内部错误")
     })
-    public RestBean<Void> register(@RequestBody @Valid UserRegisterVO userRegisterVO) {
-        return userService.register(userRegisterVO);
+    public RestBean<Void> register(@RequestBody @Valid UserRegisterReq userRegisterReq) {
+        return userService.register(userRegisterReq);
     }
 }

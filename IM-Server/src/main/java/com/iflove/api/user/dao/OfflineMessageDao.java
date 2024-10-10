@@ -15,6 +15,11 @@ import java.util.List;
 @Service
 public class OfflineMessageDao extends ServiceImpl<OfflineMessageMapper, OfflineMessage> {
 
+    /**
+     * 获取离线消息列表
+     * @param uid
+     * @return
+     */
     public List<OfflineMessage> listByUserId(Long uid) {
         return lambdaQuery()
                 .eq(OfflineMessage::getUserId, uid)

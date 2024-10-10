@@ -14,13 +14,11 @@ import com.iflove.common.constant.RedisKey;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.CommonErrorEnum;
 import com.iflove.common.exception.UserErrorEnum;
-import com.iflove.common.utils.IPUtils;
 import com.iflove.common.utils.RequestHolder;
 import com.iflove.api.user.domain.entity.User;
-import com.iflove.api.user.domain.vo.request.user.UserRegisterVO;
+import com.iflove.api.user.domain.vo.request.user.UserRegisterReq;
 import com.iflove.api.user.domain.vo.response.user.UserInfoResp;
 import com.iflove.api.user.service.cache.UserInfoCache;
-import com.iflove.websocket.NettyUtil;
 import jakarta.annotation.Resource;
 import jakarta.validation.ValidationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -109,16 +107,16 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 用户注册
-     * @param userRegisterVO 注册信息
+     * @param userRegisterReq 注册信息
      * @return {@link RestBean}
      */
     @Transactional
     @Override
-    public RestBean<Void> register(UserRegisterVO userRegisterVO) {
+    public RestBean<Void> register(UserRegisterReq userRegisterReq) {
         User user = User.builder()
-                .name(userRegisterVO.getUsername())
-                .password(passwordEncoder.encode(userRegisterVO.getPassword()))
-                .sex(userRegisterVO.getSex())
+                .name(userRegisterReq.getUsername())
+                .password(passwordEncoder.encode(userRegisterReq.getPassword()))
+                .sex(userRegisterReq.getSex())
                 .build();
         userDao.save(user);
         roleDao.save(Role.init(user.getId()));

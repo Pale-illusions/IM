@@ -1,12 +1,14 @@
 package com.iflove.api.social.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 关注表
@@ -14,6 +16,9 @@ import lombok.Data;
  */
 @TableName(value ="follow")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Follow implements Serializable {
     /**
      * 
@@ -35,6 +40,8 @@ public class Follow implements Serializable {
 
     /**
      * 关注状态 0 关注 / 1 未关注
+     * 业务实现本质上逻辑删除
+     * @see com.iflove.api.social.domain.enums.SubscribeStatusEnum
      */
     @TableField(value = "status")
     private Integer status;

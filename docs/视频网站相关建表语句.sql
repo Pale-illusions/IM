@@ -61,6 +61,10 @@ ALTER TABLE
     `follow` ADD INDEX `follow_create_time_index`(`create_time`);
 ALTER TABLE
     `follow` ADD INDEX `follow_update_time_index`(`update_time`);
+ALTER TABLE follow
+    ADD UNIQUE KEY unique_followee_follower (followee_id, follower_id);
+ALTER TABLE follow
+    ADD UNIQUE KEY unique_follower_followee (follower_id, followee_id);
 
 ALTER TABLE
     `video` ADD CONSTRAINT `video_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);

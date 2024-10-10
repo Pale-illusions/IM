@@ -19,6 +19,11 @@ import java.util.stream.Collectors;
 @Service
 public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> {
 
+    /**
+     * 获取成员id列表
+     * @param groupId
+     * @return
+     */
     public List<Long> getMemberUidList(Long groupId) {
         return lambdaQuery()
                 .eq(GroupMember::getGroupId, groupId)
@@ -29,6 +34,12 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 获取群成员
+     * @param groupId
+     * @param uid
+     * @return
+     */
     public GroupMember getMember(Long groupId, Long uid) {
         return lambdaQuery()
                 .eq(GroupMember::getGroupId, groupId)
@@ -36,6 +47,12 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .one();
     }
 
+    /**
+     * 获取成员id - 成员权限 映射
+     * @param groupId
+     * @param uidList
+     * @return
+     */
     public Map<Long, Integer> getMemberMapRole(Long groupId, List<Long> uidList) {
         List<GroupMember> list = lambdaQuery()
                 .eq(GroupMember::getGroupId, groupId)
@@ -45,6 +62,11 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
         return list.stream().collect(Collectors.toMap(GroupMember::getUserId, GroupMember::getRole));
     }
 
+    /**
+     * 新增管理员
+     * @param groupId
+     * @param uidList
+     */
     public void addAdmin(Long groupId, List<Long> uidList) {
         List<Long> distinctUidList = uidList.stream().distinct().collect(Collectors.toList());;
         lambdaUpdate()
@@ -55,6 +77,11 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .update();
     }
 
+    /**
+     * 撤回管理员
+     * @param groupId
+     * @param uidList
+     */
     public void revokeAdmin(Long groupId, List<Long> uidList) {
         List<Long> distinctUidList = uidList.stream().distinct().collect(Collectors.toList());;
         lambdaUpdate()
@@ -65,6 +92,11 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .update();
     }
 
+    /**
+     * 删除群成员
+     * @param groupId
+     * @param uidList
+     */
     public void removeByGroupId(Long groupId, List<Long> uidList) {
         lambdaUpdate()
                 .eq(GroupMember::getGroupId, groupId)

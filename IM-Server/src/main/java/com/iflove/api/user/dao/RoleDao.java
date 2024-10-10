@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class RoleDao extends ServiceImpl<RoleMapper, Role> {
+    /**
+     * 获取用户权限
+     * @param userId
+     * @return
+     */
     public Role getByUserId(Long userId) {
         return lambdaQuery()
                 .eq(Role::getUserId, userId)

@@ -2,7 +2,7 @@ package com.iflove.api.user.service;
 
 import com.iflove.api.user.domain.entity.IpInfo;
 import com.iflove.common.domain.vo.response.RestBean;
-import com.iflove.api.user.domain.vo.request.user.UserRegisterVO;
+import com.iflove.api.user.domain.vo.request.user.UserRegisterReq;
 import com.iflove.api.user.domain.vo.response.user.UserInfoResp;
 import com.iflove.api.user.domain.vo.response.user.UserLoginInfoResp;
 
@@ -29,10 +29,10 @@ public interface UserService {
 
     /**
      * 用户注册
-     * @param userRegisterVO 注册信息
+     * @param userRegisterReq 注册信息
      * @return {@link RestBean}
      */
-    RestBean<Void> register(UserRegisterVO userRegisterVO);
+    RestBean<Void> register(UserRegisterReq userRegisterReq);
 
     /**
      * 重置密码

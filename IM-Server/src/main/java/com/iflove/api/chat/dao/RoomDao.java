@@ -14,6 +14,12 @@ import java.util.Date;
 */
 @Service
 public class RoomDao extends ServiceImpl<RoomMapper, Room> {
+    /**
+     * 更新群聊活跃时间
+     * @param roomId
+     * @param messageId
+     * @param msgCreateTime
+     */
     public void refreshActiveTime(Long roomId, Long messageId, Date msgCreateTime) {
         lambdaUpdate()
                 .eq(Room::getId, roomId)

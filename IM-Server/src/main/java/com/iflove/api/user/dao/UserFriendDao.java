@@ -18,6 +18,12 @@ import java.util.List;
 @Service
 public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
 
+    /**
+     * 获取好友关系
+     * @param uid
+     * @param targetUid
+     * @return
+     */
     public UserFriend getByFriend(Long uid, Long targetUid) {
         return lambdaQuery()
                 .eq(UserFriend::getUserId, uid)
@@ -25,6 +31,12 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
                 .one();
     }
 
+    /**
+     * 获取双向好友关系
+     * @param uid
+     * @param targetUid
+     * @return
+     */
     public List<UserFriend> getUserFriend(Long uid, Long targetUid) {
         return lambdaQuery()
                 .eq(UserFriend::getUserId, uid)
@@ -35,11 +47,23 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
                 .list();
     }
 
+    /**
+     * 好友列表 (游标分页)
+     * @param uid
+     * @param req
+     * @return
+     */
     public CursorPageBaseResp<UserFriend> getFriendPage(Long uid, CursorPageBaseReq req) {
         return CursorUtils.getCursorPageByMysql(this, req,
                 wrapper -> wrapper.eq(UserFriend::getUserId, uid), UserFriend::getId);
     }
 
+    /**
+     * 批量获取好友
+     * @param uid
+     * @param uidList
+     * @return
+     */
     public List<UserFriend> getByFriends(Long uid, List<Long> uidList) {
         return lambdaQuery()
                 .eq(UserFriend::getUserId, uid)

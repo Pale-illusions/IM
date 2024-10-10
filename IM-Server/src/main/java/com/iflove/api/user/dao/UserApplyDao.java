@@ -21,6 +21,12 @@ import java.util.List;
 @Service
 public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
 
+    /**
+     * 获取好友请求
+     * @param uid
+     * @param targetUid
+     * @return
+     */
     public UserApply getFriendApply(Long uid, Long targetUid) {
         return lambdaQuery()
                 .eq(UserApply::getUserId, uid)
@@ -30,6 +36,11 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
                 .one();
     }
 
+    /**
+     * 获取请求未读数
+     * @param targetUid
+     * @return
+     */
     public Long getUnreadCount(Long targetUid) {
         return lambdaQuery()
                 .eq(UserApply::getTargetId, targetUid)
@@ -37,6 +48,12 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
                 .count();
     }
 
+    /**
+     * 获取好友请求
+     * @param uid
+     * @param page
+     * @return
+     */
     public IPage<UserApply> getFriendApplyPage(Long uid, Page page) {
         return lambdaQuery()
                 .eq(UserApply::getTargetId, uid)
@@ -45,6 +62,11 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
                 .page(page);
     }
 
+    /**
+     * 阅读请求
+     * @param uid
+     * @param applyIds
+     */
     public void readApplies(Long uid, List<Long> applyIds) {
         lambdaUpdate()
                 .set(UserApply::getReadStatus, ApplyReadStatusEnum.READ.getCode())
@@ -54,6 +76,10 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
                 .update();
     }
 
+    /**
+     * 同意请求
+     * @param applyId
+     */
     public void applyApprove(Long applyId) {
         lambdaUpdate()
                 .set(UserApply::getStatus, ApplyStatusEnum.AGREE.getCode())
@@ -62,6 +88,10 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
                 .update();
     }
 
+    /**
+     * 拒绝请求
+     * @param applyId
+     */
     public void applyDisapprove(Long applyId) {
         lambdaUpdate()
                 .set(UserApply::getStatus, ApplyStatusEnum.DISAGREE.getCode())

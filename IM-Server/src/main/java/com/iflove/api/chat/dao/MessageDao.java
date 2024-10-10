@@ -21,6 +21,12 @@ import java.util.Objects;
 */
 @Service
 public class MessageDao extends ServiceImpl<MessageMapper, Message> {
+    /**
+     * 消息列表 (游标分页)
+     * @param roomId
+     * @param req
+     * @return
+     */
     public CursorPageBaseResp<Message> getCursorpage(Long roomId, CursorPageBaseReq req) {
         return CursorUtils.getCursorPageByMysql(this, req, wrapper -> {
             wrapper.eq(Message::getRoomId, roomId);
@@ -28,6 +34,12 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
         }, Message::getId);
     }
 
+    /**
+     * 消息未读数
+     * @param roomId
+     * @param readTime
+     * @return
+     */
     public Long getUnReadCount(Long roomId, Date readTime) {
         return lambdaQuery()
                 .eq(Message::getRoomId, roomId)
@@ -35,6 +47,11 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .count();
     }
 
+    /**
+     * 删除消息记录
+     * @param roomId
+     * @param uidList
+     */
     public void removeByRoomId(Long roomId, List<Object> uidList) {
         lambdaUpdate()
                 .eq(Message::getRoomId, roomId)

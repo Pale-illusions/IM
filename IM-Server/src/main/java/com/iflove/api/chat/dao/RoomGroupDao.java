@@ -15,12 +15,22 @@ import java.util.List;
 @Service
 public class RoomGroupDao extends ServiceImpl<RoomGroupMapper, RoomGroup> {
 
+    /**
+     * 群聊房间列表
+     * @param roomIds
+     * @return
+     */
     public List<RoomGroup> listByRoomIds(List<Long> roomIds) {
         return lambdaQuery()
                 .in(RoomGroup::getRoomId, roomIds)
                 .list();
     }
 
+    /**
+     * 根据房间id获取群聊房间
+     * @param roomId
+     * @return
+     */
     public RoomGroup getByRoomId(Long roomId) {
         return lambdaQuery()
                 .eq(RoomGroup::getRoomId, roomId)

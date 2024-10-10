@@ -16,12 +16,21 @@ import java.util.List;
 @Service
 public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
 
+    /**
+     * 根据key获取好友房间
+     * @param key
+     * @return
+     */
     public RoomFriend getByKey(String key) {
         return lambdaQuery()
                 .eq(RoomFriend::getRoomKey, key)
                 .one();
     }
 
+    /**
+     * 恢复好友房间
+     * @param id
+     */
     public void restoreRoom(Long id) {
         lambdaUpdate()
                 .set(RoomFriend::getStatus, NormalOrNoEnum.NORMAL.getStatus())
@@ -29,6 +38,11 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
                 .update();
     }
 
+    /**
+     * 根据roomId获取好友房间
+     * @param id
+     * @return
+     */
     public RoomFriend getByRoomId(Long id) {
         return lambdaQuery()
                 .eq(RoomFriend::getRoomId, id)
@@ -36,6 +50,10 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
                 .one();
     }
 
+    /**
+     * 删除好友房间
+     * @param key
+     */
     public void disableRoomFriend(String key) {
         lambdaUpdate()
                 .set(RoomFriend::getStatus, NormalOrNoEnum.FORBIDDEN.getStatus())
@@ -43,6 +61,11 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
                 .update();
     }
 
+    /**
+     * 好友房间列表
+     * @param roomIds
+     * @return
+     */
     public List<RoomFriend> listByRoomIds(List<Long> roomIds) {
         return lambdaQuery()
                 .in(RoomFriend::getRoomId, roomIds)

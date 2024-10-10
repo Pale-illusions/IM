@@ -2,8 +2,10 @@ package com.iflove.api.user.service.impl;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.jwt.JWTUtil;
+import com.iflove.api.user.dao.RoleDao;
 import com.iflove.api.user.dao.UserDao;
 import com.iflove.api.user.domain.entity.IpInfo;
+import com.iflove.api.user.domain.entity.Role;
 import com.iflove.api.user.domain.vo.response.user.UserLoginInfoResp;
 import com.iflove.api.user.service.UserService;
 import com.iflove.api.user.service.adapter.UserAdapter;
@@ -41,13 +43,15 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserServiceImpl implements UserService {
     @Resource
-    UserDao userDao;
+    private UserDao userDao;
     @Resource
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @Resource
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     @Resource
-    UserInfoCache userInfoCache;
+    private UserInfoCache userInfoCache;
+    @Resource
+    private RoleDao roleDao;
 
     /**
      * 用户登录
@@ -56,7 +60,7 @@ public class UserServiceImpl implements UserService {
      * @return {@link RestBean}<{@link UserLoginInfoResp}
      */
     @Override
-    public RestBean<UserLoginInfoResp> login(String username, String password) {
+    public RestBean<UserLoginInfoResp> login(String username, String password, IpInfo ipInfo) {
         //AuthenticationManager authenticate进行用户认证
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -64,6 +68,11 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("验证失败");
         }
         User user = userDao.getUserByName(username);
+        // 如果ip信息不一致，则更新IP
+        if (!Objects.equals(ipInfo, user.getIpInfo())) {
+            user.setIpInfo(ipInfo);
+            userDao.updateById(user);
+        }
         // 获取token
         String uuid = UUID.randomUUID().toString();
         Calendar calendar = Calendar.getInstance();
@@ -111,8 +120,9 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(userRegisterVO.getPassword()))
                 .sex(userRegisterVO.getSex())
                 .build();
-        return userDao.save(user) ?
-                RestBean.success() : RestBean.failure(CommonErrorEnum.SYSTEM_ERROR);
+        userDao.save(user);
+        roleDao.save(Role.init(user.getId()));
+        return RestBean.success();
     }
 
     /**

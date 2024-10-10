@@ -6,15 +6,15 @@ import com.iflove.api.user.mapper.RoleMapper;
 import org.springframework.stereotype.Service;
 
 /**
-* @author IFLOVE
-* @description 针对表【role(角色表)】的数据库操作Service实现
-* @createDate 2024-09-17 14:57:36
-*/
+ * @author 苍镜月
+ * @version 1.0
+ * @implNote
+ */
 @Service
 public class RoleDao extends ServiceImpl<RoleMapper, Role> {
-
+    public Role getByUserId(Long userId) {
+        return lambdaQuery()
+                .eq(Role::getUserId, userId)
+                .one();
+    }
 }
-
-
-
-

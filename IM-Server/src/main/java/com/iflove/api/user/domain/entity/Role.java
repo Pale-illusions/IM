@@ -4,17 +4,23 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
- * 角色表
- * @TableName role
+ * @author 苍镜月
+ * @version 1.0
+ * @implNote
  */
 @TableName(value ="role")
 @Data
-public class Role implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Role {
     /**
      * id
      */
@@ -22,20 +28,33 @@ public class Role implements Serializable {
     private Long id;
 
     /**
-     * 角色名称
+     * 用户id
      */
-    private String name;
+    @TableField("user_id")
+    private Long userId;
 
     /**
-     * 
+     * 用户权限
+     * @see com.iflove.api.user.domain.enums.UserRoleEnum
      */
+    @TableField("role")
+    private int role;
+
+    /**
+     * 创建时间
+     */
+    @TableField("create_time")
     private Date createTime;
 
     /**
-     * 
+     * 修改时间
      */
+    @TableField("update_time")
     private Date updateTime;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    public static Role init(Long userId) {
+        Role role = new Role();
+        role.setUserId(userId);
+        return role;
+    }
 }

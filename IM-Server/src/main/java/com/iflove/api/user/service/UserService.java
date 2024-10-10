@@ -1,5 +1,6 @@
 package com.iflove.api.user.service;
 
+import com.iflove.api.user.domain.entity.IpInfo;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.api.user.domain.vo.request.user.UserRegisterVO;
 import com.iflove.api.user.domain.vo.response.user.UserInfoResp;
@@ -17,7 +18,7 @@ public interface UserService {
      * @param password 密码
      * @return {@link RestBean}<{@link UserLoginInfoResp}
      */
-    RestBean<UserLoginInfoResp> login(String username, String password);
+    RestBean<UserLoginInfoResp> login(String username, String password, IpInfo ipInfo);
 
     /**
      * 用户登出

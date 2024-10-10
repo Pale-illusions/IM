@@ -80,8 +80,9 @@ ALTER TABLE contact
 
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role`(
-    `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(64) NOT NULL COMMENT '角色名称',
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL COMMENT '用户id',
+    `role` int not null default 0 comment '用户权限 0 普通成员 / 1 管理员',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '更新时间'
 )  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
@@ -142,23 +143,6 @@ ALTER TABLE
     `room` ADD INDEX `room_create_time_index`(`create_time`);
 ALTER TABLE
     `room` ADD INDEX `room_update_time_index`(`update_time`);
-
-DROP TABLE IF EXISTS `user_role`;
-CREATE TABLE `user_role`(
-    `id` BIGINT  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'id',
-    `user_id` BIGINT NOT NULL COMMENT 'user id',
-    `role_id` BIGINT NOT NULL COMMENT '角色 id',
-    `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
-    `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '更新时间'
-)  ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户权限表' ROW_FORMAT = Dynamic;
-ALTER TABLE
-    `user_role` ADD INDEX `user_role_user_id_index`(`user_id`);
-ALTER TABLE
-    `user_role` ADD INDEX `user_role_role_id_index`(`role_id`);
-ALTER TABLE
-    `user_role` ADD INDEX `user_role_create_time_index`(`create_time`);
-ALTER TABLE
-    `user_role` ADD INDEX `user_role_update_time_index`(`update_time`);
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`(
@@ -237,9 +221,7 @@ ALTER TABLE
 ALTER TABLE
     `user_friend` ADD CONSTRAINT `user_friend_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);
 ALTER TABLE
-    `user_role` ADD CONSTRAINT `user_role_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);
-ALTER TABLE
-    `user_role` ADD CONSTRAINT `user_role_role_id_foreign` FOREIGN KEY(`role_id`) REFERENCES `role`(`id`);
+    `role` ADD CONSTRAINT `role_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);
 ALTER TABLE
     `room_friend` ADD CONSTRAINT `room_friend_room_id_foreign` FOREIGN KEY(`room_id`) REFERENCES `room`(`id`);
 ALTER TABLE

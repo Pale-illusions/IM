@@ -1,14 +1,17 @@
 package com.iflove.api.user.controller;
 
+import com.iflove.api.user.domain.entity.IpInfo;
 import com.iflove.api.user.domain.vo.response.user.UserLoginInfoResp;
 import com.iflove.api.user.service.UserService;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.api.user.domain.vo.request.user.UserRegisterVO;
+import com.iflove.common.utils.IPUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
@@ -41,8 +44,12 @@ public class AuthorizeController {
             @ApiResponse(responseCode = "501", description = "服务器内部错误")
     })
     public RestBean<UserLoginInfoResp> login(@RequestParam("name") @Length(min = 1, max = 20) String name,
-                                             @RequestParam("password") @Length(min = 6, max = 20) String password) {
-        return userService.login(name, password);
+                                             @RequestParam("password") @Length(min = 6, max = 20) String password,
+                                             HttpServletRequest request) {
+        String ip = IPUtils.getIp(request);
+        String cityInfo = IPUtils.getCityInfo(ip);
+        IpInfo ipInfo = IpInfo.init(cityInfo);
+        return userService.login(name, password, ipInfo);
     }
 
     /**

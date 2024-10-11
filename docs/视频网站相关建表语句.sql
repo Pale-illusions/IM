@@ -66,6 +66,20 @@ ALTER TABLE follow
 ALTER TABLE follow
     ADD UNIQUE KEY unique_follower_followee (follower_id, followee_id);
 
+Drop TABLE IF EXISTS `tag`;
+CREATE TABLE `tag` (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tag_name VARCHAR(255) UNIQUE NOT NULL comment '标签名称'
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '标签表' ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `video_tag`;
+CREATE TABLE `video_tag` (
+    video_id BIGINT NOT NULL comment '视频id',
+    tag_id BIGINT NOT NULL comment '标签id',
+    PRIMARY KEY (video_id, tag_id)
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '视频标签表' ROW_FORMAT = Dynamic;
+
+
 ALTER TABLE
     `video` ADD CONSTRAINT `video_user_id_foreign` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`);
 ALTER TABLE
@@ -76,3 +90,7 @@ ALTER TABLE
     `follow` ADD CONSTRAINT `follow_follower_id_foreign` FOREIGN KEY(`follower_id`) REFERENCES `user`(`id`);
 ALTER TABLE
     `follow` ADD CONSTRAINT `follow_followee_id_foreign` FOREIGN KEY(`followee_id`) REFERENCES `user`(`id`);
+ALTER TABLE
+    `video_tag` ADD CONSTRAINT `video_tag_video_id_foreign` FOREIGN KEY (`video_id`) REFERENCES `video`(`id`);
+ALTER TABLE
+    `video_tag` ADD CONSTRAINT `video_tag_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `tag`(`id`);

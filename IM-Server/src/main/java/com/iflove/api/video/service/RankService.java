@@ -6,5 +6,5 @@ package com.iflove.api.video.service;
  * @implNote
  */
 public interface RankService {
-
+    public void compute();
 }

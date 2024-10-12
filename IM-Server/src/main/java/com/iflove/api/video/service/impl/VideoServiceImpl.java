@@ -93,4 +93,5 @@ public class VideoServiceImpl implements VideoService {
         return RestBean.success(VideoAdapter.buildVideoInfoResp(dto));
     }
 
+
 }

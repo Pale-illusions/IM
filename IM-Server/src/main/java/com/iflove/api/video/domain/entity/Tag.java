@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 标签表
@@ -13,6 +16,8 @@ import lombok.Data;
  */
 @TableName(value ="tag")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Tag implements Serializable {
     /**
      * 
@@ -28,4 +33,10 @@ public class Tag implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public static Tag init(String tagName) {
+        Tag tag = new Tag();
+        tag.setTagName(tagName);
+        return tag;
+    }
 }

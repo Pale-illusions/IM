@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public enum OssSceneEnum {
     AVATAR(1, "头像", "/avatar"),
     CHAT(2, "聊天消息", "/chat"),
+    VIDEO(3, "视频", "/video"),
     ;
 
     private final Integer type;

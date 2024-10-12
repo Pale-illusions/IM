@@ -24,3 +24,4 @@
 |     Hutool     |       Java工具类库        |               https://github.com/looly/hutool                |
 |     minio      |        自建对象存储         |                https://github.com/minio/minio                |
 |    Caffeine    |         本地缓存          |                      http://caffe.berkeleyvision.org/                                        |
+| ElasticSearch  |        分布式搜索引擎        |                    https://www.elastic.co/cn/elasticsearch                                                                          |

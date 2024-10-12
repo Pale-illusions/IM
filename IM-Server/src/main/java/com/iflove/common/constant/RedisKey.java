@@ -24,6 +24,16 @@ public class RedisKey {
     public static final String ROOM_FRIEND_STRING = "room:roomFriend:roomId_%d";
     // 群聊房间信息
     public static final String ROOM_GROUP_STRING = "room:roomGroup:roomId_%d";
+    // 视频信息
+    public static final String VIDEO_INFO_STRING = "video:info:videoId_%d";
+    // 视频点击量
+    public static final String VIDEO_CLICK_COUNT ="video:clickCount";
+    // 视频点赞量
+    public static final String VIDEO_LIKE_COUNT ="video:likeCount";
+    // 评论点赞量
+    public static final String COMMENT_LIKE_COUNT = "comment:likeCount";
+    // 视频分数计算
+    public static final String VIDEO_SCORE_COMPUTEWAIT = "video:score:computeWait";
 
 
     public static String getKey(String key, Object... objects) {

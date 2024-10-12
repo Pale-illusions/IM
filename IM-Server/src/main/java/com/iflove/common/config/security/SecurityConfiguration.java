@@ -1,6 +1,7 @@
 package com.iflove.common.config.security;
 
 import cn.hutool.json.JSONUtil;
+import com.iflove.api.user.domain.enums.UserRoleEnum;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.CommonErrorEnum;
 import com.iflove.common.exception.UserErrorEnum;

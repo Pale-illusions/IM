@@ -10,6 +10,7 @@ CREATE TABLE video
     `description` varchar(255) null comment '视频简介',
     `url` varchar(255) null comment '视频地址',
     `user_id` bigint not null comment '视频作者id',
+    `score` double not null default 0 comment '视频分数',
     `delete_status` INT NOT NULL DEFAULT 0 COMMENT '逻辑删除 0 正常 / 1 删除',
     `create_time` DATETIME NOT NULL DEFAULT Now() COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT Now() on update NOW() COMMENT '修改时间'
@@ -74,9 +75,9 @@ CREATE TABLE `tag` (
 
 DROP TABLE IF EXISTS `video_tag`;
 CREATE TABLE `video_tag` (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     video_id BIGINT NOT NULL comment '视频id',
-    tag_id BIGINT NOT NULL comment '标签id',
-    PRIMARY KEY (video_id, tag_id)
+    tag_id BIGINT NOT NULL comment '标签id'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '视频标签表' ROW_FORMAT = Dynamic;
 
 

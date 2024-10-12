@@ -1,5 +1,6 @@
 package com.iflove.oss.domain.vo.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -18,9 +19,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "上传请求")
 public class UploadUrlReq {
     // 文件名（带后缀）
     @NotBlank
+    @Schema(description = "文件名(带后缀)")
     private String fileName;
     // TODO 多场景扩展
     /**
@@ -30,5 +33,6 @@ public class UploadUrlReq {
     @NotNull
     @Min(1)
     @Max(2)
+    @Schema(description = "场景 1 头像 / 2 聊天 / 3 视频")
     private Integer scene;
 }

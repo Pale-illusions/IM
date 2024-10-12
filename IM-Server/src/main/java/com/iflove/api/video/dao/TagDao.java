@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class TagDao extends ServiceImpl<TagMapper, Tag> {
 
+    public Tag getByTagName(String tagName) {
+        return lambdaQuery()
+                .eq(Tag::getTagName, tagName)
+                .one();
+    }
 }
 
 

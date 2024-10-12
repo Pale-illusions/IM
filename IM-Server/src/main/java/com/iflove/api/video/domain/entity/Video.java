@@ -1,12 +1,14 @@
 package com.iflove.api.video.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 视频表
@@ -14,6 +16,9 @@ import lombok.Data;
  */
 @TableName(value ="video")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Video implements Serializable {
     /**
      * 
@@ -46,9 +51,16 @@ public class Video implements Serializable {
     private Long userId;
 
     /**
+     * 视频分数
+     */
+    @TableField(value = "score")
+    private Double score;
+
+    /**
      * 逻辑删除 0 正常 / 1 删除
      */
     @TableField(value = "delete_status")
+    @TableLogic(value = "0", delval = "1")
     private Integer deleteStatus;
 
     /**

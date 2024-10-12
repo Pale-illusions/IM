@@ -1,7 +1,9 @@
 package com.iflove.api.video.service.impl;
 
 import com.iflove.api.video.dao.VideoDao;
+import com.iflove.api.video.domain.dto.VideoDTO;
 import com.iflove.api.video.domain.entity.Video;
+import com.iflove.api.video.service.ElasticSearchService;
 import com.iflove.api.video.service.RankService;
 import com.iflove.api.video.service.cache.VideoInfoCache;
 import com.iflove.common.constant.RedisKey;
@@ -29,6 +31,8 @@ public class RankServiceImpl implements RankService {
     private VideoInfoCache videoInfoCache;
     @Resource
     private VideoDao videoDao;
+    @Resource
+    private ElasticSearchService elasticSearchService;
 
     // 网站纪元
     private static final Date epoch;
@@ -71,7 +75,7 @@ public class RankServiceImpl implements RankService {
      */
     private void refresh(String videoId) {
         long id = Long.parseLong(videoId);
-        Video video = videoDao.getById(id);
+        VideoDTO video = videoInfoCache.get(id);
         if (Objects.isNull(video)) {
             log.warn("视频不存在, id={}", id);
         }
@@ -91,11 +95,14 @@ public class RankServiceImpl implements RankService {
         double score = Math.log10(Math.max(1, w)) +
                 (double) (video.getCreateTime().getTime() - epoch.getTime()) / (3600 * 60 * 24);
         // 更新视频分数
-        video.setScore(score);
-        videoDao.updateById(video);
+        videoDao.updateById(Video.builder()
+                .id(id)
+                .score(score)
+                .build());
         // 删除视频缓存
         videoInfoCache.delete(id);
-        // TODO 更新 es
-
+        // 更新 es
+        video.setScore(score);
+        elasticSearchService.saveVideo(video);
     }
 }

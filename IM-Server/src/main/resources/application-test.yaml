@@ -40,4 +40,9 @@ IM:
     host: 47.99.73.85
     port: 6379
     password: Cjy050119
+  # elasticsearch
+  elasticsearch:
+    uris: 120.27.210.198:9200
+    username: elastic
+    password: 114514
 

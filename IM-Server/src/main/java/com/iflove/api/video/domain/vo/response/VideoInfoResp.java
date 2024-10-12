@@ -23,6 +23,8 @@ import java.util.List;
 @Schema(description = "视频信息")
 public class VideoInfoResp {
 
+    private Long id;
+
     /**
      * 视频标题
      */
@@ -66,3 +68,5 @@ public class VideoInfoResp {
     @Schema(description = "视频标签")
     private List<String> tags;
 }
+
+// TODO 增加 评论数，点赞数，点击量等字段

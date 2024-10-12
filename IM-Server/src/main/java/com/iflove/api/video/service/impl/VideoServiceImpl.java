@@ -9,6 +9,7 @@ import com.iflove.api.video.domain.entity.Video;
 import com.iflove.api.video.domain.entity.VideoTag;
 import com.iflove.api.video.domain.vo.request.PublishReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
+import com.iflove.api.video.service.ElasticSearchService;
 import com.iflove.api.video.service.VideoService;
 import com.iflove.api.video.service.adapter.VideoAdapter;
 import com.iflove.api.video.service.cache.VideoInfoCache;
@@ -17,15 +18,11 @@ import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.BusinessException;
 import com.iflove.common.exception.VideoErrorEnum;
 import jakarta.annotation.Resource;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RedisUtil;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author 苍镜月
@@ -41,7 +38,7 @@ public class VideoServiceImpl implements VideoService {
     @Resource
     private VideoTagDao videoTagDao;
     @Resource
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ElasticSearchService elasticSearchService;
     @Resource
     private VideoInfoCache videoInfoCache;
 
@@ -68,8 +65,8 @@ public class VideoServiceImpl implements VideoService {
                     });
             videoTagDao.save(VideoTag.init(video.getId(), tag.getId()));
         });
-        // TODO es保存 发布事件
-
+        // 组装数据，保存到es
+        elasticSearchService.saveVideo(VideoAdapter.buildVideoDTO(video, Map.of(video.getId(), tags)));
         return RestBean.success();
     }
 

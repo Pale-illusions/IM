@@ -31,6 +31,10 @@ spring:
       timeout: 1800000
       # 设置密码
       password: ${IM.redis.password}
+  elasticsearch:
+    uris: ${IM.elasticsearch.uris} # elasticsearch服务器地址
+    username: ${IM.elasticsearch.username} # elasticsearch用户名
+    password: ${IM.elasticsearch.password} # elasticsearch密码
 
 rocketmq:
   name-server: ${rocketmq.name-server}

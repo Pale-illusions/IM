@@ -110,7 +110,7 @@ public class VideoServiceImpl implements VideoService {
             return RestBean.success(PageBaseResp.empty());
         }
 
-        // pageNo 项目设定默认(跟mybatisplus一致)从 1 开始, 但是搜索默认从 0 开始, 故-1
+        // pageNo 项目设定默认(跟mybatisplus一致)从 1 开始, 但是es搜索默认从 0 开始, 故-1
         int fromIndex = (req.getPageNo() - 1) * req.getPageSize();
         int toIndex = Math.min(fromIndex + req.getPageSize(), videoDTOS.size()); // 防止越界
 

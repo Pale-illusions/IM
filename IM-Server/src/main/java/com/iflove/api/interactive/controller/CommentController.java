@@ -1,7 +1,10 @@
 package com.iflove.api.interactive.controller;
 
+import com.iflove.api.interactive.domain.entity.Comment;
+import com.iflove.api.interactive.domain.vo.request.CommentPageReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPublishReq;
 import com.iflove.api.interactive.service.CommentService;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author 苍镜月
@@ -46,5 +46,18 @@ public class CommentController {
         return commentService.publish(uid, req);
     }
 
-
+    /**
+     * 评论列表
+     * @param req 评论列表请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link Comment}
+     */
+    @GetMapping("list")
+    @Operation(summary = "评论列表",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<PageBaseResp<Comment>> listComment(@Valid CommentPageReq req) {
+        return commentService.listComment(req);
+    }
 }

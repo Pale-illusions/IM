@@ -1,6 +1,9 @@
 package com.iflove.api.interactive.service;
 
+import com.iflove.api.interactive.domain.entity.Comment;
+import com.iflove.api.interactive.domain.vo.request.CommentPageReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPublishReq;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
 /**
@@ -17,4 +20,11 @@ public interface CommentService {
      * @return {@link RestBean}
      */
     RestBean<Void> publish(Long uid, CommentPublishReq req);
+
+    /**
+     * 评论列表
+     * @param req 评论列表请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link Comment}
+     */
+    RestBean<PageBaseResp<Comment>> listComment(CommentPageReq req);
 }

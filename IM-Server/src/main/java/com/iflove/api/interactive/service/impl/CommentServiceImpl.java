@@ -1,8 +1,11 @@
 package com.iflove.api.interactive.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iflove.api.interactive.dao.CommentDao;
 import com.iflove.api.interactive.domain.entity.Comment;
 import com.iflove.api.interactive.domain.enums.CommentTypeEnum;
+import com.iflove.api.interactive.domain.vo.request.CommentPageReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPublishReq;
 import com.iflove.api.interactive.service.CommentService;
 import com.iflove.api.interactive.service.adapter.CommentAdapter;
@@ -11,6 +14,7 @@ import com.iflove.api.video.dao.VideoDao;
 import com.iflove.api.video.domain.dto.VideoDTO;
 import com.iflove.api.video.service.cache.VideoInfoCache;
 import com.iflove.common.constant.RedisKey;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.BusinessException;
 import com.iflove.common.exception.CommentErrorEnum;
@@ -78,6 +82,23 @@ public class CommentServiceImpl implements CommentService {
         // 分数相关数据变更，存入Redis，等待计算分数
         RedisUtil.sSet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT), videoId);
         return RestBean.success();
+    }
+
+    /**
+     * 评论列表
+     * @param req 评论列表请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link Comment}
+     */
+    @Override
+    public RestBean<PageBaseResp<Comment>> listComment(CommentPageReq req) {
+        IPage<Comment> commentPage = commentDao.listComment(req);
+        if (CollectionUtil.isEmpty(commentPage.getRecords())) {
+            return RestBean.success(PageBaseResp.empty());
+        }
+        // 返回数据
+        return RestBean.success(
+               PageBaseResp.init(commentPage)
+        );
     }
 
 

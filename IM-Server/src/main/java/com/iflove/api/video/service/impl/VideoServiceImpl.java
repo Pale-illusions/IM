@@ -1,5 +1,7 @@
 package com.iflove.api.video.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.iflove.api.video.dao.TagDao;
 import com.iflove.api.video.dao.VideoDao;
 import com.iflove.api.video.dao.VideoTagDao;
@@ -8,12 +10,15 @@ import com.iflove.api.video.domain.entity.Tag;
 import com.iflove.api.video.domain.entity.Video;
 import com.iflove.api.video.domain.entity.VideoTag;
 import com.iflove.api.video.domain.vo.request.PublishReq;
+import com.iflove.api.video.domain.vo.request.VideoSearchReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
+import com.iflove.api.video.domain.vo.response.VideoSearchResp;
 import com.iflove.api.video.service.ElasticSearchService;
 import com.iflove.api.video.service.VideoService;
 import com.iflove.api.video.service.adapter.VideoAdapter;
 import com.iflove.api.video.service.cache.VideoInfoCache;
 import com.iflove.common.constant.RedisKey;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.BusinessException;
 import com.iflove.common.exception.VideoErrorEnum;
@@ -87,8 +92,32 @@ public class VideoServiceImpl implements VideoService {
         // 分数相关数据变更，存入Redis，等待计算分数
         RedisUtil.sSet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT), videoId);
         // 组装数据
+        // TODO 添加点赞量，评论量 。。。
         return RestBean.success(VideoAdapter.buildVideoInfoResp(dto));
     }
 
+    @Override
+    public RestBean<PageBaseResp<VideoSearchResp>> search(VideoSearchReq req) {
+        // TODO 时间范围
+        List<VideoDTO> videoDTOS = elasticSearchService.searchByTitleAndTags(req.getKeyword(), req.getTags());
+        if (CollectionUtil.isEmpty(videoDTOS)) {
+            return RestBean.success(PageBaseResp.empty());
+        }
+
+        // pageNo 项目设定默认(跟mybatisplus一致)从 1 开始, 但是搜索默认从 0 开始, 故-1
+        int fromIndex = (req.getPageNo() - 1) * req.getPageSize();
+        int toIndex = Math.min(fromIndex + req.getPageSize(), videoDTOS.size()); // 防止越界
+
+        if (fromIndex >= videoDTOS.size()) {
+            // 页数超出范围，返回空结果
+            return RestBean.success(PageBaseResp.empty());
+        }
+        // 组装结果返回
+        List<VideoDTO> result = videoDTOS.subList(fromIndex, toIndex);
+        boolean isLast = toIndex == videoDTOS.size(); // 判断是否为最后一页
+        return RestBean.success(
+                PageBaseResp.init(req.getPageNo(), req.getPageSize(), (long) videoDTOS.size(), isLast, VideoAdapter.buildVideoSearchResp(result))
+        );
+    }
 
 }

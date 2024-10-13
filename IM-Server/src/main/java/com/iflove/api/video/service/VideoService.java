@@ -1,7 +1,10 @@
 package com.iflove.api.video.service;
 
 import com.iflove.api.video.domain.vo.request.PublishReq;
+import com.iflove.api.video.domain.vo.request.VideoSearchReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
+import com.iflove.api.video.domain.vo.response.VideoSearchResp;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
 /**
@@ -24,4 +27,11 @@ public interface VideoService {
      * @return {@link RestBean}<{@link VideoInfoResp}
      */
     RestBean<VideoInfoResp> browse(Long videoId);
+
+    /**
+     * 搜索视频
+     * @param req 视频搜索请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link VideoInfoResp}
+     */
+    RestBean<PageBaseResp<VideoSearchResp>> search(VideoSearchReq req);
 }

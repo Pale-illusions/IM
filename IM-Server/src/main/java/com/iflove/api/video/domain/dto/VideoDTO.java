@@ -67,7 +67,9 @@ public class VideoDTO {
 
     /**
      * 视频标签
+     * https://blog.csdn.net/dg19971024/article/details/107103201
+     * 关于中文的keyword查询请看
      */
-    @Field(type = FieldType.Keyword)  // 关键词字段用于精确匹配，不需要分词
+    @Field(type = FieldType.Keyword)
     private List<String> tags;
 }

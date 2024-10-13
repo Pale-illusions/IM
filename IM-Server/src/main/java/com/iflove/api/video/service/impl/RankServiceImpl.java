@@ -52,7 +52,7 @@ public class RankServiceImpl implements RankService {
     @Override
     // 每1分钟执行一次，测试用
     @Scheduled(cron = "0 * * * * ?")
-    // 每2小时执行一次，正式上线用
+    // TODO 每2小时执行一次，正式上线用
 //    @Scheduled(cron = "0 0 */2 * * ?")
     public void compute() {
         Set<String> videoIds = RedisUtil.sGet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT));

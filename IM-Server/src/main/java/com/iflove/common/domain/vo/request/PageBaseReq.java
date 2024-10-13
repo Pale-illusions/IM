@@ -23,6 +23,7 @@ public class PageBaseReq {
     private Integer pageSize = 10;
 
     @Schema(description = "（从1开始）")
+    @Min(1)
     private Integer pageNo = 1;
 
     /**

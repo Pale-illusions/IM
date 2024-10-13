@@ -1,14 +1,19 @@
 package com.iflove.api.video.service.adapter;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.iflove.api.video.domain.dto.VideoDTO;
 import com.iflove.api.video.domain.entity.Tag;
 import com.iflove.api.video.domain.entity.Video;
 import com.iflove.api.video.domain.vo.request.PublishReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
+import com.iflove.api.video.domain.vo.response.VideoSearchResp;
+import com.iflove.common.constant.RedisKey;
+import utils.RedisUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -37,5 +42,20 @@ public class VideoAdapter {
         BeanUtil.copyProperties(video, resp);
         resp.setTags(map.get(video.getId()));
         return resp;
+    }
+
+    public static List<VideoSearchResp> buildVideoSearchResp(List<VideoDTO> videoDTOS) {
+        return videoDTOS.stream()
+                .map(v -> {
+                    VideoSearchResp resp = new VideoSearchResp();
+                    BeanUtil.copyProperties(v, resp);
+                    resp.setClickCount(Optional
+                            .ofNullable(RedisUtil.zScore(RedisKey.getKey(RedisKey.VIDEO_CLICK_COUNT), v.getId().toString()))
+                            .orElse(0.0)
+                            .longValue()
+                    );
+                    return resp;
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -1,8 +1,11 @@
 package com.iflove.api.video.controller;
 
 import com.iflove.api.video.domain.vo.request.PublishReq;
+import com.iflove.api.video.domain.vo.request.VideoSearchReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
+import com.iflove.api.video.domain.vo.response.VideoSearchResp;
 import com.iflove.api.video.service.VideoService;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,5 +61,21 @@ public class VideoController {
     })
     public RestBean<VideoInfoResp> browse(@NotNull @PathVariable Long videoId) {
         return videoService.browse(videoId);
+    }
+
+
+    /**
+     * 搜索视频
+     * @param req 视频搜索请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link VideoInfoResp}
+     */
+    @GetMapping("search")
+    @Operation(summary = "搜索视频",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<PageBaseResp<VideoSearchResp>> search(@Valid VideoSearchReq req) {
+        return videoService.search(req);
     }
 }

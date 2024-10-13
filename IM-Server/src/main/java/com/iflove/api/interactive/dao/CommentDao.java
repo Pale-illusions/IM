@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentDao extends ServiceImpl<CommentMapper, Comment> {
 
+    public Long getVideoCommentCount(String videoId) {
+        return lambdaQuery()
+                .eq(Comment::getVideoId, videoId)
+                .count();
+    }
 }
 
 

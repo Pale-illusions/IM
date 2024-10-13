@@ -3,7 +3,7 @@ package com.iflove.api.video.service.adapter;
 import cn.hutool.core.bean.BeanUtil;
 import com.iflove.api.video.domain.dto.VideoDTO;
 import com.iflove.api.video.domain.entity.Video;
-import com.iflove.api.video.domain.vo.request.PublishReq;
+import com.iflove.api.video.domain.vo.request.VideoPublishReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
 import com.iflove.api.video.domain.vo.response.VideoSearchResp;
 import com.iflove.common.constant.RedisKey;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @implNote
  */
 public class VideoAdapter {
-    public static Video buildVideoPost(Long uid, PublishReq req) {
+    public static Video buildVideoPost(Long uid, VideoPublishReq req) {
         return Video.builder()
                 .userId(uid)
                 .url(req.getUrl())

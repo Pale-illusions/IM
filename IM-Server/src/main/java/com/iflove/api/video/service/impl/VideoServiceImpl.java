@@ -9,7 +9,7 @@ import com.iflove.api.video.domain.dto.VideoDTO;
 import com.iflove.api.video.domain.entity.Tag;
 import com.iflove.api.video.domain.entity.Video;
 import com.iflove.api.video.domain.entity.VideoTag;
-import com.iflove.api.video.domain.vo.request.PublishReq;
+import com.iflove.api.video.domain.vo.request.VideoPublishReq;
 import com.iflove.api.video.domain.vo.request.VideoSearchReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
 import com.iflove.api.video.domain.vo.response.VideoSearchResp;
@@ -56,7 +56,7 @@ public class VideoServiceImpl implements VideoService {
      */
     @Override
     @Transactional
-    public RestBean<Void> publish(Long uid, PublishReq req) {
+    public RestBean<Void> publish(Long uid, VideoPublishReq req) {
         Video video = VideoAdapter.buildVideoPost(uid, req);
         // 保存视频
         videoDao.save(video);

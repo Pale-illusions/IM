@@ -1,5 +1,6 @@
 package com.iflove.api.video.service.impl;
 
+import com.iflove.api.interactive.dao.CommentDao;
 import com.iflove.api.video.dao.VideoDao;
 import com.iflove.api.video.domain.dto.VideoDTO;
 import com.iflove.api.video.domain.entity.Video;
@@ -31,6 +32,8 @@ public class RankServiceImpl implements RankService {
     private VideoInfoCache videoInfoCache;
     @Resource
     private VideoDao videoDao;
+    @Resource
+    private CommentDao commentDao;
     @Resource
     private ElasticSearchService elasticSearchService;
 
@@ -83,8 +86,8 @@ public class RankServiceImpl implements RankService {
         double likeCount = 0;
         // TODO 点踩数
         double disLikeCount = 0;
-        // TODO 评论数
-        double commentCount = 0;
+        // 评论数
+        double commentCount = commentDao.getVideoCommentCount(videoId);
         // 点击量
         double clickCount = RedisUtil.zScore(RedisKey.getKey(RedisKey.VIDEO_CLICK_COUNT), videoId);
         // 计算权重

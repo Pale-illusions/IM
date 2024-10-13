@@ -20,7 +20,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PublishReq {
+public class VideoPublishReq {
     /**
      * 视频标题
      */

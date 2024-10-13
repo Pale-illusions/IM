@@ -1,6 +1,6 @@
 package com.iflove.api.video.controller;
 
-import com.iflove.api.video.domain.vo.request.PublishReq;
+import com.iflove.api.video.domain.vo.request.VideoPublishReq;
 import com.iflove.api.video.domain.vo.request.VideoSearchReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
 import com.iflove.api.video.domain.vo.response.VideoSearchResp;
@@ -44,7 +44,7 @@ public class VideoController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success"),
     })
-    public RestBean<Void> publish(@Valid @RequestBody PublishReq req) {
+    public RestBean<Void> publish(@Valid @RequestBody VideoPublishReq req) {
         Long uid = RequestHolder.get().getUid();
         return videoService.publish(uid, req);
     }
@@ -94,4 +94,6 @@ public class VideoController {
     public RestBean<PageBaseResp<VideoSearchResp>> rank(@Valid PageBaseReq req) {
         return videoService.rank(req);
     }
+
+    // TODO 视频审核接口
 }

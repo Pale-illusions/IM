@@ -1,7 +1,26 @@
 package com.iflove.api.interactive.service.impl;
 
+import com.iflove.api.interactive.dao.CommentDao;
+import com.iflove.api.interactive.domain.entity.Comment;
+import com.iflove.api.interactive.domain.enums.CommentTypeEnum;
+import com.iflove.api.interactive.domain.vo.request.CommentPublishReq;
 import com.iflove.api.interactive.service.CommentService;
+import com.iflove.api.interactive.service.adapter.CommentAdapter;
+import com.iflove.api.interactive.service.cache.CommentCache;
+import com.iflove.api.video.dao.VideoDao;
+import com.iflove.api.video.domain.dto.VideoDTO;
+import com.iflove.api.video.service.cache.VideoInfoCache;
+import com.iflove.common.constant.RedisKey;
+import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.exception.BusinessException;
+import com.iflove.common.exception.CommentErrorEnum;
+import com.iflove.sensitive.service.SensitiveWordBs;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import utils.RedisUtil;
+
+import java.util.Objects;
 
 /**
  * @author 苍镜月
@@ -10,4 +29,56 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CommentServiceImpl implements CommentService {
+    @Resource
+    private CommentDao commentDao;
+    @Resource
+    private CommentCache commentCache;
+    @Resource
+    private VideoInfoCache videoInfoCache;
+    @Resource
+    private SensitiveWordBs sensitiveWordBs;
+
+    /**
+     * 评论
+     * @param uid 用户id
+     * @param req 评论请求
+     * @return {@link RestBean}
+     */
+    @Override
+    @Transactional
+    public RestBean<Void> publish(Long uid, CommentPublishReq req) {
+        // 过滤敏感词
+        req.setContent(sensitiveWordBs.filter(req.getContent()));
+        // 获取评论对象类型
+        CommentTypeEnum commentTypeEnum = CommentTypeEnum.of(req.getType());
+        // 视频id
+        Long videoId;
+        // 对视频评论
+        if (Objects.equals(commentTypeEnum, CommentTypeEnum.VIDEO)) {
+            VideoDTO target = videoInfoCache.get(req.getTargetId());
+            if (Objects.isNull(target)) {
+                throw new BusinessException(CommentErrorEnum.COMMENT_TARGET_NOT_FOUND);
+            }
+            videoId = target.getId();
+            commentDao.save(CommentAdapter.buildCommentSave(req, videoId, uid));
+        }
+        // 对评论评论
+        else if (Objects.equals(commentTypeEnum, CommentTypeEnum.COMMENT)) {
+            Comment target = commentCache.getComment(req.getTargetId());
+            if (Objects.isNull(target)) {
+                throw new BusinessException(CommentErrorEnum.COMMENT_TARGET_NOT_FOUND);
+            }
+            videoId = target.getVideoId();
+            commentDao.save(CommentAdapter.buildCommentSave(req, videoId, uid));
+        }
+        // 不支持的评论对象
+        else {
+            throw new BusinessException(CommentErrorEnum.TYPE_NOT_SUPPORTED);
+        }
+        // 分数相关数据变更，存入Redis，等待计算分数
+        RedisUtil.sSet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT), videoId);
+        return RestBean.success();
+    }
+
+
 }

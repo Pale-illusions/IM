@@ -1,31 +1,29 @@
 package com.iflove.api.chat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.iflove.api.chat.dao.*;
-import com.iflove.api.chat.domain.dto.RoomBaseInfo;
-import com.iflove.api.chat.domain.entity.*;
+import com.iflove.api.chat.dao.GroupMemberDao;
+import com.iflove.api.chat.dao.RoomDao;
+import com.iflove.api.chat.dao.RoomFriendDao;
+import com.iflove.api.chat.dao.RoomGroupDao;
+import com.iflove.api.chat.domain.entity.GroupMember;
+import com.iflove.api.chat.domain.entity.Room;
+import com.iflove.api.chat.domain.entity.RoomFriend;
+import com.iflove.api.chat.domain.entity.RoomGroup;
 import com.iflove.api.chat.domain.enums.GroupRoleEnum;
 import com.iflove.api.chat.domain.enums.RoomTypeEnum;
-import com.iflove.api.chat.domain.vo.response.ChatRoomResp;
 import com.iflove.api.chat.service.RoomService;
 import com.iflove.api.chat.service.adapter.ChatAdapter;
-import com.iflove.api.chat.service.cache.MsgCache;
-import com.iflove.api.chat.service.cache.RoomCache;
 import com.iflove.api.chat.service.cache.RoomFriendCache;
-import com.iflove.api.chat.service.cache.RoomGroupCache;
 import com.iflove.api.user.domain.entity.User;
 import com.iflove.api.user.service.cache.UserInfoCache;
 import com.iflove.common.domain.enums.NormalOrNoEnum;
-import com.iflove.common.domain.vo.response.RestBean;
-import com.iflove.common.exception.RoomErrorEnum;
 import jakarta.annotation.Resource;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author 苍镜月

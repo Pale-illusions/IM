@@ -1,6 +1,7 @@
 package com.iflove.api.interactive.service;
 
 import com.iflove.api.interactive.domain.entity.Comment;
+import com.iflove.api.interactive.domain.vo.request.CommentDeleteReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPageReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPublishReq;
 import com.iflove.common.domain.vo.response.PageBaseResp;
@@ -27,4 +28,11 @@ public interface CommentService {
      * @return {@link RestBean}<{@link PageBaseResp}<{@link Comment}
      */
     RestBean<PageBaseResp<Comment>> listComment(CommentPageReq req);
+
+    /**
+     * 删除评论
+     * @param req 评论删除请求
+     * @return {@link RestBean}
+     */
+    RestBean<Void> deleteComment(CommentDeleteReq req);
 }

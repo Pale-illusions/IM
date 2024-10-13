@@ -3,12 +3,12 @@ package com.iflove.api.interactive.dao;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.iflove.api.interactive.domain.entity.Comment;
-import com.iflove.api.interactive.domain.enums.CommentTypeEnum;
+import com.iflove.api.interactive.domain.vo.request.CommentDeleteReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPageReq;
 import com.iflove.api.interactive.mapper.CommentMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
 
 /**
 * @author IFLOVE
@@ -29,6 +29,24 @@ public class CommentDao extends ServiceImpl<CommentMapper, Comment> {
                 .eq(Comment::getType, req.getType())
                 .eq(Comment::getTargetId, req.getTargetId())
                 .page(req.plusPage());
+    }
+
+    public void deleteComment(Long targetId) {
+        lambdaUpdate()
+                .eq(Comment::getId, targetId)
+                .remove();
+    }
+
+    public List<Comment> getChilds(Long targetId) {
+        return lambdaQuery()
+                .eq(Comment::getTargetId, targetId)
+                .list();
+    }
+
+    public void deleteVideoComment(Long videoId) {
+        lambdaUpdate()
+                .eq(Comment::getVideoId, videoId)
+                .remove();
     }
 }
 

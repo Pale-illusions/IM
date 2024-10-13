@@ -1,6 +1,7 @@
 package com.iflove.api.interactive.controller;
 
 import com.iflove.api.interactive.domain.entity.Comment;
+import com.iflove.api.interactive.domain.vo.request.CommentDeleteReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPageReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPublishReq;
 import com.iflove.api.interactive.service.CommentService;
@@ -60,4 +61,21 @@ public class CommentController {
     public RestBean<PageBaseResp<Comment>> listComment(@Valid CommentPageReq req) {
         return commentService.listComment(req);
     }
+
+    /**
+     * 删除评论
+     * @param req 评论删除请求
+     * @return {@link RestBean}
+     */
+    @DeleteMapping("delete")
+    @Operation(summary = "删除评论",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<Void> deleteComment(@Valid @RequestBody CommentDeleteReq req) {
+        return commentService.deleteComment(req);
+    }
+
+
 }

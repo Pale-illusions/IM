@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iflove.api.interactive.dao.CommentDao;
 import com.iflove.api.interactive.domain.entity.Comment;
 import com.iflove.api.interactive.domain.enums.CommentTypeEnum;
+import com.iflove.api.interactive.domain.vo.request.CommentDeleteReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPageReq;
 import com.iflove.api.interactive.domain.vo.request.CommentPublishReq;
 import com.iflove.api.interactive.service.CommentService;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RedisUtil;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -91,6 +93,10 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public RestBean<PageBaseResp<Comment>> listComment(CommentPageReq req) {
+        // 不支持的评论类型
+        if (Objects.isNull(CommentTypeEnum.of(req.getType()))) {
+            throw new BusinessException(CommentErrorEnum.TYPE_NOT_SUPPORTED);
+        }
         IPage<Comment> commentPage = commentDao.listComment(req);
         if (CollectionUtil.isEmpty(commentPage.getRecords())) {
             return RestBean.success(PageBaseResp.empty());
@@ -101,5 +107,55 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
+    /**
+     * 删除评论
+     * @param req 评论删除请求
+     * @return {@link RestBean}
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RestBean<Void> deleteComment(CommentDeleteReq req) {
+        // 获取评论对象类型
+        CommentTypeEnum commentTypeEnum = CommentTypeEnum.of(req.getType());
+        // 视频id
+        Long videoId;
+        // 视频评论删除
+        if (Objects.equals(commentTypeEnum, CommentTypeEnum.VIDEO)) {
+            VideoDTO target = videoInfoCache.get(req.getTargetId());
+            if (Objects.isNull(target)) {
+                throw new BusinessException(CommentErrorEnum.COMMENT_TARGET_NOT_FOUND);
+            }
+            videoId = target.getId();
+            commentDao.deleteVideoComment(videoId);
+        }
+        // 评论的评论删除
+        else if (Objects.equals(commentTypeEnum, CommentTypeEnum.COMMENT)) {
+            Comment target = commentCache.getComment(req.getTargetId());
+            if (Objects.isNull(target)) {
+                throw new BusinessException(CommentErrorEnum.COMMENT_TARGET_NOT_FOUND);
+            }
+            videoId = target.getVideoId();
+            dfsDelete(target.getId());
+        }
+        // 不支持的评论对象
+        else {
+            throw new BusinessException(CommentErrorEnum.TYPE_NOT_SUPPORTED);
+        }
+        // 分数相关数据变更，存入Redis，等待计算分数
+        RedisUtil.sSet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT), videoId);
+        return RestBean.success();
+    }
+
+    /**
+     * dfs删除评论
+     * @param targetId 目标id
+     */
+    private void dfsDelete(Long targetId) {
+        List<Comment> childs = commentDao.getChilds(targetId);
+        commentDao.deleteComment(targetId);
+        commentCache.evictComment(targetId);
+        if (CollectionUtil.isEmpty(childs)) return;
+        childs.forEach(child -> dfsDelete(child.getId()));
+    }
 
 }

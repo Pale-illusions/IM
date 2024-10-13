@@ -1,5 +1,7 @@
 package com.iflove.api.video.dao;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.iflove.api.video.domain.entity.Video;
@@ -14,6 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class VideoDao extends ServiceImpl<VideoMapper, Video> {
 
+    public IPage<Video> rank(Page page) {
+        return lambdaQuery()
+                .orderByDesc(Video::getScore)
+                .page(page);
+    }
 }
 
 

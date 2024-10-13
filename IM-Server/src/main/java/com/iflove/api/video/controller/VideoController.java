@@ -5,6 +5,7 @@ import com.iflove.api.video.domain.vo.request.VideoSearchReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
 import com.iflove.api.video.domain.vo.response.VideoSearchResp;
 import com.iflove.api.video.service.VideoService;
+import com.iflove.common.domain.vo.request.PageBaseReq;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
@@ -77,5 +78,20 @@ public class VideoController {
     })
     public RestBean<PageBaseResp<VideoSearchResp>> search(@Valid VideoSearchReq req) {
         return videoService.search(req);
+    }
+
+    /**
+     * 热门排行榜
+     * @param req 基础分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link VideoSearchResp}
+     */
+    @GetMapping("rank")
+    @Operation(summary = "热门排行榜",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<PageBaseResp<VideoSearchResp>> rank(@Valid PageBaseReq req) {
+        return videoService.rank(req);
     }
 }

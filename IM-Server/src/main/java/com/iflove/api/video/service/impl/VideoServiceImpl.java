@@ -1,7 +1,7 @@
 package com.iflove.api.video.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.iflove.api.video.dao.TagDao;
 import com.iflove.api.video.dao.VideoDao;
 import com.iflove.api.video.dao.VideoTagDao;
@@ -18,6 +18,7 @@ import com.iflove.api.video.service.VideoService;
 import com.iflove.api.video.service.adapter.VideoAdapter;
 import com.iflove.api.video.service.cache.VideoInfoCache;
 import com.iflove.common.constant.RedisKey;
+import com.iflove.common.domain.vo.request.PageBaseReq;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.exception.BusinessException;
@@ -96,6 +97,11 @@ public class VideoServiceImpl implements VideoService {
         return RestBean.success(VideoAdapter.buildVideoInfoResp(dto));
     }
 
+    /**
+     * 搜索视频
+     * @param req 视频搜索请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link VideoInfoResp}
+     */
     @Override
     public RestBean<PageBaseResp<VideoSearchResp>> search(VideoSearchReq req) {
         // TODO 时间范围
@@ -116,7 +122,24 @@ public class VideoServiceImpl implements VideoService {
         List<VideoDTO> result = videoDTOS.subList(fromIndex, toIndex);
         boolean isLast = toIndex == videoDTOS.size(); // 判断是否为最后一页
         return RestBean.success(
-                PageBaseResp.init(req.getPageNo(), req.getPageSize(), (long) videoDTOS.size(), isLast, VideoAdapter.buildVideoSearchResp(result))
+                PageBaseResp.init(req.getPageNo(), req.getPageSize(), (long) videoDTOS.size(), isLast, VideoAdapter.buildVideoSearchRespByDTO(result))
+        );
+    }
+
+    /**
+     * 热门排行榜
+     * @param req 基础分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link VideoSearchResp}
+     */
+    @Override
+    public RestBean<PageBaseResp<VideoSearchResp>> rank(PageBaseReq req) {
+        IPage<Video> rankPage = videoDao.rank(req.plusPage());
+        if (CollectionUtil.isEmpty(rankPage.getRecords())) {
+            return RestBean.success(PageBaseResp.empty());
+        }
+        // 返回数据
+        return RestBean.success(
+                PageBaseResp.init(rankPage, VideoAdapter.buildVideoSearchRespByVideo(rankPage.getRecords()))
         );
     }
 

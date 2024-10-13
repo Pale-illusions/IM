@@ -4,6 +4,7 @@ import com.iflove.api.video.domain.vo.request.PublishReq;
 import com.iflove.api.video.domain.vo.request.VideoSearchReq;
 import com.iflove.api.video.domain.vo.response.VideoInfoResp;
 import com.iflove.api.video.domain.vo.response.VideoSearchResp;
+import com.iflove.common.domain.vo.request.PageBaseReq;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
@@ -34,4 +35,11 @@ public interface VideoService {
      * @return {@link RestBean}<{@link PageBaseResp}<{@link VideoInfoResp}
      */
     RestBean<PageBaseResp<VideoSearchResp>> search(VideoSearchReq req);
+
+    /**
+     * 热门排行榜
+     * @param req 基础分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link VideoSearchResp}
+     */
+    RestBean<PageBaseResp<VideoSearchResp>> rank(PageBaseReq req);
 }

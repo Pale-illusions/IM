@@ -1,7 +1,11 @@
 package com.iflove.api.interactive.controller;
 
 import com.iflove.api.interactive.domain.vo.request.VideoActionReq;
+import com.iflove.api.interactive.domain.vo.response.ActionListResp;
 import com.iflove.api.interactive.service.LikeService;
+import com.iflove.api.video.domain.entity.Video;
+import com.iflove.common.domain.vo.request.PageBaseReq;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import com.iflove.common.utils.RequestHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,10 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author 苍镜月
@@ -44,5 +45,37 @@ public class LikeController {
     public RestBean<Void> mark(@Valid @RequestBody VideoActionReq req) {
         Long uid = RequestHolder.get().getUid();
         return likeService.mark(uid, req);
+    }
+
+    /**
+     * 点赞列表
+     * @param req 基础分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link ActionListResp}
+     */
+    @GetMapping("like/list")
+    @Operation(summary = "点赞列表",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<PageBaseResp<ActionListResp>> likeList(@Valid PageBaseReq req) {
+        Long uid = RequestHolder.get().getUid();
+        return likeService.likeList(uid);
+    }
+
+    /**
+     * 点踩列表
+     * @param req 基础分页请求
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link ActionListResp}
+     */
+    @GetMapping("unlike/list")
+    @Operation(summary = "点踩列表",
+            security = {@SecurityRequirement(name = "Authorization")})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success"),
+    })
+    public RestBean<PageBaseResp<ActionListResp>> unlikeList(@Valid PageBaseReq req) {
+        Long uid = RequestHolder.get().getUid();
+        return likeService.unlikeList(uid);
     }
 }

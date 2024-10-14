@@ -1,6 +1,8 @@
 package com.iflove.api.interactive.service;
 
 import com.iflove.api.interactive.domain.vo.request.VideoActionReq;
+import com.iflove.api.interactive.domain.vo.response.ActionListResp;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 
 /**
@@ -16,4 +18,18 @@ public interface LikeService {
      * @return {@link RestBean}
      */
     RestBean<Void> mark(Long uid, VideoActionReq req);
+
+    /**
+     * 点赞列表
+     * @param uid 用户id
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link ActionListResp}
+     */
+    RestBean<PageBaseResp<ActionListResp>> likeList(Long uid);
+
+    /**
+     * 点踩列表
+     * @param uid 用户id
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link ActionListResp}
+     */
+    RestBean<PageBaseResp<ActionListResp>> unlikeList(Long uid);
 }

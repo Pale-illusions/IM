@@ -1,12 +1,15 @@
 package com.iflove.api.interactive.service.impl;
 
+import com.iflove.api.interactive.dao.LikeDao;
 import com.iflove.api.interactive.domain.enums.ActionTypeEnum;
 import com.iflove.api.interactive.domain.enums.MarkTypeEnum;
 import com.iflove.api.interactive.domain.vo.request.VideoActionReq;
+import com.iflove.api.interactive.domain.vo.response.ActionListResp;
 import com.iflove.api.interactive.service.LikeService;
 import com.iflove.api.interactive.service.strategy.AbstractMarkStrategy;
 import com.iflove.api.interactive.service.strategy.MarkFactory;
 import com.iflove.common.annotation.RedissonLock;
+import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +36,26 @@ public class LikeServiceImpl implements LikeService {
             case UN_MARK -> strategy.unMark(uid, req.getVideoId());
         }
         return RestBean.success();
+    }
+
+    /**
+     * 点赞列表
+     * @param uid 用户id
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link ActionListResp}
+     */
+    @Override
+    public RestBean<PageBaseResp<ActionListResp>> likeList(Long uid) {
+//        LikeDao.likeList(uid)
+        return null;
+    }
+
+    /**
+     * 点踩列表
+     * @param uid 用户id
+     * @return {@link RestBean}<{@link PageBaseResp}<{@link ActionListResp}
+     */
+    @Override
+    public RestBean<PageBaseResp<ActionListResp>> unlikeList(Long uid) {
+        return null;
     }
 }

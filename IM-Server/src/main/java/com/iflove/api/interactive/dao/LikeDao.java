@@ -4,6 +4,7 @@ import com.iflove.api.interactive.domain.enums.MarkTypeEnum;
 import com.iflove.common.constant.RedisKey;
 import utils.RedisUtil;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.iflove.common.constant.RedisKey.VIDEO_DISLIKE_RELATION;
@@ -55,8 +56,4 @@ public class LikeDao {
             RedisUtil.zIncrementScore(countKey, videoId.toString(), scoreChange);
         }
     }
-
-//    public static List<Long> List(Long uid, MarkTypeEnum markType) {
-//        RedisUtil.hmget()
-//    }
 }

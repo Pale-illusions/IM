@@ -17,10 +17,12 @@ import com.iflove.api.video.service.cache.VideoInfoCache;
 import com.iflove.common.constant.RedisKey;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.event.VideoScoreComputeEvent;
 import com.iflove.common.exception.BusinessException;
 import com.iflove.common.exception.CommentErrorEnum;
 import com.iflove.sensitive.service.SensitiveWordBs;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RedisUtil;
@@ -43,6 +45,8 @@ public class CommentServiceImpl implements CommentService {
     private VideoInfoCache videoInfoCache;
     @Resource
     private SensitiveWordBs sensitiveWordBs;
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 评论
@@ -81,8 +85,8 @@ public class CommentServiceImpl implements CommentService {
         else {
             throw new BusinessException(CommentErrorEnum.TYPE_NOT_SUPPORTED);
         }
-        // 分数相关数据变更，存入Redis，等待计算分数
-        RedisUtil.sSet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT), videoId);
+        // 发布视频分数计算事件
+        applicationEventPublisher.publishEvent(new VideoScoreComputeEvent(this, videoId));
         return RestBean.success();
     }
 
@@ -141,8 +145,8 @@ public class CommentServiceImpl implements CommentService {
         else {
             throw new BusinessException(CommentErrorEnum.TYPE_NOT_SUPPORTED);
         }
-        // 分数相关数据变更，存入Redis，等待计算分数
-        RedisUtil.sSet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT), videoId);
+        // 发布视频分数计算事件
+        applicationEventPublisher.publishEvent(new VideoScoreComputeEvent(this, videoId));
         return RestBean.success();
     }
 

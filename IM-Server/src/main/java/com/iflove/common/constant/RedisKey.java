@@ -30,8 +30,12 @@ public class RedisKey {
     public static final String VIDEO_CLICK_COUNT ="video:clickCount";
     // 视频点赞量
     public static final String VIDEO_LIKE_COUNT ="video:likeCount";
-    // 评论点赞量
-    public static final String COMMENT_LIKE_COUNT = "comment:likeCount";
+    // 视频点踩量
+    public static final String VIDEO_DISLIKE_COUNT ="video:dislikeCount";
+    // 用户 - 视频 点赞关系映射  格式 222222::333333
+    public static final String VIDEO_LIKE_RELATION = "video:like:relation";
+    // 用户 - 视频 点踩关系映射  格式 222222::333333
+    public static final String VIDEO_DISLIKE_RELATION = "video:dislike:relation";
     // 视频分数计算
     public static final String VIDEO_SCORE_COMPUTEWAIT = "video:score:computeWait";
 

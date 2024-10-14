@@ -82,10 +82,10 @@ public class RankServiceImpl implements RankService {
         if (Objects.isNull(video)) {
             log.warn("视频不存在, id={}", id);
         }
-        // TODO 点赞数
-        double likeCount = 0;
-        // TODO 点踩数
-        double disLikeCount = 0;
+        // 点赞数
+        double likeCount = RedisUtil.zScore(RedisKey.getKey(RedisKey.VIDEO_LIKE_COUNT), videoId);
+        // 点踩数
+        double disLikeCount = RedisUtil.zScore(RedisKey.getKey(RedisKey.VIDEO_DISLIKE_COUNT), videoId);
         // 评论数
         double commentCount = commentDao.getVideoCommentCount(videoId);
         // 点击量

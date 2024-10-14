@@ -1,6 +1,8 @@
 package com.iflove.api.user.service.strategy;
 
 import com.iflove.api.chat.service.strategy.AbstractMsgHandler;
+import com.iflove.common.exception.BusinessException;
+import com.iflove.common.exception.CommonErrorEnum;
 import jakarta.validation.ValidationException;
 
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class OfflineMsgHandlerFactory {
     public static AbstractOfflineMsgHandler getStrategyNonNull(Integer code) {
         AbstractOfflineMsgHandler handler = STRATEGY_MAP.get(code);
         if (Objects.isNull(handler)) {
-            throw new ValidationException("参数校验失败");
+            throw new BusinessException(CommonErrorEnum.PARAM_VALID);
         }
         return handler;
     }

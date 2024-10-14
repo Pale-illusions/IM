@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequestMapping("api/interactive/comment")
-@Tag(name = "互动模块")
+@Tag(name = "评论模块")
 public class CommentController {
     @Resource
     private CommentService commentService;

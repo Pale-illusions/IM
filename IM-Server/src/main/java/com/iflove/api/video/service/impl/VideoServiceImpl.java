@@ -21,9 +21,11 @@ import com.iflove.common.constant.RedisKey;
 import com.iflove.common.domain.vo.request.PageBaseReq;
 import com.iflove.common.domain.vo.response.PageBaseResp;
 import com.iflove.common.domain.vo.response.RestBean;
+import com.iflove.common.event.VideoScoreComputeEvent;
 import com.iflove.common.exception.BusinessException;
 import com.iflove.common.exception.VideoErrorEnum;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.RedisUtil;
@@ -47,6 +49,8 @@ public class VideoServiceImpl implements VideoService {
     private ElasticSearchService elasticSearchService;
     @Resource
     private VideoInfoCache videoInfoCache;
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 发布视频
@@ -90,8 +94,8 @@ public class VideoServiceImpl implements VideoService {
         }
         // 增加视频点击量
         RedisUtil.zIncrementScore(RedisKey.getKey(RedisKey.VIDEO_CLICK_COUNT), videoId.toString(), 1);
-        // 分数相关数据变更，存入Redis，等待计算分数
-        RedisUtil.sSet(RedisKey.getKey(RedisKey.VIDEO_SCORE_COMPUTEWAIT), videoId);
+        // 发布视频分数计算事件
+        applicationEventPublisher.publishEvent(new VideoScoreComputeEvent(this, videoId));
         // 组装数据
         // TODO 添加点赞量，评论量 。。。
         return RestBean.success(VideoAdapter.buildVideoInfoResp(dto));

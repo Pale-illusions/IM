@@ -98,17 +98,19 @@ public class RedisUtil {
     }
 
 
+    public static Boolean del(String key) {
+        return template.delete(key);
+    }
+
     /**
      * 删除缓存
      *
      * @param keys
      */
-    public static void del(String... keys) {
+    public static Boolean del(String... keys) {
         if (keys != null && keys.length > 0) {
             if (keys.length == 1) {
-                Boolean result = template.delete(keys[0]);
-                log.debug("--------------------------------------------");
-                log.debug("删除缓存：" + keys[0] + "，结果：" + result);
+                return template.delete(keys[0]);
             } else {
                 Set<String> keySet = new HashSet<>();
                 for (String key : keys) {
@@ -118,12 +120,10 @@ public class RedisUtil {
                     }
                 }
                 Long count = template.delete(keySet);
-                log.debug("--------------------------------------------");
-                log.debug("成功删除缓存：" + keySet);
-                log.debug("缓存删除数量：" + count + "个");
+                return Optional.ofNullable(count).filter(c -> c > 0).isPresent();
             }
-            log.debug("--------------------------------------------");
         }
+        return false;
     }
 
     public static void del(List<String> keys) {
@@ -412,9 +412,9 @@ public class RedisUtil {
      * @param value 值
      * @return true 存在 false不存在
      */
-    public static Boolean sHasKey(String key, Object value) {
+    public static boolean sHasKey(String key, Object value) {
         try {
-            return template.opsForSet().isMember(key, value);
+            return Boolean.TRUE.equals(template.opsForSet().isMember(key, value));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return false;
